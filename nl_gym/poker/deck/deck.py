@@ -17,16 +17,17 @@ class Deck:
         self.num_suits = num_suits
         self.trick = False
         if order is not None:
-            self.top_cards = itemgetter(order)
-            self.bottom_cards = itemgetter(set(range(num_ranks * num_suits)).difference(set(order)))
+            self.top_cards = itemgetter(*order)
+            self.bottom_cards = itemgetter(
+                *list(set(range(num_ranks * num_suits)).difference(set(order))))
             self.trick = True
         self.shuffle()
 
     def shuffle(self):
         self.cards = Deck.GetFullDeck(self.num_ranks, self.num_suits)
         if self.trick:
-            top_cards = self.top_cards(self.cards)
-            bottom_cards = self.bottom_cards(self.cards)
+            top_cards = list(self.top_cards(self.cards))
+            bottom_cards = list(self.bottom_cards(self.cards))
             shuffle(bottom_cards)
             self.cards = top_cards + bottom_cards
         else:
