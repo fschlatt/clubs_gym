@@ -35,6 +35,8 @@ class ASCIIViewer(PokerViewer):
         self.player_pos = self.POS_DICT[num_players]
 
     def render(self, config):
+
+        # TODO split pot for all ins
         action = config['action']
         dealer = config['dealer']
         done = config['done']
@@ -45,8 +47,23 @@ class ASCIIViewer(PokerViewer):
         ccs += ['--'] * (self.num_community_cards - len(ccs))
         ccs = '[' + ','.join(ccs) + ']'
 
+        str_config['ccs'] = ccs
+        if not done:
+            str_config['pot'] = '{:,}'.format(config['pot'])
+            str_config['a{}'.format(self.player_pos[action])] = 'X'
+        else:
+            str_config['pot'] = '0'
+        str_config['b{}'.format(self.player_pos[dealer])] = 'D '
+        if config['small_blind']:
+            str_config['b{}'.format(
+                self.player_pos[(dealer + 1) % self.num_players])] = 'SB'
+        if config['big_blind'] and self.num_players > 2:
+            str_config['b{}'.format(
+                self.player_pos[(dealer + 2) % self.num_players])] = 'BB'
+
         players = []
-        iterator = zip(config['hands'], config['stacks'], config['active'])
+        iterator = zip(
+            config['hole_cards'], config['stacks'], config['active'])
         for idx, (hand, stack, active) in enumerate(iterator):
             if not active:
                 players.append('{:2}. '.format(idx + 1) +
@@ -62,22 +79,20 @@ class ASCIIViewer(PokerViewer):
                            ','.join(['??']*self.num_hole_cards) +
                            ' {:,}'.format(stack))
 
-        str_config['ccs'] = ccs
-        str_config['pot'] = '{:,}'.format(config['pot'])
-        str_config['b{}'.format(self.player_pos[dealer])] = 'D '
-        if config['small_blind']:
-            str_config['b{}'.format(
-                self.player_pos[(dealer + 1) % self.num_players])] = 'SB'
-        if config['big_blind'] and self.num_players > 2:
-            str_config['b{}'.format(
-                self.player_pos[(dealer + 2) % self.num_players])] = 'BB'
-        str_config['a{}'.format(self.player_pos[action])] = 'X'
-
         positions = ['p{}'.format(idx) for idx in self.player_pos]
-        iterator = zip(players, config['street_commits'], positions)
-        for player, street_commit, pos in iterator:
+        iterator = zip(
+            players, config['street_commits'], positions, config['all_in'])
+        for player, street_commit, pos, all_in in iterator:
             str_config[pos] = player
             str_config[pos + 'c'] = '{:,}'.format(street_commit)
+            if all_in and not done:
+                str_config['a' + pos[:1]] = 'A'
+
+        iterator = zip(
+            config['payouts'], positions)
+        if done:
+            for payout, pos in iterator:
+                str_config[pos + 'c'] = '{:,}'.format(payout)
 
         string = self.table.format(**str_config)
         print(string)
