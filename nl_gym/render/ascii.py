@@ -15,11 +15,11 @@ class ASCIIViewer(PokerViewer):
                 9: [0, 1, 2, 4, 5, 6, 7, 8, 9],
                 10: list(range(10))}
 
-    KEYS = ['p{}'.format(idx) for idx in range(10)] + \
-        ['p{}c'.format(idx) for idx in range(10)] + \
-        ['a{}'.format(idx) for idx in range(10)] + \
-        ['b{}'.format(idx) for idx in range(10)] + \
-        ['sb', 'bb', 'ccs', 'pot', 'action']
+    KEYS = (['p{}'.format(idx) for idx in range(10)]
+            + ['p{}c'.format(idx) for idx in range(10)]
+            + ['a{}'.format(idx) for idx in range(10)]
+            + ['b{}'.format(idx) for idx in range(10)]
+            + ['sb', 'bb', 'ccs', 'pot', 'action'])
 
     def __init__(self, num_players, num_hole_cards, num_community_cards):
         super(ASCIIViewer, self).__init__(
