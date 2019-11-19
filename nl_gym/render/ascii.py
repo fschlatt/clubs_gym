@@ -34,7 +34,7 @@ class ASCIIViewer(PokerViewer):
 
         self.player_pos = self.POS_DICT[num_players]
 
-    def render(self, config):
+    def _parse_string(self, config):
 
         # TODO split pot for all ins
         action = config['action']
@@ -88,11 +88,52 @@ class ASCIIViewer(PokerViewer):
             if all_in and not done:
                 str_config['a' + pos[:1]] = 'A'
 
-        iterator = zip(
-            config['payouts'], positions)
+        action_string = ''
+        win_string = ''
+
+        prev_action = config['prev_action']
+        if prev_action is not None:
+            action_string = 'Player {} {}'
+            player, bet, fold = prev_action
+            if fold:
+                action = 'folded '
+            else:
+                if bet:
+                    action = 'bet {} '.format(bet)
+                else:
+                    action = 'checked '
+            action_string = action_string.format(player + 1, action)
+
         if done:
+            win_string = 'Player'
+            iterator = zip(
+                config['payouts'], positions)
             for payout, pos in iterator:
                 str_config[pos + 'c'] = '{:,}'.format(payout)
+            if (config['payouts'] > 0).sum() > 1:
+                win_string += 's {} won {} respectively'
+            else:
+                win_string += ' {} won {}'
+            players = []
+            payouts = []
+            for player, payout in enumerate(config['payouts']):
+                if payout > 0:
+                    players.append(str(player + 1))
+                    payouts.append(str(payout))
+            win_string = win_string.format(
+                ', '.join(players), ', '.join(payouts))
+        else:
+            action_string += 'Action on Player {}'.format(config['action'] + 1)
+
+        str_config['action'] = action_string
+        str_config['win'] = win_string
 
         string = self.table.format(**str_config)
+
+        return string
+
+    def render(self, config):
+
+        string = self._parse_string(config)
+
         print(string)
