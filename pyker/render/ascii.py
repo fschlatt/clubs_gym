@@ -1,5 +1,5 @@
 from .viewer import PokerViewer
-from nl_gym.poker.deck import Card
+from pyker.poker.deck import Card
 import os
 
 

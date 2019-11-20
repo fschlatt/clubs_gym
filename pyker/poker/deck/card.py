@@ -128,8 +128,8 @@ class Card:
         to the correct prime and multiplied in.
 
         Params:
-            rankbits = a single 32-bit (only 13-bits set) integer representing 
-                    the ranks of 5 _different_ ranked cards 
+            rankbits = a single 32-bit (only 13-bits set) integer representing
+                    the ranks of 5 _different_ ranked cards
                     (5 of 13 bits are set)
 
         Primarily used for evaulating flushes and straights, 
@@ -137,7 +137,7 @@ class Card:
 
         Assumes that the input is in form (set bits):
 
-                              rankbits     
+                              rankbits
                         +--------+--------+
                         |xxxbbbbb|bbbbbbbb|
                         +--------+--------+
@@ -171,7 +171,7 @@ class Card:
     @staticmethod
     def int_to_pretty_str(card_int):
         """
-        Prints a single card 
+        Prints a single card
         """
 
         color = False
@@ -192,13 +192,13 @@ class Card:
         rank_int = Card.get_rank_int(card_int)
 
         # if we need to color red
-        s = Card.PRETTY_SUITS[suit_int]
+        suit = Card.PRETTY_SUITS[suit_int]
         # if color and suit_int in Card.PRETTY_REDS:
-        #     s = colored(s, "red")
+        #     suit = colored(suit, "red")
 
-        r = Card.STR_RANKS[rank_int]
+        rank = Card.STR_RANKS[rank_int]
 
-        return "{}{}".format(r, s)
+        return "{}{}".format(rank, suit)
 
     @staticmethod
     def print_pretty_card(card_int):
@@ -214,12 +214,11 @@ class Card:
         Expects a list of cards in integer form.
         """
         output = ""
-        for i in range(len(card_ints)):
-            c = card_ints[i]
-            if i != len(card_ints) - 1:
-                output += str(Card.int_to_pretty_str(c)) + ","
+        for idx, card in enumerate(card_ints):
+            if idx != len(card_ints) - 1:
+                output += str(Card.int_to_pretty_str(card)) + ","
             else:
-                output += str(Card.int_to_pretty_str(c)) + " "
+                output += str(Card.int_to_pretty_str(card)) + " "
 
         print(output)
         return output

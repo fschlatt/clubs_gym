@@ -1,15 +1,7 @@
 import pytest
 
-from nl_gym.poker.deck import Card, Evaluator
+from pyker.poker.deck import Card, Evaluator
 
-
-# def test_general():
-#     # too few cards
-#     evaluator = Evaluator(1, 13, 2, 5, 0)
-#     hand1 = [Card.new('As'), Card.new('Ks')]
-#     comm_cards = [Card.new('Ts')]
-#     with pytest.raises(Exception):
-#         evaluator.evaluate(hand1, comm_cards)
 
 def test_1_card():
     # no community cards

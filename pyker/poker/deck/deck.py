@@ -10,11 +10,11 @@ class Deck:
     deck with the list of unique card integers. Each object instantiated simply
     makes a copy of this object and shuffles it
     """
-    __FULL_DECK = []
 
     def __init__(self, num_suits, num_ranks, order=None):
         self.num_ranks = num_ranks
         self.num_suits = num_suits
+        self.full_deck = []
         self.trick = False
         if order is not None:
             self.top_cards = itemgetter(*order)
@@ -24,7 +24,7 @@ class Deck:
         self.shuffle()
 
     def shuffle(self):
-        self.cards = Deck.GetFullDeck(self.num_ranks, self.num_suits)
+        self.cards = self.get_full_deck(self.num_ranks, self.num_suits)
         if self.trick:
             top_cards = list(self.top_cards(self.cards))
             bottom_cards = list(self.bottom_cards(self.cards))
@@ -44,15 +44,14 @@ class Deck:
         Card.print_pretty_cards(self.cards)
         return ''
 
-    @staticmethod
-    def GetFullDeck(num_ranks, num_suits):
-        if Deck.__FULL_DECK:
-            return list(Deck.__FULL_DECK)
+    def get_full_deck(self, num_ranks, num_suits):
+        if self.full_deck:
+            return list(self.full_deck)
 
         # create the standard deck
         ranks = Card.STR_RANKS[-num_ranks:]
         suits = list(Card.CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
         for rank in ranks:
             for suit in suits:
-                Deck.__FULL_DECK.append(Card.new(rank + suit))
-        return list(Deck.__FULL_DECK)
+                self.full_deck.append(Card.new(rank + suit))
+        return list(self.full_deck)

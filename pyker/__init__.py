@@ -8,7 +8,7 @@ def register(config):
     gym.envs.registration.register(
         id=config['env_id'],
         entry_point=config['env_entry_point'],
-        kwargs={'config': config['kwargs']})
+        kwargs={'config': config['config']})
 
 
 def _register():
@@ -21,7 +21,7 @@ def _register():
         gym.envs.registration.register(
             id=config['env_id'],
             entry_point=config['env_entry_point'],
-            kwargs={'config': config['kwargs']})
+            kwargs={'config': config['config']})
 
 
 # Register environments with gym
