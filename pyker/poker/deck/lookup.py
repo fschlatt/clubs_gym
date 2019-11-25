@@ -144,7 +144,7 @@ class LookupTable():
         return int(suited), int(unsuited)
 
     def __four_of_a_kind(self, suits, ranks, cards_for_hand):
-        if cards_for_hand < 3 or suits < 4:
+        if cards_for_hand < 4 or suits < 4:
             return 0, 0
         # choose 1 rank for quads multiplied by choice for 1 card from remaining rank
         unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 4)
