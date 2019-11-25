@@ -1,5 +1,5 @@
 class Card:
-    """
+    '''
     Static class that handles cards. We represent cards as 32-bit integers, so 
     there is no object instantiation - they are just ints. Most of the bits are 
     used, and have a specific meaning. See below: 
@@ -23,7 +23,7 @@ class Card:
     - Detect straights
 
     and is also quite performant.
-    """
+    '''
 
     # the basics
     STR_RANKS = '23456789TJQKA'
@@ -53,11 +53,11 @@ class Card:
 
     @staticmethod
     def new(string):
-        """
+        '''
         Converts Card string to binary integer representation of card, inspired by:
 
         http://www.suffecool.net/poker/evaluator.html
-        """
+        '''
 
         rank_char = string[0]
         suit_char = string[1]
@@ -99,10 +99,10 @@ class Card:
 
     @staticmethod
     def hand_to_binary(card_strs):
-        """
+        '''
         Expects a list of cards as strings and returns a list
         of integers of same length corresponding to those strings. 
-        """
+        '''
         bhand = []
         for c in card_strs:
             bhand.append(Card.new(c))
@@ -110,9 +110,9 @@ class Card:
 
     @staticmethod
     def prime_product_from_hand(card_ints):
-        """
+        '''
         Expects a list of cards in integer form. 
-        """
+        '''
 
         product = 1
         for card_int in card_ints:
@@ -122,7 +122,7 @@ class Card:
 
     @staticmethod
     def prime_product_from_rankbits(rankbits):
-        """
+        '''
         Returns the prime product using the bitrank (b)
         bits of the hand. Each 1 in the sequence is converted
         to the correct prime and multiplied in.
@@ -142,7 +142,7 @@ class Card:
                         |xxxbbbbb|bbbbbbbb|
                         +--------+--------+
 
-        """
+        '''
         product = 1
         for i in Card.INT_RANKS:
             # if the ith bit is set
@@ -153,26 +153,26 @@ class Card:
 
     @staticmethod
     def int_to_binary(card_int):
-        """
+        '''
         For debugging purposes. Displays the binary number as a 
         human readable string in groups of four digits. 
-        """
+        '''
         bstr = bin(card_int)[
             2:][::-1]  # chop off the 0b and THEN reverse string
-        output = list("".join(["0000" + "\t"] * 7) + "0000")
+        output = list(''.join(['0000' + '\t'] * 7) + '0000')
 
         for i in range(len(bstr)):
             output[i + int(i/4)] = bstr[i]
 
         # output the string to console
         output.reverse()
-        return "".join(output)
+        return ''.join(output)
 
     @staticmethod
     def int_to_pretty_str(card_int):
-        """
+        '''
         Prints a single card
-        """
+        '''
 
         color = False
         try:
@@ -194,31 +194,31 @@ class Card:
         # if we need to color red
         suit = Card.PRETTY_SUITS[suit_int]
         # if color and suit_int in Card.PRETTY_REDS:
-        #     suit = colored(suit, "red")
+        #     suit = colored(suit, 'red')
 
         rank = Card.STR_RANKS[rank_int]
 
-        return "{}{}".format(rank, suit)
+        return f'{rank}{suit}'
 
     @staticmethod
     def print_pretty_card(card_int):
-        """
+        '''
         Expects a single integer as input
-        """
+        '''
         print(Card.int_to_pretty_str(card_int))
         return Card.int_to_pretty_str(card_int)
 
     @staticmethod
     def print_pretty_cards(card_ints):
-        """
+        '''
         Expects a list of cards in integer form.
-        """
-        output = ""
+        '''
+        output = ''
         for idx, card in enumerate(card_ints):
             if idx != len(card_ints) - 1:
-                output += str(Card.int_to_pretty_str(card)) + ","
+                output += str(Card.int_to_pretty_str(card)) + ','
             else:
-                output += str(Card.int_to_pretty_str(card)) + " "
+                output += str(Card.int_to_pretty_str(card)) + ' '
 
         print(output)
         return output

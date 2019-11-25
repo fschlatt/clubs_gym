@@ -5,11 +5,11 @@ from .card import Card
 
 
 class Deck:
-    """
+    '''
     Class representing a deck. The first time we create, we seed the static
     deck with the list of unique card integers. Each object instantiated simply
     makes a copy of this object and shuffles it
-    """
+    '''
 
     def __init__(self, num_suits, num_ranks, order=None):
         self.num_ranks = num_ranks

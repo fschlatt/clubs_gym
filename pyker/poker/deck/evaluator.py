@@ -8,7 +8,7 @@ from .lookup import LookupTable
 
 
 class Evaluator(object):
-    """
+    '''
     Evaluates hand strengths using a variant of Cactus Kev's algorithm:
     http://suffe.cool/poker/evaluator.html
 
@@ -16,7 +16,7 @@ class Evaluator(object):
     in fact the lookup table generation can be done in under a second and
     consequent evaluations are very fast. Won't beat C, but very fast as
     all calculations are done with bit arithmetic and table lookups.
-    """
+    '''
 
     def __init__(self, suits, ranks, h_cards, cards_for_hand, mandatory_h_cards):
 
@@ -37,12 +37,12 @@ class Evaluator(object):
         self.ranks = ' > '.join(hands)
 
     def evaluate(self, cards, board):
-        """
+        '''
         This is the function that the user calls to get a hand rank.
 
         Supports empty board, etc very flexible. No input validation
         because that's cycles!
-        """
+        '''
 
         # compute all possible hand combinations
         all_card_combs = []
@@ -75,11 +75,11 @@ class Evaluator(object):
         return minimum
 
     def __lookup(self, cards):
-        """
+        '''
         Performs an evalution given cards in integer form, mapping them to
         a rank dependent on number of cards and suits in the deck. Lower ranks
         are better
-        """
+        '''
         # if flush
         if functools.reduce(operator.and_, cards + [0xF000]):
             hand_or = functools.reduce(operator.or_, cards) >> 16
@@ -92,10 +92,10 @@ class Evaluator(object):
             return self.table.unsuited_lookup[prime]
 
     def get_rank_class(self, hr):
-        """
+        '''
         Returns the class of hand given the hand hand_rank
         returned from evaluate
-        """
+        '''
 
         hands = self.table.hands
 
@@ -107,12 +107,12 @@ class Evaluator(object):
         if rank is not None:
             return rank
         else:
-            raise Exception("Inavlid hand rank, cannot return rank class")
+            raise Exception('Inavlid hand rank, cannot return rank class')
 
     def get_rank_string(self, hr):
-        """
+        '''
         Returns the string of the hand for a given hand rank
-        """
+        '''
         hands = self.table.hands
 
         rank = None
@@ -125,12 +125,12 @@ class Evaluator(object):
         if rank is not None:
             return rank
         else:
-            raise Exception("Inavlid hand rank, cannot return rank class")
+            raise Exception('Inavlid hand rank, cannot return rank class')
 
     def get_five_card_rank_percentage(self, hand_rank):
-        """
+        '''
         Scales the hand rank score to the [0.0, 1.0] range.
-        """
+        '''
         worst_hand = self.table.hands['ranked hands'][-1]
         worst_hand_rank = self.table.hands[worst_hand]['cumulative unsuited']
         return float(hand_rank) / float(worst_hand_rank)

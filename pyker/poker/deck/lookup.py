@@ -1,7 +1,7 @@
-"""
+'''
 Lookup table which maps a hand's unique prime product to
 unique hand rank
-"""
+'''
 
 import itertools
 from scipy.special import comb
@@ -10,18 +10,18 @@ from .card import Card
 
 
 class LookupTable():
-    """
+    '''
     Lookup table which maps a hand's unique prime product to
     unique hand rank
     Examples for 5 card hands:
     * Royal flush (best hand possible)          => 1
     * 7-5-4-3-2 unsuited (worst hand possible)  => 7462
-    """
+    '''
 
     def __init__(self, suits, ranks, cards_for_hand):
-        """
+        '''
         Calculates lookup tables
-        """
+        '''
         # number of suited and unsuited possibilities of different hands
         straight_flushes, u_straight_flushes = self.__straight_flush(
             suits, ranks, cards_for_hand)
@@ -237,11 +237,11 @@ class LookupTable():
         return int(suited), int(unsuited)
 
     def __flushes(self, ranks, cards_for_hand):
-        """
+        '''
         Straight flushes and flushes.
         Lookup is done on 13 bit integer (2^13 > 7462):
         xxxbbbbb bbbbbbbb => integer hand index
-        """
+        '''
 
         # straight flushes in rank order
         straight_flushes = []
@@ -324,10 +324,10 @@ class LookupTable():
         self.__straight_and_highcards(straight_flushes, flushes)
 
     def __straight_and_highcards(self, straights, highcards):
-        """
+        '''
         Unique five card sets. Straights and highcards.
         Reuses bit sequences from flush calculations.
-        """
+        '''
 
         if self.hands['straight']['cumulative unsuited']:
             rank = self.__get_rank('straight')
@@ -344,9 +344,9 @@ class LookupTable():
                 rank += 1
 
     def __multiples(self, ranks, cards_for_hand):
-        """
+        '''
         Pair, Two Pair, Three of a Kind, Full House, and 4 of a Kind.
-        """
+        '''
         backwards_ranks = list(range(13 - 1, 13 - 1 - ranks, -1))
 
         # 1) Four of a Kind
@@ -487,12 +487,12 @@ class LookupTable():
                     rank += 1
 
     def write_table_to_disk(self, table, filepath):
-        """
+        '''
         Writes lookup table to disk
-        """
+        '''
         with open(filepath, 'w') as ofile:
             for prime_prod, rank in table.iteritems():
-                ofile.write(str(prime_prod) + "," + str(rank) + '\n')
+                ofile.write(str(prime_prod) + ',' + str(rank) + '\n')
 
     def __get_rank(self, hand):
         rank = self.hands[hand]['rank']
@@ -502,12 +502,12 @@ class LookupTable():
         return self.hands[better_hand]['cumulative unsuited'] + 1
 
     def __lexographic_next_bit(self, bits):
-        """
+        '''
         Bit hack from here:
         http://www.graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
         Generator even does this in poker order rank
         so no need to sort when done! Perfect.
-        """
+        '''
         lex = bits
         yield lex
         while True:
