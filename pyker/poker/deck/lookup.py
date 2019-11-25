@@ -4,9 +4,17 @@ unique hand rank
 '''
 
 import itertools
-from scipy.special import comb
+import operator as op
+from functools import reduce
 
 from .card import Card
+
+
+def ncr(n, r):
+    r = min(r, n-r)
+    numer = reduce(op.mul, range(n, n-r, -1), 1)
+    denom = reduce(op.mul, range(1, r+1), 1)
+    return numer / denom
 
 
 class LookupTable():
@@ -139,7 +147,7 @@ class LookupTable():
         if cards_for_hand < 3 or suits < 4:
             return 0, 0
         # choose 1 rank for quads multiplied by choice for 1 card from remaining rank
-        unsuited = comb(ranks, 1) * comb(ranks - 1, cards_for_hand - 4)
+        unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 4)
         # mutliplied with number of suit choices for remaining cards
         suited = max(unsuited, unsuited * suits**(cards_for_hand - 4))
         if suits < 2:
@@ -150,11 +158,11 @@ class LookupTable():
         if cards_for_hand < 5 or suits < 3:
             return 0, 0
         # choose one rank for trips and one rank for pair
-        unsuited = comb(ranks, 1) * comb(ranks - 1, 1) * \
-            comb(ranks - 2, cards_for_hand - 5)
+        unsuited = ncr(ranks, 1) * ncr(ranks - 1, 1) * \
+            ncr(ranks - 2, cards_for_hand - 5)
         # multiplied with number of suit choices for trips, pair and remaining cards
-        suited = max(unsuited, unsuited * comb(suits, 3) * comb(suits, 2) * \
-            suits**(cards_for_hand - 5))
+        suited = max(unsuited, unsuited * ncr(suits, 3) * ncr(suits, 2) *
+                     suits**(cards_for_hand - 5))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -162,10 +170,10 @@ class LookupTable():
     def __flush(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 3 or suits < 2:
             return 0, 0
-        # all straight combinations
+        # all straight ncrinations
         straight_flushes = ranks - (cards_for_hand - 1) + int(ranks == 13)
         # choose all cards from ranks minus straight flushes
-        unsuited = comb(ranks, cards_for_hand) - straight_flushes
+        unsuited = ncr(ranks, cards_for_hand) - straight_flushes
         # multiplied by number of suits
         suited = max(unsuited, unsuited * suits)
         if suits < 2:
@@ -178,12 +186,13 @@ class LookupTable():
         # number of smallest cards which start straight
         # add 1 for top and bottom if ace included
         unsuited = ranks - (cards_for_hand - 1) + int(ranks == 13)
-        # straight flush combinations
+        # straight flush ncrinations
         straight_flushes = 0
         if suits > 1:
             straight_flushes = unsuited * suits
         # multiplied with suit choice for every card minus straight flushes
-        suited = max(unsuited, unsuited * suits**(cards_for_hand) - straight_flushes)
+        suited = max(unsuited, unsuited * suits **
+                     (cards_for_hand) - straight_flushes)
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -192,10 +201,10 @@ class LookupTable():
         if cards_for_hand < 3 or suits < 3:
             return 0, 0
         # choose one rank for trips and remaining cards from remaining ranks
-        unsuited = comb(ranks, 1) * comb(ranks - 1, cards_for_hand - 3)
+        unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 3)
         # multiplied with suit choices for trips and suit choices for remaining cards
-        suited = max(unsuited, unsuited * comb(suits, 3) * \
-            comb(suits, 3)**(cards_for_hand - 3))
+        suited = max(unsuited, unsuited * ncr(suits, 3) *
+                     ncr(suits, 3)**(cards_for_hand - 3))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -204,9 +213,10 @@ class LookupTable():
         if cards_for_hand < 4 or suits < 2:
             return 0, 0
         # choose two ranks for pairs and ranks for remaining cards
-        unsuited = comb(ranks, 2) * comb(ranks - 2, cards_for_hand - 4)
+        unsuited = ncr(ranks, 2) * ncr(ranks - 2, cards_for_hand - 4)
         # multiplied with suit choices for both pairs and suit choices for remaining cards
-        suited = max(unsuited, unsuited * comb(suits, 2)**2 * suits**(cards_for_hand - 4))
+        suited = max(unsuited, unsuited * ncr(suits, 2)
+                     ** 2 * suits**(cards_for_hand - 4))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -215,9 +225,10 @@ class LookupTable():
         if cards_for_hand < 2 or suits < 2:
             return 0, 0
         # choose rank for pair and ranks for remaining cards
-        unsuited = comb(ranks, 1) * comb(ranks - 1, cards_for_hand - 2)
+        unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 2)
         # multiplied with suit choices for pair and suit choices for remaining cards
-        suited = max(unsuited, unsuited * comb(suits, 2) * suits**(cards_for_hand - 2))
+        suited = max(unsuited, unsuited * ncr(suits, 2)
+                     * suits**(cards_for_hand - 2))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -228,8 +239,8 @@ class LookupTable():
         straights = 0
         if cards_for_hand > 2:
             straights = ranks - (cards_for_hand - 1) + int(ranks == 13)
-        # any combination of rank and subtract straights
-        unsuited = comb(ranks, cards_for_hand) - straights
+        # any ncrination of rank and subtract straights
+        unsuited = ncr(ranks, cards_for_hand) - straights
         # multiplied with suit choices for all cards, all same suits not allowed
         suited = max(unsuited, unsuited * (suits**cards_for_hand - suits))
         if suits < 2:
@@ -277,7 +288,7 @@ class LookupTable():
             gen = self.__lexographic_next_bit(
                 int(bin_num_str, 2))
             # iterate over all possibilities of unique hands
-            for _ in range(int(comb(ranks, cards_for_hand))):
+            for _ in range(int(ncr(ranks, cards_for_hand))):
                 # pull the next flush pattern from our generator
                 flush = next(gen) << (13 - ranks)
 
@@ -358,18 +369,18 @@ class LookupTable():
                 # compute prime product for selected rank
                 base_product = Card.PRIMES[idx]**4
 
-                # and for each possible combination of kicker ranks
+                # and for each possible ncrination of kicker ranks
                 kickers = backwards_ranks[:]
                 kickers.remove(idx)
-                combinations = list(itertools.combinations(
+                ncrinations = list(itertools.ncrinations(
                     kickers, cards_for_hand - 4))
                 # if at least one kicker exists
-                if combinations[0]:
-                    for combination in combinations:
+                if ncrinations[0]:
+                    for ncrination in ncrinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in combination:
+                        for kicker in ncrination:
                             product *= Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
@@ -391,15 +402,15 @@ class LookupTable():
                         Card.PRIMES[pair_rank]**2
 
                     pairranks.remove(pair_rank)
-                    combinations = list(itertools.combinations(
+                    ncrinations = list(itertools.ncrinations(
                         pairranks, cards_for_hand - 5))
                     # if at least one kicker exists
-                    if combinations[0]:
-                        for combination in combinations:
+                    if ncrinations[0]:
+                        for ncrination in ncrinations:
                             product = base_product
                             # for each kicker multiply kicker prime onto
                             # base prime product
-                            for kicker in combination:
+                            for kicker in ncrination:
                                 product *= Card.PRIMES[kicker]
                             self.unsuited_lookup[product] = rank
                             rank += 1
@@ -417,15 +428,15 @@ class LookupTable():
 
                 kickers = backwards_ranks[:]
                 kickers.remove(three_of_a_kind)
-                combinations = list(itertools.combinations(
+                ncrinations = list(itertools.ncrinations(
                     kickers, cards_for_hand - 3))
 
-                if combinations[0]:
-                    for combination in combinations:
+                if ncrinations[0]:
+                    for ncrination in ncrinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in combination:
+                        for kicker in ncrination:
                             product *= Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
@@ -437,7 +448,7 @@ class LookupTable():
         if self.hands['two pair']['cumulative unsuited']:
             rank = self.__get_rank('two pair')
             # choose two pairs
-            tpgen = itertools.combinations(backwards_ranks, 2)
+            tpgen = itertools.ncrinations(backwards_ranks, 2)
             for two_pair in tpgen:
                 pair1, pair2 = two_pair
                 base_product = Card.PRIMES[pair1]**2 * Card.PRIMES[pair2]**2
@@ -445,14 +456,14 @@ class LookupTable():
                 kickers = backwards_ranks[:]
                 kickers.remove(pair1)
                 kickers.remove(pair2)
-                combinations = list(itertools.combinations(
+                ncrinations = list(itertools.ncrinations(
                     kickers, cards_for_hand - 4))
-                if combinations[0]:
-                    for combination in combinations:
+                if ncrinations[0]:
+                    for ncrination in ncrinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in combination:
+                        for kicker in ncrination:
                             product *= Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
@@ -470,15 +481,15 @@ class LookupTable():
 
                 kickers = backwards_ranks[:]
                 kickers.remove(pairrank)
-                combinations = list(itertools.combinations(
+                ncrinations = list(itertools.ncrinations(
                     kickers, cards_for_hand - 2))
 
-                if combinations[0]:
-                    for combination in combinations:
+                if ncrinations[0]:
+                    for ncrination in ncrinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in combination:
+                        for kicker in ncrination:
                             product *= Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
