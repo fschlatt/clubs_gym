@@ -170,7 +170,7 @@ class LookupTable():
     def __flush(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 3 or suits < 2:
             return 0, 0
-        # all straight ncrinations
+        # all straight combinations
         straight_flushes = ranks - (cards_for_hand - 1) + int(ranks == 13)
         # choose all cards from ranks minus straight flushes
         unsuited = ncr(ranks, cards_for_hand) - straight_flushes
@@ -186,7 +186,7 @@ class LookupTable():
         # number of smallest cards which start straight
         # add 1 for top and bottom if ace included
         unsuited = ranks - (cards_for_hand - 1) + int(ranks == 13)
-        # straight flush ncrinations
+        # straight flush combinations
         straight_flushes = 0
         if suits > 1:
             straight_flushes = unsuited * suits
@@ -372,11 +372,11 @@ class LookupTable():
                 # and for each possible ncrination of kicker ranks
                 kickers = backwards_ranks[:]
                 kickers.remove(idx)
-                ncrinations = list(itertools.ncrinations(
+                combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 4))
                 # if at least one kicker exists
-                if ncrinations[0]:
-                    for ncrination in ncrinations:
+                if combinations[0]:
+                    for ncrination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
@@ -402,11 +402,11 @@ class LookupTable():
                         Card.PRIMES[pair_rank]**2
 
                     pairranks.remove(pair_rank)
-                    ncrinations = list(itertools.ncrinations(
+                    combinations = list(itertools.combinations(
                         pairranks, cards_for_hand - 5))
                     # if at least one kicker exists
-                    if ncrinations[0]:
-                        for ncrination in ncrinations:
+                    if combinations[0]:
+                        for ncrination in combinations:
                             product = base_product
                             # for each kicker multiply kicker prime onto
                             # base prime product
@@ -428,11 +428,11 @@ class LookupTable():
 
                 kickers = backwards_ranks[:]
                 kickers.remove(three_of_a_kind)
-                ncrinations = list(itertools.ncrinations(
+                combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 3))
 
-                if ncrinations[0]:
-                    for ncrination in ncrinations:
+                if combinations[0]:
+                    for ncrination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
@@ -448,7 +448,7 @@ class LookupTable():
         if self.hands['two pair']['cumulative unsuited']:
             rank = self.__get_rank('two pair')
             # choose two pairs
-            tpgen = itertools.ncrinations(backwards_ranks, 2)
+            tpgen = itertools.combinations(backwards_ranks, 2)
             for two_pair in tpgen:
                 pair1, pair2 = two_pair
                 base_product = Card.PRIMES[pair1]**2 * Card.PRIMES[pair2]**2
@@ -456,10 +456,10 @@ class LookupTable():
                 kickers = backwards_ranks[:]
                 kickers.remove(pair1)
                 kickers.remove(pair2)
-                ncrinations = list(itertools.ncrinations(
+                combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 4))
-                if ncrinations[0]:
-                    for ncrination in ncrinations:
+                if combinations[0]:
+                    for ncrination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
@@ -481,11 +481,11 @@ class LookupTable():
 
                 kickers = backwards_ranks[:]
                 kickers.remove(pairrank)
-                ncrinations = list(itertools.ncrinations(
+                combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 2))
 
-                if ncrinations[0]:
-                    for ncrination in ncrinations:
+                if combinations[0]:
+                    for ncrination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
