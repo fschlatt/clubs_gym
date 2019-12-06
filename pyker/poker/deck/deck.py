@@ -15,17 +15,19 @@ class Deck:
         self.num_ranks = num_ranks
         self.num_suits = num_suits
         self.full_deck = []
-        self.trick = False
+        self.tricked = False
+        self.top_cards = None
+        self.bottom_cards = None
         if order is not None:
             self.top_cards = itemgetter(*order)
             self.bottom_cards = itemgetter(
                 *list(set(range(num_ranks * num_suits)).difference(set(order))))
-            self.trick = True
+            self.tricked = True
         self.shuffle()
 
     def shuffle(self):
         self.cards = self.get_full_deck(self.num_ranks, self.num_suits)
-        if self.trick:
+        if self.tricked:
             top_cards = list(self.top_cards(self.cards))
             bottom_cards = list(self.bottom_cards(self.cards))
             shuffle(bottom_cards)
@@ -40,9 +42,16 @@ class Deck:
             cards.append(self.cards.pop(0))
         return cards
 
-    def __str__(self):
-        Card.print_pretty_cards(self.cards)
-        return ''
+    def trick(self, order):
+        self.top_cards = itemgetter(*order)
+        self.bottom_cards = itemgetter(
+            *list(set(range(num_ranks * num_suits)).difference(set(order))))
+        self.tricked = True
+
+    def untrick(self):
+        self.top_cards = None
+        self.bottom_cards = None
+        self.tricked = False
 
     def get_full_deck(self, num_ranks, num_suits):
         if self.full_deck:
@@ -57,6 +66,7 @@ class Deck:
         return list(self.full_deck)
 
     def __str__(self):
-        string = ','.join([Card.int_to_pretty_str(card) for card in self.cards])
+        string = ','.join([Card.int_to_pretty_str(card)
+                           for card in self.cards])
         string = f'[{string}]'
         return string
