@@ -184,8 +184,8 @@ class LookupTable():
         if cards_for_hand < 3:
             return 0, 0
         # number of smallest cards which start straight
-        # add 1 for top and bottom if ace included
-        unsuited = ranks - (cards_for_hand - 1) + int(ranks == 13)
+        # add 1 for low and high end ace straights
+        unsuited = ranks - (cards_for_hand - 1) + 1
         # straight flush combinations
         straight_flushes = 0
         if suits > 1:
@@ -269,11 +269,10 @@ class LookupTable():
             for _ in range(ranks - (cards_for_hand - 1)):
                 straight_flushes.append(int(bin_num_str, 2))
                 bin_num_str = bin_num_str[:-1]
-            # add A 2 3 4 5 straight if all 13 ranks are used
-            if ranks == 13:
-                bin_num_str = '0b1' + '0' * \
-                    (13 - cards_for_hand) + '1' * (cards_for_hand - 1)
-                straight_flushes.append(int(bin_num_str, 2))
+            # add low end straight
+            bin_num_str = '0b1' + '0' * \
+                (13 - cards_for_hand) + '1' * (cards_for_hand - 1)
+            straight_flushes.append(int(bin_num_str, 2))
 
         # if any flushes/high cards exist in card configuration
         # create list of all possibilities
