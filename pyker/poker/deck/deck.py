@@ -55,3 +55,8 @@ class Deck:
             for suit in suits:
                 self.full_deck.append(Card.new(rank + suit))
         return list(self.full_deck)
+
+    def __str__(self):
+        string = ','.join([Card.int_to_pretty_str(card) for card in self.cards])
+        string = f'[{string}]'
+        return string

@@ -193,32 +193,9 @@ class Card:
 
         # if we need to color red
         suit = Card.PRETTY_SUITS[suit_int]
-        # if color and suit_int in Card.PRETTY_REDS:
-        #     suit = colored(suit, 'red')
+        if color and suit_int in Card.PRETTY_REDS:
+            suit = colored(suit, 'red')
 
         rank = Card.STR_RANKS[rank_int]
 
         return f'{rank}{suit}'
-
-    @staticmethod
-    def print_pretty_card(card_int):
-        '''
-        Expects a single integer as input
-        '''
-        print(Card.int_to_pretty_str(card_int))
-        return Card.int_to_pretty_str(card_int)
-
-    @staticmethod
-    def print_pretty_cards(card_ints):
-        '''
-        Expects a list of cards in integer form.
-        '''
-        output = ''
-        for idx, card in enumerate(card_ints):
-            if idx != len(card_ints) - 1:
-                output += str(Card.int_to_pretty_str(card)) + ','
-            else:
-                output += str(Card.int_to_pretty_str(card)) + ' '
-
-        print(output)
-        return output
