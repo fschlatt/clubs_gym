@@ -253,7 +253,7 @@ class LookupTable():
         straights = 0
         if cards_for_hand > 2:
             straights = ranks - (cards_for_hand - 1) + int(ranks == 13)
-        # any ncrination of rank and subtract straights
+        # any combination of rank and subtract straights
         unsuited = ncr(ranks, cards_for_hand) - straights
         # multiplied with suit choices for all cards, all same suits not allowed
         suited = max(unsuited, unsuited * (suits**cards_for_hand - suits))
@@ -372,18 +372,18 @@ class LookupTable():
                 # compute prime product for selected rank
                 base_product = card.Card.PRIMES[idx]**4
 
-                # and for each possible ncrination of kicker ranks
+                # and for each possible combination of kicker ranks
                 kickers = backwards_ranks[:]
                 kickers.remove(idx)
                 combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 4))
                 # if at least one kicker exists
                 if combinations[0]:
-                    for ncrination in combinations:
+                    for combination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in ncrination:
+                        for kicker in combination:
                             product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
@@ -409,11 +409,11 @@ class LookupTable():
                         pairranks, cards_for_hand - 5))
                     # if at least one kicker exists
                     if combinations[0]:
-                        for ncrination in combinations:
+                        for combination in combinations:
                             product = base_product
                             # for each kicker multiply kicker prime onto
                             # base prime product
-                            for kicker in ncrination:
+                            for kicker in combination:
                                 product *= card.Card.PRIMES[kicker]
                             self.unsuited_lookup[product] = rank
                             rank += 1
@@ -435,11 +435,11 @@ class LookupTable():
                     kickers, cards_for_hand - 3))
 
                 if combinations[0]:
-                    for ncrination in combinations:
+                    for combination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in ncrination:
+                        for kicker in combination:
                             product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
@@ -463,11 +463,11 @@ class LookupTable():
                 combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 4))
                 if combinations[0]:
-                    for ncrination in combinations:
+                    for combination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in ncrination:
+                        for kicker in combination:
                             product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
@@ -489,11 +489,11 @@ class LookupTable():
                     kickers, cards_for_hand - 2))
 
                 if combinations[0]:
-                    for ncrination in combinations:
+                    for combination in combinations:
                         product = base_product
                         # for each kicker multiply kicker prime onto
                         # base prime product
-                        for kicker in ncrination:
+                        for kicker in combination:
                             product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
