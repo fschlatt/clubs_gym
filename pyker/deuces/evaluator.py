@@ -30,9 +30,18 @@ class Evaluator(object):
 
         self.table = lookup.LookupTable(suits, ranks, cards_for_hand)
 
-        hands = ['{} ({})'.format(hand, self.table.hands[hand]['suited'])
-                 for hand in self.table.hands['ranked hands']]
-        self.ranks = ' > '.join(hands)
+        total = sum(
+            self.table.hand_dict[hand]['suited']
+            for hand in self.table.hand_dict['ranked hands'])
+
+        hands = [
+            '{} ({:.4%})'.format(
+                hand, self.table.hand_dict[hand]['suited'] / total)
+            for hand in self.table.hand_dict['ranked hands']]
+        self.hand_ranks = ' > '.join(hands)
+
+    def __str__(self):
+        return self.hand_ranks
 
     def evaluate(self, cards, board):
         '''
