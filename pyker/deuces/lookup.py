@@ -26,10 +26,19 @@ class LookupTable():
     * 7-5-4-3-2 unsuited (worst hand possible)  => 7462
     '''
 
-    def __init__(self, suits, ranks, cards_for_hand, low_end_straight=True):
+    ORDER_STRINGS = ['sf', 'fk', 'fh', 'fl', 'st', 'tk', 'tp', 'pa', 'hc']
+
+    def __init__(self, suits, ranks, cards_for_hand,
+                 low_end_straight=True, order=None):
         '''
         Calculates lookup tables
         '''
+        if order is not None:
+            if any(string not in order for string in self.ORDER_STRINGS):
+                raise ValueError(
+                    (f'invalid order list, '
+                     'order list be permutation of {self.ORDER_STRINGS}'))
+
         # number of suited and unsuited possibilities of different hands
         straight_flushes, u_straight_flushes = self.__straight_flush(
             suits, ranks, cards_for_hand)
@@ -93,11 +102,16 @@ class LookupTable():
             (high_cards, 'high card')]
 
         # sort suited hands and rank unsuited hands by suited
-        # rank order => lookup is done on unsuited hands but hand
+        # rank order or by order provided
+        if order is None:
+            s_hands = sorted(s_hands)
+        else:
+            idcs = [self.ORDER_STRINGS.index(hand) for hand in order]
+            s_hands = [s_hands[idx] for idx in idcs]
+        # lookup is done on unsuited hands but hand
         # rank is dependent on suited hands
-        s_hands = sorted(s_hands)
         u_hands = [(self.hand_dict[u_hand[1]]['unsuited'], u_hand[1])
-                   for u_hand in s_hands]
+                    for u_hand in s_hands]
 
         # compute cumulative number of unsuited hands for each hand
         # cumulative unsuited is the maximum rank a hand can have

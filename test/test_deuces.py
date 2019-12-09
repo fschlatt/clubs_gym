@@ -386,3 +386,18 @@ def test_5_card():
     assert evaluator.evaluate(
         hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
 
+
+def test_short_deck():
+
+    order = ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
+
+    evaluator = deuces.Evaluator(4, 9, 2, 5, 0, order=order)
+
+    # flush > full house
+    hand1 = [deuces.Card('8h'), deuces.Card('7h')]
+    hand2 = [deuces.Card('Jd'), deuces.Card('As')]
+    comm_cards = [
+        deuces.Card('Jh'), deuces.Card('9h'),
+        deuces.Card('Ah'), deuces.Card('Ac')]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)

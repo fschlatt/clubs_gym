@@ -16,11 +16,12 @@ class Evaluator(object):
     all calculations are done with bit arithmetic and table lookups.
     '''
 
-    def __init__(self, suits, ranks, h_cards, cards_for_hand, mandatory_h_cards):
+    def __init__(self, suits, ranks, h_cards, cards_for_hand,
+                 mandatory_h_cards, low_end_straight=True, order=None):
 
         if cards_for_hand < 0 or cards_for_hand > 5:
             raise NotImplementedError(
-                'Evaluation not implemented for %s card hands' % (cards_for_hand))
+                f'Evaluation not implemented for {cards_for_hand} card hands')
 
         self.suits = suits
         self.ranks = ranks
@@ -28,7 +29,8 @@ class Evaluator(object):
         self.cards_for_hand = cards_for_hand
         self.mandatory_h_cards = mandatory_h_cards
 
-        self.table = lookup.LookupTable(suits, ranks, cards_for_hand)
+        self.table = lookup.LookupTable(suits, ranks, cards_for_hand, 
+            low_end_straight=low_end_straight, order=order)
 
         total = sum(
             self.table.hand_dict[hand]['suited']
@@ -87,7 +89,7 @@ class Evaluator(object):
         a rank dependent on number of cards and suits in the deck. Lower ranks
         are better
         '''
-        # if flush
+        # if all flush bits equal then use flush lookup
         if functools.reduce(operator.and_, cards + [0xF000]):
             hand_or = functools.reduce(operator.or_, cards) >> 16
             prime = card.Card.prime_product_from_rankbits(hand_or)
