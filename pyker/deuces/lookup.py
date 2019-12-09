@@ -7,7 +7,7 @@ import itertools
 import operator as op
 from functools import reduce
 
-from .card import Card
+from . import card
 
 
 def ncr(n, r):
@@ -310,7 +310,7 @@ class LookupTable():
         if self.hands['straight flush']['cumulative unsuited']:
             rank = self.__get_rank('straight flush')
             for straight_flush in straight_flushes:
-                prime_product = Card.prime_product_from_rankbits(
+                prime_product = card.Card.prime_product_from_rankbits(
                     straight_flush)
                 self.flush_lookup[prime_product] = rank
                 rank += 1
@@ -318,7 +318,7 @@ class LookupTable():
         if self.hands['flush']['cumulative unsuited']:
             rank = self.__get_rank('flush')
             for flush in flushes:
-                prime_product = Card.prime_product_from_rankbits(flush)
+                prime_product = card.Card.prime_product_from_rankbits(flush)
                 self.flush_lookup[prime_product] = rank
                 rank += 1
 
@@ -332,14 +332,15 @@ class LookupTable():
         if self.hands['straight']['cumulative unsuited']:
             rank = self.__get_rank('straight')
             for straight in straights:
-                prime_product = Card.prime_product_from_rankbits(straight)
+                prime_product = card.Card.prime_product_from_rankbits(straight)
                 self.unsuited_lookup[prime_product] = rank
                 rank += 1
 
         if self.hands['high card']['cumulative unsuited']:
             rank = self.__get_rank('high card')
             for high_card in highcards:
-                prime_product = Card.prime_product_from_rankbits(high_card)
+                prime_product = card.Card.prime_product_from_rankbits(
+                    high_card)
                 self.unsuited_lookup[prime_product] = rank
                 rank += 1
 
@@ -356,7 +357,7 @@ class LookupTable():
             # for each choice of a set of four rank
             for idx in backwards_ranks:
                 # compute prime product for selected rank
-                base_product = Card.PRIMES[idx]**4
+                base_product = card.Card.PRIMES[idx]**4
 
                 # and for each possible ncrination of kicker ranks
                 kickers = backwards_ranks[:]
@@ -370,7 +371,7 @@ class LookupTable():
                         # for each kicker multiply kicker prime onto
                         # base prime product
                         for kicker in ncrination:
-                            product *= Card.PRIMES[kicker]
+                            product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
                 else:
@@ -387,8 +388,8 @@ class LookupTable():
                 pairranks = backwards_ranks[:]
                 pairranks.remove(idx)
                 for pair_rank in pairranks:
-                    base_product = Card.PRIMES[idx]**3 * \
-                        Card.PRIMES[pair_rank]**2
+                    base_product = card.Card.PRIMES[idx]**3 * \
+                        card.Card.PRIMES[pair_rank]**2
 
                     pairranks.remove(pair_rank)
                     combinations = list(itertools.combinations(
@@ -400,7 +401,7 @@ class LookupTable():
                             # for each kicker multiply kicker prime onto
                             # base prime product
                             for kicker in ncrination:
-                                product *= Card.PRIMES[kicker]
+                                product *= card.Card.PRIMES[kicker]
                             self.unsuited_lookup[product] = rank
                             rank += 1
                     else:
@@ -413,7 +414,7 @@ class LookupTable():
             rank = self.__get_rank('three of a kind')
             for three_of_a_kind in backwards_ranks:
 
-                base_product = Card.PRIMES[three_of_a_kind]**3
+                base_product = card.Card.PRIMES[three_of_a_kind]**3
 
                 kickers = backwards_ranks[:]
                 kickers.remove(three_of_a_kind)
@@ -426,7 +427,7 @@ class LookupTable():
                         # for each kicker multiply kicker prime onto
                         # base prime product
                         for kicker in ncrination:
-                            product *= Card.PRIMES[kicker]
+                            product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
                 else:
@@ -440,7 +441,8 @@ class LookupTable():
             tpgen = itertools.combinations(backwards_ranks, 2)
             for two_pair in tpgen:
                 pair1, pair2 = two_pair
-                base_product = Card.PRIMES[pair1]**2 * Card.PRIMES[pair2]**2
+                base_product = (card.Card.PRIMES[pair1]**2 *
+                                card.Card.PRIMES[pair2]**2)
 
                 kickers = backwards_ranks[:]
                 kickers.remove(pair1)
@@ -453,7 +455,7 @@ class LookupTable():
                         # for each kicker multiply kicker prime onto
                         # base prime product
                         for kicker in ncrination:
-                            product *= Card.PRIMES[kicker]
+                            product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
                 else:
@@ -466,7 +468,7 @@ class LookupTable():
             rank = self.__get_rank('pair')
             for pairrank in backwards_ranks:
 
-                base_product = Card.PRIMES[pairrank]**2
+                base_product = card.Card.PRIMES[pairrank]**2
 
                 kickers = backwards_ranks[:]
                 kickers.remove(pairrank)
@@ -479,7 +481,7 @@ class LookupTable():
                         # for each kicker multiply kicker prime onto
                         # base prime product
                         for kicker in ncrination:
-                            product *= Card.PRIMES[kicker]
+                            product *= card.Card.PRIMES[kicker]
                         self.unsuited_lookup[product] = rank
                         rank += 1
                 else:

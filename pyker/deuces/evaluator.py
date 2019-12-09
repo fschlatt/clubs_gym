@@ -1,10 +1,8 @@
-import itertools
 import functools
+import itertools
 import operator
 
-from .card import Card
-from .deck import Deck
-from .lookup import LookupTable
+from . import card, lookup
 
 
 class Evaluator(object):
@@ -30,7 +28,7 @@ class Evaluator(object):
         self.cards_for_hand = cards_for_hand
         self.mandatory_h_cards = mandatory_h_cards
 
-        self.table = LookupTable(suits, ranks, cards_for_hand)
+        self.table = lookup.LookupTable(suits, ranks, cards_for_hand)
 
         hands = ['{} ({})'.format(hand, self.table.hands[hand]['suited'])
                  for hand in self.table.hands['ranked hands']]
@@ -83,12 +81,12 @@ class Evaluator(object):
         # if flush
         if functools.reduce(operator.and_, cards + [0xF000]):
             hand_or = functools.reduce(operator.or_, cards) >> 16
-            prime = Card.prime_product_from_rankbits(hand_or)
+            prime = card.Card.prime_product_from_rankbits(hand_or)
             return self.table.flush_lookup[prime]
 
         # otherwise
         else:
-            prime = Card.prime_product_from_hand(cards)
+            prime = card.Card.prime_product_from_hand(cards)
             return self.table.unsuited_lookup[prime]
 
     def get_rank_class(self, hr):

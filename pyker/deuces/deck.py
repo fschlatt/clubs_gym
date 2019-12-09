@@ -1,7 +1,7 @@
 from operator import itemgetter
 from random import shuffle
 
-from .card import Card
+from . import card
 
 
 class Deck:
@@ -58,15 +58,15 @@ class Deck:
             return list(self.full_deck)
 
         # create the standard deck
-        ranks = Card.STR_RANKS[-num_ranks:]
-        suits = list(Card.CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
+        ranks = card.Card.STR_RANKS[-num_ranks:]
+        suits = list(card.Card.CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
         for rank in ranks:
             for suit in suits:
-                self.full_deck.append(Card(rank + suit))
+                self.full_deck.append(card.Card(rank + suit))
         return list(self.full_deck)
 
     def __str__(self):
-        string = ','.join([Card.int_to_pretty_str(card)
+        string = ','.join([card.Card.int_to_pretty_str(card)
                            for card in self.cards])
         string = f'[{string}]'
         return string
