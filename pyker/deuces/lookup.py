@@ -292,14 +292,12 @@ class LookupTable():
                 # pull the next flush pattern from generator
                 flush = next(gen) << (13 - ranks)
 
-                not_straight_flush = True
                 for straight_flush in straight_flushes:
                     # if flush XOR straight_flush == 0 then bit pattern
                     # is same and shouldn't be added
                     if not flush ^ straight_flush:
-                        not_straight_flush = False
-
-                if not_straight_flush:
+                        break
+                else:
                     flushes.append(flush)
 
         # hand generation started from worst hand
