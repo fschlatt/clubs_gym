@@ -89,7 +89,7 @@ class Evaluator(object):
             prime = card.Card.prime_product_from_hand(cards)
             return self.table.unsuited_lookup[prime]
 
-    def get_rank_class(self, hr):
+    def get_rank_class(self, hand_rank):
         '''
         Returns the class of hand given the hand hand_rank
         returned from evaluate
@@ -99,7 +99,7 @@ class Evaluator(object):
 
         rank = None
         for hand in hands['ranked hands']:
-            if hr >= 0 and hr <= hands[hand]['cumulative unsuited']:
+            if hand_rank >= 0 and hand_rank <= hands[hand]['cumulative unsuited']:
                 rank = hands[hand]['rank']
                 break
         if rank is not None:
@@ -107,7 +107,7 @@ class Evaluator(object):
         else:
             raise Exception('Inavlid hand rank, cannot return rank class')
 
-    def get_rank_string(self, hr):
+    def get_rank_string(self, hand_rank):
         '''
         Returns the string of the hand for a given hand rank
         '''
@@ -117,7 +117,7 @@ class Evaluator(object):
         for hand in hands['ranked hands']:
             if not hands[hand]['cumulative unsuited']:
                 continue
-            if hr >= 0 and hr <= hands[hand]['cumulative unsuited']:
+            if hand_rank >= 0 and hand_rank <= hands[hand]['cumulative unsuited']:
                 rank = hand
                 break
         if rank is not None:
