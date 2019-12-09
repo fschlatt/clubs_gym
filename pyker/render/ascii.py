@@ -1,9 +1,10 @@
-from .viewer import PokerViewer
-from pyker.poker.deck import Card
 import os
 
+from . import viewer
+from pyker import deuces
 
-class ASCIIViewer(PokerViewer):
+
+class ASCIIViewer(viewer.PokerViewer):
 
     POS_DICT = {2: [0, 5],
                 3: [0, 3, 6],
@@ -36,14 +37,13 @@ class ASCIIViewer(PokerViewer):
 
     def _parse_string(self, config):
 
-        # TODO split pot for all ins
         action = config['action']
         dealer = config['dealer']
         done = config['done']
 
         str_config = {key: '' for key in self.KEYS}
 
-        ccs = Card.int_to_str(config['community_cards'])
+        ccs = deuces.Card.int_to_str(config['community_cards'])
         ccs += ['--'] * (self.num_community_cards - len(ccs))
         ccs = '[' + ','.join(ccs) + ']'
 
@@ -72,7 +72,7 @@ class ASCIIViewer(PokerViewer):
                 continue
             if done or idx == action:
                 players.append('{:2}. '.format(idx + 1) +
-                               ','.join(Card.int_to_str(hand)) +
+                               ','.join(deuces.Card.int_to_str(hand)) +
                                ' {:,}'.format(stack))
                 continue
             players.append('{:2}. '.format(idx + 1) +
