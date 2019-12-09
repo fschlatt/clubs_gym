@@ -63,8 +63,8 @@ class Evaluator(object):
             all_card_combs = itertools.combinations(
                 all_cards, self.cards_for_hand)
 
-        worst_hand = self.table.hands['ranked hands'][-1]
-        minimum = self.table.hands[worst_hand]['cumulative unsuited']
+        worst_hand = self.table.hand_dict['ranked hands'][-1]
+        minimum = self.table.hand_dict[worst_hand]['cumulative unsuited']
 
         for card_comb in all_card_combs:
             score = self.__lookup(list(card_comb))
@@ -82,7 +82,7 @@ class Evaluator(object):
         if functools.reduce(operator.and_, cards + [0xF000]):
             hand_or = functools.reduce(operator.or_, cards) >> 16
             prime = card.Card.prime_product_from_rankbits(hand_or)
-            return self.table.flush_lookup[prime]
+            return self.table.suited_lookup[prime]
 
         # otherwise
         else:
@@ -95,7 +95,7 @@ class Evaluator(object):
         returned from evaluate
         '''
 
-        hands = self.table.hands
+        hands = self.table.hand_dict
 
         rank = None
         for hand in hands['ranked hands']:
@@ -111,7 +111,7 @@ class Evaluator(object):
         '''
         Returns the string of the hand for a given hand rank
         '''
-        hands = self.table.hands
+        hands = self.table.hand_dict
 
         rank = None
         for hand in hands['ranked hands']:
@@ -129,6 +129,6 @@ class Evaluator(object):
         '''
         Scales the hand rank score to the [0.0, 1.0] range.
         '''
-        worst_hand = self.table.hands['ranked hands'][-1]
-        worst_hand_rank = self.table.hands[worst_hand]['cumulative unsuited']
+        worst_hand = self.table.hand_dict['ranked hands'][-1]
+        worst_hand_rank = self.table.hand_dict[worst_hand]['cumulative unsuited']
         return float(hand_rank) / float(worst_hand_rank)
