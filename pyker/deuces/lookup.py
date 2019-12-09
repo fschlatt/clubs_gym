@@ -26,7 +26,7 @@ class LookupTable():
     * 7-5-4-3-2 unsuited (worst hand possible)  => 7462
     '''
 
-    def __init__(self, suits, ranks, cards_for_hand):
+    def __init__(self, suits, ranks, cards_for_hand, low_end_straight=True):
         '''
         Calculates lookup tables
         '''
@@ -123,7 +123,7 @@ class LookupTable():
         # create the lookup table in piecewise fashion
         # this will call straights and high cards method,
         # we reuse some of the bit sequences
-        self.__flushes(ranks, cards_for_hand)
+        self.__flushes(ranks, cards_for_hand, low_end_straight)
         self.__multiples(ranks, cards_for_hand)
 
         # if suited hands aren't relevant set the suited
@@ -247,7 +247,7 @@ class LookupTable():
             suited = unsuited
         return int(suited), int(unsuited)
 
-    def __flushes(self, ranks, cards_for_hand):
+    def __flushes(self, ranks, cards_for_hand, low_end_straight):
         '''
         Straight flushes and flushes.
         Lookup is done on 13 bit integer (2^13 > 7462):
@@ -269,10 +269,11 @@ class LookupTable():
             for _ in range(ranks - (cards_for_hand - 1)):
                 straight_flushes.append(int(bin_num_str, 2))
                 bin_num_str = bin_num_str[:-1]
-            # add low end straight
-            bin_num_str = '0b1' + '0' * \
-                (13 - cards_for_hand) + '1' * (cards_for_hand - 1)
-            straight_flushes.append(int(bin_num_str, 2))
+            if low_end_straight:
+                # add low end straight
+                bin_num_str = '0b1' + '0' * \
+                    (13 - cards_for_hand) + '1' * (cards_for_hand - 1)
+                straight_flushes.append(int(bin_num_str, 2))
 
         # if any flushes/high cards exist in card configuration
         # create list of all possibilities
