@@ -62,7 +62,7 @@ class Deck:
         suits = list(Card.CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
         for rank in ranks:
             for suit in suits:
-                self.full_deck.append(Card.new(rank + suit))
+                self.full_deck.append(Card(rank + suit))
         return list(self.full_deck)
 
     def __str__(self):

@@ -51,8 +51,7 @@ class Card:
     # hearts and diamonds
     PRETTY_REDS = [2, 4]
 
-    @staticmethod
-    def new(string: str) -> int:
+    def __new__(cls, string: str) -> int:
         '''Converts card string into binary int representation
 
         Args:
