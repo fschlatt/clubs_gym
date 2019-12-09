@@ -17,7 +17,7 @@ class AsciimaticsViewer(ascii.ASCIIViewer):
 
         if not ASCIIMATICS:
             raise ImportError(
-                'install asciimatics to use the aciimatics viewer')
+                'install asciimatics to use the asciimatics viewer')
 
         self.string = ''
         self.refresh = threading.Condition()
