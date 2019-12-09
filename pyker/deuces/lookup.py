@@ -288,29 +288,25 @@ class LookupTable():
                 int(bin_num_str, 2))
             # iterate over all possibilities of unique hands
             for _ in range(int(ncr(ranks, cards_for_hand))):
-                # pull the next flush pattern from our generator
+                # pull the next flush pattern from generator
                 flush = next(gen) << (13 - ranks)
 
-                # if this flush matches perfectly any
-                # straight flush, do not add it
                 not_straight_flush = True
                 for straight_flush in straight_flushes:
-                    # if flush XOR straight_flush == 0, then bit pattern
-                    # is same, and we should not add
+                    # if flush XOR straight_flush == 0 then bit pattern
+                    # is same and shouldn't be added
                     if not flush ^ straight_flush:
                         not_straight_flush = False
 
                 if not_straight_flush:
                     flushes.append(flush)
 
-        # we started from the lowest straight pattern, now we want to start ranking from
-        # the most powerful hands, so we reverse
+        # hand generation started from worst hand
+        # so needs to be reversed
         flushes.reverse()
 
-        # now add to the lookup map:
-        # start with straight flushes and the rank of 1
-        # since it is the best hand in poker
-        # rank 1 = Royal Flush!
+        # add prime products to look up maps
+        # use ranks of hands computed beforehand
         if self.hands['straight flush']['cumulative unsuited']:
             rank = self.__get_rank('straight flush')
             for straight_flush in straight_flushes:
@@ -319,8 +315,6 @@ class LookupTable():
                 self.flush_lookup[prime_product] = rank
                 rank += 1
 
-        # we start the counting for flushes on max full house, which
-        # is the worst rank that a full house can have (2,2,2,3,3)
         if self.hands['flush']['cumulative unsuited']:
             rank = self.__get_rank('flush')
             for flush in flushes:
@@ -328,16 +322,12 @@ class LookupTable():
                 self.flush_lookup[prime_product] = rank
                 rank += 1
 
-        # we can reuse these bit sequences for straights
-        # and high cards since they are inherently related
+        # straight flush and flush bit sequences can be reused for
+        # straights and high cards since they are inherently related
         # and differ only by context
         self.__straight_and_highcards(straight_flushes, flushes)
 
     def __straight_and_highcards(self, straights, highcards):
-        '''
-        Unique five card sets. Straights and highcards.
-        Reuses bit sequences from flush calculations.
-        '''
 
         if self.hands['straight']['cumulative unsuited']:
             rank = self.__get_rank('straight')
