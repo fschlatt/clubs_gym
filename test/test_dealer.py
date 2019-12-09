@@ -1,16 +1,13 @@
-from pyker.poker.dealer import Dealer
-from pyker.poker.deck import Deck
-from pyker.poker.deck import Card
-from pyker.poker import configs
+from pyker import configs, deuces, engine
 
 
 def test_game():
 
     config = configs.LEDUC_2P_ENV
 
-    dealer = Dealer(**config)
+    dealer = engine.Dealer(**config)
 
-    deck = Deck(2, 3, order=[0, 2, 1])
+    deck = deuces.Deck(2, 3, order=[0, 2, 1])
 
     dealer.deck = deck
     obs = dealer.reset(reset_stacks=True, reset_button=True)
@@ -37,7 +34,7 @@ def test_limit_betting_size():
 
     config = configs.LIMIT_HOLDEM_6P_ENV
 
-    dealer = Dealer(**config)
+    dealer = engine.Dealer(**config)
 
     _ = dealer.reset(reset_stacks=True, reset_button=True)
     action = {'fold': 0, 'bet': 2.1}
@@ -60,7 +57,7 @@ def test_heads_up():
 
     config = configs.NOLIMIT_HOLDEM_2P_ENV
 
-    dealer = Dealer(**config)
+    dealer = engine.Dealer(**config)
 
     obs = dealer.reset(reset_stacks=True, reset_button=True)
 
@@ -81,7 +78,7 @@ def test_incomplete_raise():
     config = configs.NOLIMIT_HOLDEM_6P_ENV
     config['num_players'] = 3
 
-    dealer = Dealer(**config)
+    dealer = engine.Dealer(**config)
 
     dealer.stacks[1] = dealer.stacks[1] - 190
     dealer.stacks[2] = dealer.stacks[2] + 190
@@ -113,7 +110,7 @@ def test_pot_limit_betting_size():
 
     config = configs.POT_LIMIT_OMAHA_6P_ENV
 
-    dealer = Dealer(**config)
+    dealer = engine.Dealer(**config)
 
     obs = dealer.reset(reset_stacks=True, reset_button=True)
     assert obs['min_raise'] == 4
@@ -136,8 +133,6 @@ def test_split_pot():
 
     config = configs.NOLIMIT_HOLDEM_9P_ENV
 
-    dealer = Dealer(**config)
+    dealer = engine.Dealer(**config)
 
-    deck = Deck()
-
-    
+    deck = deuces.Deck()

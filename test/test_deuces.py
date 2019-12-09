@@ -1,6 +1,6 @@
 import pytest
 
-from universal_deuces import card, evaluator
+from pyker.deuces import card, evaluator
 
 
 def test_1_card():
