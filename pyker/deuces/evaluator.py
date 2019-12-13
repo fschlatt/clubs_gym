@@ -85,7 +85,7 @@ class Evaluator(object):
 
     def __lookup(self, cards):
         '''
-        Performs an evalution given cards in integer form, mapping them to
+        Performs an evaluation given cards in integer form, mapping them to
         a rank dependent on number of cards and suits in the deck. Lower ranks
         are better
         '''
