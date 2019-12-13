@@ -511,7 +511,7 @@ class LookupTable():
 
     def __get_rank(self, hand):
         rank = self.hand_dict[hand]['rank']
-        if rank == 0:
+        if not rank:
             return 0
         better_hand = self.hand_dict['ranked hands'][rank - 1]
         return self.hand_dict[better_hand]['cumulative unsuited'] + 1
