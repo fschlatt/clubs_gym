@@ -41,7 +41,7 @@ class LookupTable():
 
         # number of suited and unsuited possibilities of different hands
         straight_flushes, u_straight_flushes = self.__straight_flush(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand, low_end_straight)
         four_of_a_kinds, u_four_of_a_kinds = self.__four_of_a_kind(
             suits, ranks, cards_for_hand)
         full_houses, u_full_houses = self.__full_house(
@@ -49,7 +49,7 @@ class LookupTable():
         flushes, u_flushes = self.__flush(
             suits, ranks, cards_for_hand)
         straights, u_straights = self.__straight(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand, low_end_straight)
         three_of_a_kinds, u_three_of_a_kinds = self.__three_of_a_kind(
             suits, ranks, cards_for_hand)
         two_pairs, u_two_pairs = self.__two_pair(
@@ -111,7 +111,7 @@ class LookupTable():
         # lookup is done on unsuited hands but hand
         # rank is dependent on suited hands
         u_hands = [(self.hand_dict[u_hand[1]]['unsuited'], u_hand[1])
-                    for u_hand in s_hands]
+                   for u_hand in s_hands]
 
         # compute cumulative number of unsuited hands for each hand
         # cumulative unsuited is the maximum rank a hand can have
@@ -145,12 +145,11 @@ class LookupTable():
         if not self.hand_dict['flush']['cumulative unsuited']:
             self.suited_lookup = self.unsuited_lookup
 
-    def __straight_flush(self, suits, ranks, cards_for_hand):
+    def __straight_flush(self, suits, ranks, cards_for_hand, low_end_straight):
         if cards_for_hand < 3 or suits < 2:
             return 0, 0
         # number of smallest cards which start straight
-        # add 1 for top and and bottom if ace included
-        unsuited = ranks - (cards_for_hand - 1) + int(ranks == 13)
+        unsuited = ranks - (cards_for_hand - 1) + low_end_straight
         # multiplied with number of suits
         suited = max(unsuited, unsuited * suits)
         if suits < 2:
@@ -194,12 +193,11 @@ class LookupTable():
             suited = unsuited
         return int(suited), int(unsuited)
 
-    def __straight(self, suits, ranks, cards_for_hand):
+    def __straight(self, suits, ranks, cards_for_hand, low_end_straight):
         if cards_for_hand < 3:
             return 0, 0
         # number of smallest cards which start straight
-        # add 1 for low and high end ace straights
-        unsuited = ranks - (cards_for_hand - 1) + 1
+        unsuited = ranks - (cards_for_hand - 1) + low_end_straight
         # straight flush combinations
         straight_flushes = 0
         if suits > 1:
@@ -327,6 +325,8 @@ class LookupTable():
                     straight_flush)
                 self.suited_lookup[prime_product] = rank
                 rank += 1
+            num_ranks = rank - self.__get_rank('straight flush')
+            assert (num_ranks == self.hand_dict['straight flush']['unsuited'])
 
         if self.hand_dict['flush']['cumulative unsuited']:
             rank = self.__get_rank('flush')
@@ -334,6 +334,8 @@ class LookupTable():
                 prime_product = card.Card.prime_product_from_rankbits(flush)
                 self.suited_lookup[prime_product] = rank
                 rank += 1
+            num_ranks = rank - self.__get_rank('flush')
+            assert (num_ranks == self.hand_dict['flush']['unsuited'])
 
         # straight flush and flush bit sequences can be reused for
         # straights and high cards since they are inherently related
@@ -348,6 +350,8 @@ class LookupTable():
                 prime_product = card.Card.prime_product_from_rankbits(straight)
                 self.unsuited_lookup[prime_product] = rank
                 rank += 1
+            num_ranks = rank - self.__get_rank('straight')
+            assert (num_ranks == self.hand_dict['straight']['unsuited'])
 
         if self.hand_dict['high card']['cumulative unsuited']:
             rank = self.__get_rank('high card')
@@ -356,6 +360,8 @@ class LookupTable():
                     high_card)
                 self.unsuited_lookup[prime_product] = rank
                 rank += 1
+            num_ranks = rank - self.__get_rank('high card')
+            assert (num_ranks == self.hand_dict['high card']['unsuited'])
 
     def __multiples(self, ranks, cards_for_hand):
         '''
@@ -368,13 +374,13 @@ class LookupTable():
         if self.hand_dict['four of a kind']['cumulative unsuited']:
             rank = self.__get_rank('four of a kind')
             # for each choice of a set of four rank
-            for idx in backwards_ranks:
+            for four_of_a_kind in backwards_ranks:
                 # compute prime product for selected rank
-                base_product = card.Card.PRIMES[idx]**4
+                base_product = card.Card.PRIMES[four_of_a_kind]**4
 
                 # and for each possible combination of kicker ranks
                 kickers = backwards_ranks[:]
-                kickers.remove(idx)
+                kickers.remove(four_of_a_kind)
                 combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 4))
                 # if at least one kicker exists
@@ -390,23 +396,26 @@ class LookupTable():
                 else:
                     self.unsuited_lookup[base_product] = rank
                     rank += 1
+            num_ranks = rank - self.__get_rank('four of a kind')
+            assert (num_ranks == self.hand_dict['four of a kind']['unsuited'])
 
         # 2) Full House
         if self.hand_dict['full house']['cumulative unsuited']:
             rank = self.__get_rank('full house')
             # for each three of a kind
-            for idx in backwards_ranks:
+            for three_of_a_kind in backwards_ranks:
 
                 # and for each choice of pair rank
-                pairranks = backwards_ranks[:]
-                pairranks.remove(idx)
-                for pair_rank in pairranks:
-                    base_product = card.Card.PRIMES[idx]**3 * \
-                        card.Card.PRIMES[pair_rank]**2
+                pairs = backwards_ranks[:]
+                pairs.remove(three_of_a_kind)
+                for pair in pairs:
+                    base_product = card.Card.PRIMES[three_of_a_kind]**3 * \
+                        card.Card.PRIMES[pair]**2
 
-                    pairranks.remove(pair_rank)
+                    kickers = pairs[:]
+                    kickers.remove(pair)
                     combinations = list(itertools.combinations(
-                        pairranks, cards_for_hand - 5))
+                        kickers, cards_for_hand - 5))
                     # if at least one kicker exists
                     if combinations[0]:
                         for combination in combinations:
@@ -420,6 +429,8 @@ class LookupTable():
                     else:
                         self.unsuited_lookup[base_product] = rank
                         rank += 1
+            num_ranks = rank - self.__get_rank('full house')
+            assert (num_ranks == self.hand_dict['full house']['unsuited'])
 
         # 3) Three of a Kind
         # pick three of one rank
@@ -446,6 +457,8 @@ class LookupTable():
                 else:
                     self.unsuited_lookup[base_product] = rank
                     rank += 1
+            num_ranks = rank - self.__get_rank('three of a kind')
+            assert (num_ranks == self.hand_dict['three of a kind']['unsuited'])
 
         # 4) Two Pair
         if self.hand_dict['two pair']['cumulative unsuited']:
@@ -474,6 +487,8 @@ class LookupTable():
                 else:
                     self.unsuited_lookup[base_product] = rank
                     rank += 1
+            num_ranks = rank - self.__get_rank('two pair')
+            assert (num_ranks == self.hand_dict['two pair']['unsuited'])
 
         # 5) Pair
         # choose a pair
@@ -500,6 +515,8 @@ class LookupTable():
                 else:
                     self.unsuited_lookup[base_product] = rank
                     rank += 1
+            num_ranks = rank - self.__get_rank('pair')
+            assert (num_ranks == self.hand_dict['pair']['unsuited'])
 
     def write_table_to_disk(self, table, filepath):
         '''
