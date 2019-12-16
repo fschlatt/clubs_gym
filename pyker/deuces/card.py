@@ -63,8 +63,19 @@ class Card:
 
         rank_char = string[0]
         suit_char = string[1]
-        rank_int = Card.CHAR_RANK_TO_INT_RANK[rank_char]
-        suit_int = Card.CHAR_SUIT_TO_INT_SUIT[suit_char]
+        try:
+            rank_int = Card.CHAR_RANK_TO_INT_RANK[rank_char]
+        except KeyError:
+            raise KeyError(
+                (f'invalid rank {rank_char}, choose one '
+                 f'of {list(Card.CHAR_RANK_TO_INT_RANK.keys())}'))
+        try:
+            suit_int = Card.CHAR_SUIT_TO_INT_SUIT[suit_char]
+        except KeyError:
+            raise KeyError(
+                (f'invalid suit {suit_char}, choose one '
+                 f'of {list(Card.CHAR_SUIT_TO_INT_SUIT.keys())}'))
+
         rank_prime = Card.PRIMES[rank_int]
 
         bitrank = 1 << rank_int << 16
@@ -117,13 +128,13 @@ class Card:
     def prime_product_from_rankbits(rankbits: int) -> int:
         '''Computes prime product from rankbits of cards, primarily used
         for evaluating flushes and straights. Expects 
-        
+
         Args:
             rankbits (int): [description]
-        
+
         Returns:
             int: [description]
-        '''        
+        '''
         product = 1
         # '''
         # Returns the prime product using the bitrank (b)
