@@ -321,21 +321,26 @@ class Dealer():
             return reward + self.active * self.pot
         # if last street played and still players multiple players active
         if self.street == self.num_streets:
-            reward = self.__eval_round(reward)
+            reward = self.__eval_round()
+        reward -= self.pot_commit
         return reward
 
-    def __eval_round(self, reward):
+    def __eval_round(self):
         # grab array of hand strength and pot commits
-        hands = np.array([
-            [player,
-             self.evaluator.evaluate(
-                 self.hole_cards[player], self.community_cards),
-             self.pot_commit[player]]
-            for player in range(self.num_players) if self.active[player]])
+        hands = []
+        reward = np.zeros(self.num_players)
+        for player in range(self.num_players):
+            # if not active hand strength set
+            # to 1 worse than worst possible rank
+            hand_strength = self.evaluator.table.max_rank + 1
+            if self.active[player]:
+                hand_strength = self.evaluator.evaluate(
+                    self.hole_cards[player], self.community_cards)
+            hands.append([player, hand_strength, self.pot_commit[player]])
+        hands = np.array(hands)
         # sort hands by hand strength and pot commits
-        hands = hands[np.lexsort([hands[:, 1], hands[:, 2]])].astype(float)
-        pot = hands[:, -1].sum()
-        assert pot == self.pot
+        hands = hands[np.lexsort([hands[:, 2], hands[:, 1]])].astype(float)
+        pot = self.pot
         # iterate over hand strength and pot commits from smallest to largest
         for idx, (player, strength, pot_commit) in enumerate(hands):
             player = int(player)
@@ -351,15 +356,20 @@ class Dealer():
             # set hand strength to -1 to disregard for next split computation
             hands[idx][1] = -1
             # when pot is empty break
+            assert pot >= 0
             if not pot:
                 break
         # give worst position remainder of split chips
         remainder, reward = np.modf(reward)
-        # worst position is first active player after button
-        worst_idx = int(
-            np.argmin(hands[:, 0] + (hands[:, 0] <= self.button) * self.num_players))
-        worst_pos = int(hands[:, 0][worst_idx])
-        reward[worst_pos] += remainder.sum()
+        if remainder.any():
+            # worst position is first player
+            # after button involved in pot
+            involved_players = np.nonzero(reward)[0]
+            button_shift = (involved_players <= self.button) * self.num_players
+            button_shifted_players = involved_players + button_shift
+            worst_idx = np.argmin(button_shifted_players)
+            worst_pos = involved_players[worst_idx]
+            reward[worst_pos] += remainder.sum()
         return reward.astype(int)
 
     def __move_action(self):
