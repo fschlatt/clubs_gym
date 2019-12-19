@@ -126,6 +126,7 @@ class LookupTable():
                 self.hand_dict[hand_rank]['rank'] = rank
                 rank += 1
                 ranked_hands.append(hand_rank)
+        self.max_rank = cumulative_hands
 
         # list of hands ordered by rank from best to worst
         self.hand_dict['ranked hands'] = ranked_hands
