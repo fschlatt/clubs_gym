@@ -26,7 +26,7 @@ def test_game():
 
     assert all(done)
     assert reward[0] > reward[1]
-    assert reward[0] == 14
+    assert reward[0] == 7
 
 
 def test_limit_betting_size():
@@ -128,10 +128,59 @@ def test_pot_limit_betting_size():
     _ = dealer.step(action)
     action = {'fold': 0, 'bet': 4}
 
+
 def test_split_pot():
 
     config = configs.NOLIMIT_HOLDEM_9P_ENV
 
     dealer = engine.Dealer(**config)
 
-    deck = deuces.Deck()
+    hands = [
+        ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['Js', 'Jc'],
+        ['6h', '8d'], ['5c', '7d'], ['Qh', '2c'], ['3d', '4s']]
+    comm_cards = ['4d', '5h', '7c', 'Ac', 'Kh']
+    top_cards = [card for hand in hands for card in hand] + comm_cards
+    dealer.deck = dealer.deck.trick(top_cards)
+
+    obs = dealer.reset(reset_stacks=True, reset_button=True)
+
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 5}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 5}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 5}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 5}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 4}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    obs, *_ = dealer.step(action)
+    assert obs['pot'] == 27
+    # flop
+    action = {'fold': 0, 'bet': 4}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 4}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 4}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 4}
+    obs, *_ = dealer.step(action)
+    assert obs['pot'] == 43
+
+    while True:
+        action = {'fold': 0, 'bet': 0}
+        obs, reward, done, _ = dealer.step(action)
+        if all(done):
+            break
+    assert not sum(reward)
+    assert_payout = [12, -9, -2, 0, -5, 13, -9, 0, 0]
+    assert all(rew == ass_pay for rew, ass_pay in zip(reward, assert_payout))
