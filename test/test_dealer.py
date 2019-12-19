@@ -7,9 +7,8 @@ def test_game():
 
     dealer = engine.Dealer(**config)
 
-    deck = deuces.Deck(2, 3, order=[0, 2, 1])
+    dealer.deck = dealer.deck.trick(['Qs', 'Ks', 'Qh'])
 
-    dealer.deck = deck
     obs = dealer.reset(reset_stacks=True, reset_button=True)
 
     action = {'fold': 0, 'bet': 2}
