@@ -178,9 +178,9 @@ def test_split_pot():
 
     while True:
         action = {'fold': 0, 'bet': 0}
-        obs, reward, done, _ = dealer.step(action)
+        obs, rewards, done, _ = dealer.step(action)
         if all(done):
             break
-    assert not sum(reward)
-    assert_payout = [12, -9, -2, 0, -5, 13, -9, 0, 0]
-    assert all(rew == ass_pay for rew, ass_pay in zip(reward, assert_payout))
+    assert not sum(rewards)
+    payouts = [12, -9, -2, 0, -5, 13, -9, 0, 0]
+    assert all(reward == payout for reward, payout in zip(rewards, payouts))
