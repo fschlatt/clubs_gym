@@ -184,3 +184,53 @@ def test_split_pot():
     assert not sum(rewards)
     payouts = [12, -9, -2, 0, -5, 13, -9, 0, 0]
     assert all(reward == payout for reward, payout in zip(rewards, payouts))
+
+def test_all_in():
+
+    config = configs.NOLIMIT_HOLDEM_9P_ENV
+
+    dealer = pyker.Dealer(**config)
+
+    hands = [
+        ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['Js', 'Jc'],
+        ['6h', '8d'], ['5c', '7d'], ['Qh', '2c'], ['3d', '4s']]
+    comm_cards = ['4d', '5h', '7c', 'Ac', 'Kh']
+    top_cards = [card for hand in hands for card in hand] + comm_cards
+    dealer.deck = dealer.deck.trick(top_cards)
+
+    dealer.stacks[0] = dealer.stacks[0] - 180
+    dealer.stacks[1] = dealer.stacks[1] + 180
+
+    obs = dealer.reset(reset_stacks=False, reset_button=True)
+
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 50}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 20}
+    _ = dealer.step(action)
+    action = {'fold': 0, 'bet': 49}
+    _ = dealer.step(action)
+    action = {'fold': 1, 'bet': 0}
+    obs, *_ = dealer.step(action)
+
+    assert obs['pot'] == 122
+
+    while True:
+        action = {'fold': 0, 'bet': 0}
+        obs, rewards, done, _ = dealer.step(action)
+        if all(done):
+            break
+
+    assert not sum(rewards)
+    payouts = [42, 10, -2, 0, -50, 0, 0, 0, 0]
+    assert all(reward == payout for reward, payout in zip(rewards, payouts))
+    
