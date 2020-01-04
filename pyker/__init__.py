@@ -1,1 +1,1 @@
-from .engine import Dealer
+from .dealer import Dealer
