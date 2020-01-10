@@ -319,7 +319,7 @@ class Dealer():
         rewards = -1 * self.pot_commit * np.logical_not(self.active)
         if self.active.sum() <= 1:
             return rewards + self.active * self.pot
-        # if last street played and 
+        # if last street played and
         # still players multiple players active
         if self.street == self.num_streets:
             rewards = self.__eval_round()
@@ -344,7 +344,7 @@ class Dealer():
         hands = hands[np.lexsort([hands[:, 2], hands[:, 1]])]
         pot = self.pot
         remainder = 0
-        # iterate over hand strength and 
+        # iterate over hand strength and
         # pot commits from smallest to largest
         for idx, (_, strength, pot_commit) in enumerate(hands):
             eligible = hands[:, 0][hands[:, 1] == strength].astype(int)
