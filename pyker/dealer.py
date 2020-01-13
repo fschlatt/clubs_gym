@@ -317,13 +317,12 @@ class Dealer():
     def __create_reward(self):
         # players that have folded lose their bets
         rewards = -1 * self.pot_commit * np.logical_not(self.active)
-        if self.active.sum() <= 1:
+        if self.active.sum() == 1:
             return rewards + self.active * self.pot
-        # if last street played and
-        # still players multiple players active
+        # if last street played and still multiple players active
         if self.street == self.num_streets:
             rewards = self.__eval_round()
-        rewards -= self.pot_commit
+            rewards -= self.pot_commit
         return rewards
 
     def __eval_round(self):
