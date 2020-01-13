@@ -73,7 +73,7 @@ class Dealer():
 
         self.done = np.zeros(self.num_players, dtype=np.uint8)
         self.observation = {}
-        self.rewards = np.zeros(self.num_players, dtype=np.uint8)
+        self.payouts = np.zeros(self.num_players, dtype=np.uint8)
         self.info = None
 
         self.viewer = None
@@ -155,10 +155,10 @@ class Dealer():
 
         self.done = self.__create_done()
         self.observation = self.__create_observation()
-        self.rewards = self.__create_reward()
+        self.payouts = self.__create_payout()
         self.info = None
 
-        return self.observation, self.rewards, self.done, self.info
+        return self.observation, self.payouts, self.done, self.info
 
     def render(self, mode='ascii'):
         if self.viewer is None:
@@ -187,7 +187,7 @@ class Dealer():
         done = self.done.all()
         hole_cards = self.hole_cards
         pot = self.pot
-        payouts = self.rewards
+        payouts = self.payouts
         street_commits = self.street_commits
         small_blind = bool(self.small_blind)
         stacks = self.stacks
@@ -314,22 +314,22 @@ class Dealer():
                        'street_commits': self.street_commits}
         return observation
 
-    def __create_reward(self):
+    def __create_payout(self):
         # players that have folded lose their bets
-        rewards = -1 * self.pot_commit * np.logical_not(self.active)
+        payouts = -1 * self.pot_commit * np.logical_not(self.active)
         if self.active.sum() == 1:
-            return rewards + self.active * self.pot
+            return payouts + self.active * self.pot
         # if last street played and still multiple players active
         if self.street == self.num_streets:
-            rewards = self.__eval_round()
-            rewards -= self.pot_commit
-        return rewards
+            payouts = self.__eval_round()
+            payouts -= self.pot_commit
+        return payouts
 
     def __eval_round(self):
         # grab array of hand strength and pot commits
         worst_hand = self.evaluator.table.max_rank + 1
         hands = []
-        rewards = np.zeros(self.num_players, dtype=int)
+        payouts = np.zeros(self.num_players, dtype=int)
         for player in range(self.num_players):
             # if not active hand strength set
             # to 1 worse than worst possible rank
@@ -352,7 +352,7 @@ class Dealer():
             split_pot = cut.sum()
             split = split_pot // len(eligible)
             remain = split_pot % len(eligible)
-            rewards[eligible] += split
+            payouts[eligible] += split
             remainder += remain
             # remove chips from players and pot
             hands[:, 2] -= cut
@@ -365,13 +365,13 @@ class Dealer():
         # give worst position player remainder chips
         if remainder:
             # worst player is first player after button involved in pot
-            involved_players = np.nonzero(rewards)[0]
+            involved_players = np.nonzero(payouts)[0]
             button_shift = (involved_players <= self.button) * self.num_players
             button_shifted_players = involved_players + button_shift
             worst_idx = np.argmin(button_shifted_players)
             worst_pos = involved_players[worst_idx]
-            rewards[worst_pos] += remainder
-        return rewards
+            payouts[worst_pos] += remainder
+        return payouts
 
     def __move_action(self):
         for idx in range(1, self.num_players+1):
