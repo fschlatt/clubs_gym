@@ -30,7 +30,7 @@ def test_game():
     assert reward[0] == 7
 
 
-def test_limit_betting_size():
+def test_limit_bet_size():
 
     config = configs.LIMIT_HOLDEM_6P_ENV
 
@@ -107,7 +107,7 @@ def test_incomplete_raise():
     assert obs['max_raise'] == 0
 
 
-def test_pot_limit_betting_size():
+def test_pot_limit_bet_size():
 
     config = configs.POT_LIMIT_OMAHA_6P_ENV
 
