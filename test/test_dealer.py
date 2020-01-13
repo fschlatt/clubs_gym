@@ -52,6 +52,22 @@ def test_limit_bet_size():
     assert obs['pot'] == 9
     assert not obs['active'].all()
 
+def test_all_in_bet_size():
+    config = configs.NOLIMIT_HOLDEM_2P_ENV
+
+    dealer = pyker.Dealer(**config)
+
+    dealer.stacks[0] -= 150
+    dealer.stacks[1] += 150
+
+    obs = dealer.reset(reset_stacks=False, reset_button=True)
+
+    action = {'fold': 0, 'bet': 100}
+    obs, *_ = dealer.step(action)
+    assert obs['pot'] == 52
+    action = {'fold': 0, 'bet': 1000}
+    obs, *_ = dealer.step(action)
+    assert obs['pot'] == 400
 
 def test_heads_up():
 
