@@ -19,18 +19,18 @@ class Deck:
         for rank in ranks:
             for suit in suits:
                 self.full_deck.append(card.Card(rank + suit))
-        self.__tricked = False
-        self.top_idcs = None
-        self.bottom_idcs = None
+        self._tricked = False
+        self._top_idcs = None
+        self._bottom_idcs = None
         if top_cards is not None:
             self.trick(top_cards)
         self.shuffle()
 
     def shuffle(self):
         self.cards = list(self.full_deck)
-        if self.__tricked:
-            top_cards = [self.full_deck[idx] for idx in self.top_idcs]
-            bottom_cards = [self.full_deck[idx] for idx in self.bottom_idcs]
+        if self._tricked:
+            top_cards = [self.full_deck[idx] for idx in self._top_idcs]
+            bottom_cards = [self.full_deck[idx] for idx in self._bottom_idcs]
             shuffle(bottom_cards)
             self.cards = top_cards + bottom_cards
         else:
@@ -45,19 +45,19 @@ class Deck:
 
     def trick(self, top_cards):
         if not top_cards:
-            self.__tricked = False
+            self._tricked = False
             return self
-        self.top_idcs = [self.full_deck.index(card.Card(top_card))
+        self._top_idcs = [self.full_deck.index(card.Card(top_card))
                          for top_card in top_cards]
         all_idcs = set(range(self.num_ranks * self.num_suits))
-        self.bottom_idcs = list(all_idcs.difference(set(self.top_idcs)))
-        self.__tricked = True
+        self._bottom_idcs = list(all_idcs.difference(set(self._top_idcs)))
+        self._tricked = True
         return self
 
     def untrick(self):
-        self.top_idcs = None
-        self.bottom_idcs = None
-        self.__tricked = False
+        self._top_idcs = None
+        self._bottom_idcs = None
+        self._tricked = False
         return self
 
     def __str__(self):
