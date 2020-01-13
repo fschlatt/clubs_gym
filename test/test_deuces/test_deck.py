@@ -2,7 +2,6 @@ import random
 
 from pyker import deuces
 
-random.seed(42)
 
 def test_draw():
 
@@ -20,7 +19,9 @@ def test_draw():
     cards = deck.draw(1)
     assert len(cards) == 0
 
+
 def test_trick():
+    random.seed(42)
 
     deck = deuces.Deck(4, 13, ['Ah', '2s'])
 
