@@ -40,7 +40,8 @@ class Deck:
     def draw(self, n=1):
         cards = []
         for _ in range(n):
-            cards.append(self.cards.pop(0))
+            if self.cards: 
+                cards.append(self.cards.pop(0))
         return cards
 
     def trick(self, top_cards):
