@@ -1,5 +1,3 @@
-import pytest
-
 from pyker import deuces
 
 

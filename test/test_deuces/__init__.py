@@ -1,1 +1,1 @@
-from .test_deuces import *
+from .test_evaluator import *
