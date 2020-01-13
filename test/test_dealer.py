@@ -61,6 +61,7 @@ def test_heads_up():
 
     obs = dealer.reset(reset_stacks=True, reset_button=True)
 
+    assert obs['action'] == 0
     assert obs['call'] == 1
     assert obs['min_raise'] == 3
     assert obs['max_raise'] == 199
