@@ -117,6 +117,9 @@ class Dealer():
 
     def step(self, action):
 
+        if not self.observation:
+            raise RuntimeError('call reset before calling first step')
+
         fold = round(action['fold'])
         bet = round(action['bet'])
 
