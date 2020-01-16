@@ -78,7 +78,7 @@ class Dealer():
 
         self.viewer = None
 
-    def reset(self, reset_stacks, reset_button):
+    def reset(self, reset_button, reset_stacks):
         self.deck.shuffle()
 
         if reset_stacks:
