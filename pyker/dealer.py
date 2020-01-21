@@ -183,7 +183,7 @@ class Dealer():
 
         action = self.action
         active = self.active
-        all_in = self.active & (self.stacks > 0)
+        all_in = self.active * (self.stacks == 0)
         big_blind = bool(self.big_blind)
         community_cards = self.community_cards
         dealer = self.button
