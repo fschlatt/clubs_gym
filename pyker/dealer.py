@@ -119,6 +119,8 @@ class Dealer():
 
         if not self.observation:
             raise RuntimeError('call reset before calling first step')
+        if all(self.done):
+            return self.observation, self.payouts, self.done, self.info
 
         fold = round(action['fold'])
         bet = round(action['bet'])
@@ -307,6 +309,7 @@ class Dealer():
     def __create_observation(self):
         if self.done.all():
             call = min_raise = max_raise = 0
+            self.action = -1
         else:
             call, min_raise, max_raise = self.__bet_sizes()
         observation = {'action': self.action,
