@@ -92,12 +92,10 @@ class Evaluator(object):
         # if all flush bits equal then use flush lookup
         if functools.reduce(operator.and_, cards + [0xF000]):
             hand_or = functools.reduce(operator.or_, cards) >> 16
-            prime = card.Card.prime_product_from_rankbits(hand_or)
+            prime = card.prime_product_from_rankbits(hand_or)
             return self.table.suited_lookup[prime]
-
-        # otherwise
         else:
-            prime = card.Card.prime_product_from_hand(cards)
+            prime = card.prime_product_from_hand(cards)
             return self.table.unsuited_lookup[prime]
 
     def get_rank_class(self, hand_rank):

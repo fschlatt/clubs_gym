@@ -14,8 +14,8 @@ class Deck:
         self.num_ranks = num_ranks
         self.num_suits = num_suits
         self.full_deck = []
-        ranks = card.Card.STR_RANKS[-num_ranks:]
-        suits = list(card.Card.CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
+        ranks = card.STR_RANKS[-num_ranks:]
+        suits = list(card.CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
         for rank in ranks:
             for suit in suits:
                 self.full_deck.append(card.Card(rank + suit))
@@ -40,7 +40,7 @@ class Deck:
     def draw(self, n=1):
         cards = []
         for _ in range(n):
-            if self.cards: 
+            if self.cards:
                 cards.append(self.cards.pop(0))
         return cards
 
@@ -49,7 +49,7 @@ class Deck:
             self._tricked = False
             return self
         self._top_idcs = [self.full_deck.index(card.Card(top_card))
-                         for top_card in top_cards]
+                          for top_card in top_cards]
         all_idcs = set(range(self.num_ranks * self.num_suits))
         self._bottom_idcs = list(all_idcs.difference(set(self._top_idcs)))
         self._tricked = True
@@ -62,7 +62,6 @@ class Deck:
         return self
 
     def __str__(self):
-        string = ','.join([card.Card.int_to_pretty_str(card)
-                           for card in self.cards])
+        string = ','.join([str(card) for card in self.cards])
         string = f'[{string}]'
         return string

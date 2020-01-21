@@ -1,3 +1,27 @@
+# the basics
+STR_RANKS = '23456789TJQKA'
+INT_RANKS = range(13)
+PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+
+# conversion from string => int
+CHAR_RANK_TO_INT_RANK = dict(zip(list(STR_RANKS), INT_RANKS))
+CHAR_SUIT_TO_INT_SUIT = {
+    's': 1,  # spades
+    'h': 2,  # hearts
+    'd': 4,  # diamonds
+    'c': 8,  # clubs
+}
+INT_SUIT_TO_CHAR_SUIT = 'xshxdxxxc'
+
+# for pretty printing
+PRETTY_SUITS = {
+    1: chr(9824),   # spades
+    2: chr(9829),   # hearts
+    4: chr(9830),   # diamonds
+    8: chr(9827)    # clubs
+}
+
+
 class Card:
     '''
     Static class that handles cards. Cards are represented as 32-bit
@@ -25,33 +49,7 @@ class Card:
     and is also quite performant.
     '''
 
-    # the basics
-    STR_RANKS = '23456789TJQKA'
-    INT_RANKS = range(13)
-    PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
-
-    # conversion from string => int
-    CHAR_RANK_TO_INT_RANK = dict(zip(list(STR_RANKS), INT_RANKS))
-    CHAR_SUIT_TO_INT_SUIT = {
-        's': 1,  # spades
-        'h': 2,  # hearts
-        'd': 4,  # diamonds
-        'c': 8,  # clubs
-    }
-    INT_SUIT_TO_CHAR_SUIT = 'xshxdxxxc'
-
-    # for pretty printing
-    PRETTY_SUITS = {
-        1: chr(9824),   # spades
-        2: chr(9829),   # hearts
-        4: chr(9830),   # diamonds
-        8: chr(9827)    # clubs
-    }
-
-    # hearts and diamonds
-    PRETTY_REDS = [2, 4]
-
-    def __new__(cls, string: str) -> int:
+    def __init__(self, string: str):
         '''Converts card string into binary int representation
 
         Args:
@@ -64,28 +62,28 @@ class Card:
         rank_char = string[0]
         suit_char = string[1]
         try:
-            rank_int = Card.CHAR_RANK_TO_INT_RANK[rank_char]
+            rank_int = CHAR_RANK_TO_INT_RANK[rank_char]
         except KeyError:
             raise KeyError(
                 (f'invalid rank {rank_char}, choose one '
-                 f'of {list(Card.CHAR_RANK_TO_INT_RANK.keys())}'))
+                 f'of {list(CHAR_RANK_TO_INT_RANK.keys())}'))
         try:
-            suit_int = Card.CHAR_SUIT_TO_INT_SUIT[suit_char]
+            suit_int = CHAR_SUIT_TO_INT_SUIT[suit_char]
         except KeyError:
             raise KeyError(
                 (f'invalid suit {suit_char}, choose one '
-                 f'of {list(Card.CHAR_SUIT_TO_INT_SUIT.keys())}'))
+                 f'of {list(CHAR_SUIT_TO_INT_SUIT.keys())}'))
 
-        rank_prime = Card.PRIMES[rank_int]
+        rank_prime = PRIMES[rank_int]
 
         bitrank = 1 << rank_int << 16
         suit = suit_int << 12
         rank = rank_int << 8
 
-        return bitrank | suit | rank | rank_prime
+        self._int = bitrank | suit | rank | rank_prime
 
     @staticmethod
-    def get_rank_int(card_int: int) -> int:
+    def _get_rank_int(card_int: int) -> int:
         '''Grabs rank int from binary card int
 
         Args:
@@ -97,7 +95,7 @@ class Card:
         return (card_int >> 8) & 0xF
 
     @staticmethod
-    def get_suit_int(card_int: int) -> int:
+    def _get_suit_int(card_int: int) -> int:
         '''Grabs suit int from binary card int
 
         Args:
@@ -108,90 +106,73 @@ class Card:
         '''
         return (card_int >> 12) & 0xF
 
-    @staticmethod
-    def prime_product_from_hand(card_ints: list) -> int:
-        '''Computes unique prime product for a list of cards. Used for
-        evaluating hands
-
-        Args:
-            card_ints (list): list of card ints
-
-        Returns:
-            int: prime product of cards
-        '''
-        product = 1
-        for card_int in card_ints:
-            product *= (card_int & 0xFF)
-        return product
-
-    @staticmethod
-    def prime_product_from_rankbits(rankbits: int) -> int:
-        '''Computes prime product from rankbits of cards, primarily used
-        for evaluating flushes and straights. Expects 
-
-        Args:
-            rankbits (int): [description]
-
-        Returns:
-            int: [description]
-        '''
-        product = 1
-        # '''
-        # Returns the prime product using the bitrank (b)
-        # bits of the hand. Each 1 in the sequence is converted
-        # to the correct prime and multiplied in.
-
-        # Params:
-        #     rankbits = a single 32-bit (only 13-bits set) integer representing
-        #             the ranks of 5 _different_ ranked cards
-        #             (5 of 13 bits are set)
-
-        # Primarily used for evaulating flushes and straights,
-        # two occasions where we know the ranks are *ALL* different.
-
-        # Assumes that the input is in form (set bits):
-
-        #                       rankbits
-        #                 +--------+--------+
-        #                 |xxxbbbbb|bbbbbbbb|
-        #                 +--------+--------+
-
-        # '''
-        for i in Card.INT_RANKS:
-            # if the ith bit is set
-            if rankbits & (1 << i):
-                product *= Card.PRIMES[i]
-
-        return product
-
-    @staticmethod
-    def int_to_pretty_str(card_int):
-        '''
-        Prints a single card
-        '''
-
-        color = False
-        try:
-            from colorama import init
-            from termcolor import colored
-
-            init()
-            # for mac, linux: http://pypi.python.org/pypi/termcolor
-            # can use for windows: http://pypi.python.org/pypi/colorama
-            color = True
-
-        except ImportError:
-            pass
+    def __str__(self):
 
         # suit and rank
-        suit_int = Card.get_suit_int(card_int)
-        rank_int = Card.get_rank_int(card_int)
+        suit_int = self._get_suit_int(self._int)
+        rank_int = self._get_rank_int(self._int)
 
-        # if we need to color red
-        suit = Card.PRETTY_SUITS[suit_int]
-        if color and suit_int in Card.PRETTY_REDS:
-            suit = colored(suit, 'red')
-
-        rank = Card.STR_RANKS[rank_int]
+        suit = PRETTY_SUITS[suit_int]
+        rank = STR_RANKS[rank_int]
 
         return f'{rank}{suit}'
+
+    def __repr__(self):
+        return str(self)
+
+    def __and__(self, other):
+        return self._int & other
+
+    def __rand__(self, other):
+        return other & self._int
+
+    def __or__(self, other):
+        return self._int | other
+    
+    def __ror__(self, other):
+        return other | self._int
+
+    def __lshift__(self, other):
+        return self._int << other
+
+    def __rshift__(self, other):
+        return self._int >> other
+
+    def __eq__(self, other):
+        return self._int == other
+
+
+def prime_product_from_rankbits(rankbits: int) -> int:
+    '''Computes prime product from rankbits of cards, primarily used
+    for evaluating flushes and straights. Expects 13 bit integer 
+    with bits of the cards in the hand flipped.
+
+    Args:
+        rankbits (int): 13 bit integer with flipped rank bits
+
+    Returns:
+        int: prime product if bit flipped cards
+    '''
+    product = 1
+    for i in INT_RANKS:
+        # if the ith bit is set
+        if rankbits & (1 << i):
+            product *= PRIMES[i]
+
+    return product
+
+
+def prime_product_from_hand(cards: list) -> int:
+    '''Computes unique prime product for a list of cards. Used for
+    evaluating hands
+
+    Args:
+        card_ints (list): list of cards
+
+    Returns:
+        int: prime product of cards
+    '''
+    product = 1
+    for card in cards:
+        product *= (card & 0xFF)
+    return product

@@ -43,7 +43,7 @@ class ASCIIViewer(viewer.PokerViewer):
 
         str_config = {key: '' for key in self.KEYS}
 
-        ccs = deuces.Card.int_to_str(config['community_cards'])
+        ccs = [str(card) for card in config['community_cards']]
         ccs += ['--'] * (self.num_community_cards - len(ccs))
         ccs = '[' + ','.join(ccs) + ']'
 
@@ -72,7 +72,7 @@ class ASCIIViewer(viewer.PokerViewer):
                 continue
             if done or idx == action:
                 players.append('{:2}. '.format(idx + 1) +
-                               ','.join(deuces.Card.int_to_str(hand)) +
+                               ','.join([str(card) for card in hand]) +
                                ' {:,}'.format(stack))
                 continue
             players.append('{:2}. '.format(idx + 1) +
