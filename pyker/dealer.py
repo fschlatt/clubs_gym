@@ -148,10 +148,19 @@ class Dealer():
         if self.__all_agreed():
             self.action = self.button
             self.__move_action()
-            self.street += 1
-            if self.street < self.num_streets:
+            # if at most 1 player active and not all in turn up all
+            # community cards and evaluate hand
+            while True:
+                self.street += 1
+                full_streets = self.street >= self.num_streets
+                all_in = self.active * (self.stacks == 0)
+                all_all_in = self.active.sum() - all_in.sum() <= 1
+                if full_streets:
+                    break
                 self.community_cards += self.deck.draw(
                     self.num_community_cards[self.street])
+                if not all_all_in:
+                    break
             self.street_commits.fill(0)
             self.street_option = np.logical_not(self.active).astype(np.uint8)
             self.street_raises = 0
@@ -290,7 +299,7 @@ class Dealer():
         self.stacks[self.action] -= bet
 
     def __create_done(self):
-        if self.street == self.num_streets or self.active.sum() <= 1:
+        if self.street >= self.num_streets or self.active.sum() <= 1:
             # end game
             return np.full(self.num_players, 1)
         return np.logical_not(self.active)
@@ -305,10 +314,10 @@ class Dealer():
                        'button': self.button,
                        'call': call,
                        'community_cards': [
-                           deuces.Card.int_to_pretty_str(card)
+                           str(card)
                            for card in self.community_cards],
                        'hole_cards': [
-                           deuces.Card.int_to_pretty_str(card)
+                           str(card)
                            for card in self.hole_cards[self.action]],
                        'max_raise': max_raise,
                        'min_raise': min_raise,
@@ -323,7 +332,7 @@ class Dealer():
         if self.active.sum() == 1:
             return payouts + self.active * (self.pot - self.pot_commit)
         # if last street played and still multiple players active
-        if self.street == self.num_streets:
+        if self.street >= self.num_streets:
             payouts = self.__eval_round()
             payouts -= self.pot_commit
         return payouts
