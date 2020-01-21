@@ -86,7 +86,7 @@ class ASCIIViewer(viewer.PokerViewer):
             str_config[pos] = player
             str_config[pos + 'c'] = '{:,}'.format(street_commit)
             if all_in and not done:
-                str_config['a' + pos[:1]] = 'A'
+                str_config['a' + pos[1:]] = 'A'
 
         action_string = ''
         win_string = ''
