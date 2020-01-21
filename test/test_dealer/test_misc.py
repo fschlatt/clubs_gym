@@ -9,7 +9,7 @@ def test_game():
 
     dealer.deck = dealer.deck.trick(['Qs', 'Ks', 'Qh'])
 
-    obs = dealer.reset(reset_stacks=True, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=True)
 
     action = {'fold': 0, 'bet': 2}
     _ = dealer.step(action)
@@ -35,7 +35,7 @@ def test_heads_up():
 
     dealer = pyker.Dealer(**config)
 
-    obs = dealer.reset(reset_stacks=True, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=True)
 
     assert obs['action'] == 0
     assert obs['call'] == 1

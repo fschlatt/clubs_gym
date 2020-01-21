@@ -14,7 +14,7 @@ def test_split_pot():
     top_cards = [card for hand in hands for card in hand] + comm_cards
     dealer.deck = dealer.deck.trick(top_cards)
 
-    obs = dealer.reset(reset_stacks=True, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=True)
 
     action = {'fold': 1, 'bet': 0}
     _ = dealer.step(action)
@@ -75,7 +75,7 @@ def test_all_in():
     dealer.stacks[0] = dealer.stacks[0] - 180
     dealer.stacks[1] = dealer.stacks[1] + 180
 
-    obs = dealer.reset(reset_stacks=False, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=False)
 
     action = {'fold': 1, 'bet': 0}
     _ = dealer.step(action)
@@ -128,7 +128,7 @@ def test_all_in_split_pot():
     dealer.stacks[5] = dealer.stacks[5] - 165
     dealer.stacks[7] = dealer.stacks[7] + 165
 
-    obs = dealer.reset(reset_stacks=False, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=False)
 
     action = {'fold': 1, 'bet': 0}
     _ = dealer.step(action)

@@ -6,7 +6,7 @@ def test_limit_bet_size():
 
     dealer = pyker.Dealer(**config)
 
-    _ = dealer.reset(reset_stacks=True, reset_button=True)
+    _ = dealer.reset(reset_button=True, reset_stacks=True)
     action = {'fold': 0, 'bet': 2.1}
     obs, *_ = dealer.step(action)
     assert obs['pot'] == 5
@@ -30,7 +30,7 @@ def test_all_in_bet_size():
     dealer.stacks[0] -= 150
     dealer.stacks[1] += 150
 
-    obs = dealer.reset(reset_stacks=False, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=False)
 
     action = {'fold': 0, 'bet': 100}
     obs, *_ = dealer.step(action)
@@ -41,7 +41,7 @@ def test_all_in_bet_size():
 
 def test_incomplete_raise():
 
-    config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = dict(**pyker.configs.NOLIMIT_HOLDEM_6P_ENV)
     config['num_players'] = 3
 
     dealer = pyker.Dealer(**config)
@@ -49,7 +49,7 @@ def test_incomplete_raise():
     dealer.stacks[1] = dealer.stacks[1] - 190
     dealer.stacks[2] = dealer.stacks[2] + 190
 
-    obs = dealer.reset(reset_stacks=False, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=False)
 
     action = {'fold': 0, 'bet': 8}
     obs, *_ = dealer.step(action)
@@ -78,7 +78,7 @@ def test_pot_limit_bet_size():
 
     dealer = pyker.Dealer(**config)
 
-    obs = dealer.reset(reset_stacks=True, reset_button=True)
+    obs = dealer.reset(reset_button=True, reset_stacks=True)
     assert obs['min_raise'] == 4
     assert obs['max_raise'] == 7
 
