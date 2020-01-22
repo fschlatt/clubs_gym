@@ -42,7 +42,6 @@ def test_all_in_bet_size():
 def test_incomplete_raise():
 
     config = dict(**pyker.configs.NOLIMIT_HOLDEM_6P_ENV)
-    config['num_players'] = 3
 
     dealer = pyker.Dealer(**config)
 
@@ -51,6 +50,9 @@ def test_incomplete_raise():
 
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
+    action = {'fold': 1, 'bet': 0}
+    _ = dealer.step(action)
+    _ = dealer.step(action)
     action = {'fold': 0, 'bet': 8}
     obs, *_ = dealer.step(action)
     assert obs['pot'] == 11
