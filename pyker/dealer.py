@@ -89,13 +89,7 @@ class Dealer():
         if reset_button:
             self.button = 0
         else:
-            self.button = self.button % self.num_players
-
-        # in heads up button posts small blind
-        if self.num_players > 2:
-            self.action = self.button + 1 % self.num_players
-        else:
-            self.action = self.button
+            self.button = self.button + 1 % self.num_players
 
         self.community_cards = self.deck.draw(self.num_community_cards[0])
         self.history = []
