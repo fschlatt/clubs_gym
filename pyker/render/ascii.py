@@ -54,12 +54,6 @@ class ASCIIViewer(viewer.PokerViewer):
         else:
             str_config['pot'] = '0'
         str_config['b{}'.format(self.player_pos[dealer])] = 'D '
-        if config['small_blind']:
-            str_config['b{}'.format(
-                self.player_pos[(dealer + 1) % self.num_players])] = 'SB'
-        if config['big_blind'] and self.num_players > 2:
-            str_config['b{}'.format(
-                self.player_pos[(dealer + 2) % self.num_players])] = 'BB'
 
         players = []
         iterator = zip(
