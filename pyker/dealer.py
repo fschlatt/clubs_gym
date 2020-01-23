@@ -87,18 +87,20 @@ class Dealer():
         self.viewer = None
 
     def reset(self, reset_button, reset_stacks):
-        self.deck.shuffle()
-
         if reset_stacks:
             self.active.fill(1)
             self.stacks = np.full(self.num_players, self.start_stack)
         else:
             self.active = self.stacks > 0
+            if sum(self.active) <= 1:
+                raise RuntimeError(
+            'not enough players have chips, set reset_stacks=True')
         if reset_button:
             self.button = 0
         else:
             self.button = self.button + 1 % self.num_players
 
+        self.deck.shuffle()
         self.community_cards = self.deck.draw(self.num_community_cards[0])
         self.history = []
         self.hole_cards = [self.deck.draw(
