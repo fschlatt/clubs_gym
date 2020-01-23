@@ -167,7 +167,7 @@ class Dealer():
                 self.street += 1
                 full_streets = self.street >= self.num_streets
                 all_in = self.active * (self.stacks == 0)
-                all_all_in = self.active.sum() - all_in.sum() <= 1
+                all_all_in = sum(self.active) - sum(all_in) <= 1
                 if full_streets:
                     break
                 self.community_cards += self.deck.draw(
@@ -292,7 +292,7 @@ class Dealer():
         if street_commits:
             self.street_commits += bets
         self.pot_commit += bets
-        self.pot += bets.sum()
+        self.pot += sum(bets)
         self.stacks -= bets
 
     def __collect_bet(self, bet):
@@ -305,7 +305,7 @@ class Dealer():
         self.stacks[self.action] -= bet
 
     def __create_done(self):
-        if self.street >= self.num_streets or self.active.sum() <= 1:
+        if self.street >= self.num_streets or sum(self.active) <= 1:
             # end game
             return np.full(self.num_players, 1)
         return np.logical_not(self.active)
@@ -336,7 +336,7 @@ class Dealer():
     def __create_payout(self):
         # players that have folded lose their bets
         payouts = -1 * self.pot_commit * np.logical_not(self.active)
-        if self.active.sum() == 1:
+        if sum(self.active) == 1:
             return payouts + self.active * (self.pot - self.pot_commit)
         # if last street played and still multiple players active
         if self.street >= self.num_streets:
@@ -368,7 +368,7 @@ class Dealer():
             eligible = hands[:, 0][hands[:, 1] == strength].astype(int)
             # cut can only be as large as lowest player commit amount
             cut = np.clip(hands[:, 2], None, pot_commit)
-            split_pot = cut.sum()
+            split_pot = sum(cut)
             split = split_pot // len(eligible)
             remain = split_pot % len(eligible)
             payouts[eligible] += split
@@ -393,7 +393,7 @@ class Dealer():
         return payouts
 
     def __move_action(self):
-        for idx in range(1, self.num_players+1):
+        for idx in range(1, self.num_players + 1):
             action = (self.action + idx) % self.num_players
             if self.active[action]:
                 break
