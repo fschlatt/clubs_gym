@@ -120,7 +120,10 @@ class Dealer():
         self.__move_action()
         self.__move_action()
 
+        self.done[:] = 0
         self.observation = self.__create_observation()
+        self.payouts[:] = 0
+        self.info = None
         return self.observation
 
     def step(self, action):
