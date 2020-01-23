@@ -5,18 +5,49 @@ from pyker import deuces, render
 
 class Dealer():
 
-    def __init__(self, num_players, num_streets, small_blind, big_blind,
-                 ante, raise_size, num_raises, num_suits, num_ranks,
+    def __init__(self, num_players, num_streets, blinds,
+                 antes, raise_size, num_raises, num_suits, num_ranks,
                  num_hole_cards, num_community_cards, num_cards_for_hand,
                  mandatory_num_hole_cards, start_stack):
 
+        if isinstance(raise_size, list):
+            assert len(raise_size) == num_streets
+        else:
+            raise_size = [raise_size] * num_streets
+        if isinstance(num_raises, list):
+            assert len(num_raises) == num_streets
+        else:
+            num_raises = [num_raises] * num_streets
+        if isinstance(blinds, list):
+            assert len(blinds) == num_players
+        else:
+            blinds = [blinds] * num_players
+        if isinstance(antes, list):
+            assert len(antes) == num_players
+        else:
+            antes = [antes] * num_players
+
+        def clean_rs(_raise_size):
+            if isinstance(_raise_size, int):
+                return _raise_size
+            if _raise_size.endswith('bb'):
+                factor = int(_raise_size.split('bb')[0])
+                return self.big_blind * factor
+            if _raise_size == 'inf':
+                return float(_raise_size)
+            if _raise_size == 'pot':
+                return _raise_size
+            raise ValueError(f'unkown raise size {_raise_size}')
+
+        # config
         self.num_players = num_players
         self.num_streets = num_streets
-        self.small_blind = small_blind
-        self.big_blind = big_blind
-        self.ante = ante
-        self.raise_size = raise_size
-        self.num_raises = num_raises
+        self.blinds = np.array(blinds)
+        self.antes = np.array(antes)
+        self.big_blind = blinds[1]
+        self.antes = antes
+        self.raise_size = [clean_rs(_raise_size) for _raise_size in raise_size]
+        self.num_raises = [float(_num_raises) for _num_raises in num_raises]
         self.num_suits = num_suits
         self.num_ranks = num_ranks
         self.num_hole_cards = num_hole_cards
@@ -25,31 +56,7 @@ class Dealer():
         self.mandatory_num_hole_cards = mandatory_num_hole_cards
         self.start_stack = start_stack
 
-        if not isinstance(self.raise_size, list):
-            self.raise_size = [self.raise_size] * self.num_streets
-        if not isinstance(self.num_raises, list):
-            self.num_raises = [self.num_raises] * self.num_streets
-
-        def _parse_raise_size(raise_size):
-            if isinstance(raise_size, int):
-                return raise_size
-            if raise_size.endswith('bb'):
-                factor = int(raise_size.split('bb')[0])
-                return self.big_blind * factor
-            if raise_size == 'inf':
-                return float(raise_size)
-            if raise_size == 'pot':
-                return raise_size
-            raise ValueError(f'unkown raise size {raise_size}')
-
-        self.raise_size = [
-            _parse_raise_size(raise_size)
-            for raise_size in self.raise_size]
-
-        self.num_raises = [
-            float(num_raises)
-            for num_raises in self.num_raises]
-
+        # dealer
         self.action = 0
         self.active = np.ones(self.num_players, dtype=np.uint8)
         self.button = 0
@@ -58,7 +65,6 @@ class Dealer():
         self.evaluator = deuces.Evaluator(
             self.num_suits, self.num_ranks, self.num_hole_cards,
             self.num_cards_for_hand, self.mandatory_num_hole_cards)
-
         self.history = []
         self.hole_cards = []
         self.largest_raise = 0
@@ -71,11 +77,13 @@ class Dealer():
         self.street_option = np.zeros(self.num_players, dtype=np.uint8)
         self.street_raises = 0
 
+        # output
         self.done = np.zeros(self.num_players, dtype=np.uint8)
         self.observation = {}
         self.payouts = np.zeros(self.num_players, dtype=np.uint8)
         self.info = None
 
+        # render
         self.viewer = None
 
     def reset(self, reset_button, reset_stacks):
@@ -103,8 +111,14 @@ class Dealer():
         self.street_option.fill(0)
         self.street_raises = 0
 
-        self.__collect_ante()
-        self.__collect_blinds()
+        self.action = self.button
+        # in heads up button posts small blind
+        if self.num_players > 2:
+            self.__move_action()
+        self.__collect_multiple_bets(bets=self.antes, street_commits=False)
+        self.__collect_multiple_bets(bets=self.blinds, street_commits=True)
+        self.__move_action()
+        self.__move_action()
 
         self.observation = self.__create_observation()
         return self.observation
@@ -189,7 +203,6 @@ class Dealer():
         action = self.action
         active = self.active
         all_in = self.active * (self.stacks == 0)
-        big_blind = bool(self.big_blind)
         community_cards = self.community_cards
         dealer = self.button
         done = self.done.all()
@@ -197,14 +210,12 @@ class Dealer():
         pot = self.pot
         payouts = self.payouts
         street_commits = self.street_commits
-        small_blind = bool(self.small_blind)
         stacks = self.stacks
 
         config = {
             'action': action,
             'active': active,
             'all_in': all_in,
-            'big_blind': big_blind,
             'community_cards': community_cards,
             'dealer': dealer,
             'done': done,
@@ -213,7 +224,6 @@ class Dealer():
             'payouts': payouts,
             'prev_action': None if not self.history else self.history[-1],
             'street_commits': street_commits,
-            'small_blind': small_blind,
             'stacks': stacks,
         }
 
@@ -229,12 +239,6 @@ class Dealer():
         return ((self.street_commits == self.street_commits.max()) |
                 (self.stacks == 0) |
                 np.logical_not(self.active)).all()
-
-    def __collect_ante(self):
-        bets = (self.stacks > 0) * self.active * self.ante
-        self.pot_commit += bets
-        self.pot += bets.sum()
-        self.stacks -= bets
 
     def __bet_sizes(self):
         # call difference between commit and maximum commit
@@ -279,11 +283,14 @@ class Dealer():
         # if fold closest
         return 0
 
-    def __collect_blinds(self):
-        self.__collect_bet(self.small_blind)
-        self.__move_action()
-        self.__collect_bet(self.big_blind)
-        self.__move_action()
+    def __collect_multiple_bets(self, bets, street_commits=True):
+        bets = np.roll(bets, self.action)
+        bets = (self.stacks > 0) * self.active * bets
+        if street_commits:
+            self.street_commits += bets
+        self.pot_commit += bets
+        self.pot += bets.sum()
+        self.stacks -= bets
 
     def __collect_bet(self, bet):
         # bet only as large as stack size
