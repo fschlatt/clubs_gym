@@ -97,3 +97,36 @@ def test_pot_limit_bet_size():
     action = {'fold': 0, 'bet': 4}
     _ = dealer.step(action)
     action = {'fold': 0, 'bet': 4}
+
+def test_bet_rounding():
+
+    config = pyker.configs.NOLIMIT_HOLDEM_9P_ENV
+
+    dealer = pyker.Dealer(**config)
+
+    _ = dealer.reset(reset_button=True, reset_stacks=True)
+
+    action = {'fold': 0, 'bet': 1}
+    obs, *_ = dealer.step(action)
+    assert obs['street_commits'][3] == 0
+
+    action = {'fold': 0, 'bet': 6}
+    obs, *_ = dealer.step(action)
+    assert obs['street_commits'][4] == 6
+
+    action = {'fold': 0, 'bet': 3}
+    obs, *_ = dealer.step(action)
+    assert obs['street_commits'][5] == 0
+    assert not obs['active'][5]
+
+    action = {'fold': 0, 'bet': 4}
+    obs, *_ = dealer.step(action)
+    assert obs['street_commits'][6] == 6
+
+    action = {'fold': 0, 'bet': 8}
+    obs, *_ = dealer.step(action)
+    assert obs['street_commits'][7] == 6
+
+    action = {'fold': 0, 'bet': 9}
+    obs, *_ = dealer.step(action)
+    assert obs['street_commits'][8] == 10
