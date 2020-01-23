@@ -339,11 +339,12 @@ class Dealer():
         # players that have folded lose their bets
         payouts = -1 * self.pot_commit * np.logical_not(self.active)
         if sum(self.active) == 1:
-            return payouts + self.active * (self.pot - self.pot_commit)
+            payouts +=  self.active * (self.pot - self.pot_commit)
         # if last street played and still multiple players active
-        if self.street >= self.num_streets:
+        elif self.street >= self.num_streets:
             payouts = self.__eval_round()
             payouts -= self.pot_commit
+        self.stacks += payouts + self.pot_commit
         return payouts
 
     def __eval_round(self):
