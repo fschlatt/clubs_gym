@@ -53,6 +53,7 @@ def test_incomplete_raise():
     action = {'fold': 1, 'bet': 0}
     _ = dealer.step(action)
     _ = dealer.step(action)
+    _ = dealer.step(action)
     action = {'fold': 0, 'bet': 8}
     obs, *_ = dealer.step(action)
     assert obs['pot'] == 11
