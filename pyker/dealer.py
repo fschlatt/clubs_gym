@@ -315,8 +315,8 @@ class Dealer():
                            str(card)
                            for card in self.community_cards],
                        'hole_cards': [
-                           str(card)
-                           for card in self.hole_cards[self.action]],
+                           [str(card) for card in cards]
+                           for cards in self.hole_cards],
                        'max_raise': max_raise,
                        'min_raise': min_raise,
                        'pot': self.pot,
