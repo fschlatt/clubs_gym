@@ -19,6 +19,9 @@ def test_all_but_one_fold():
     test_payouts = [0, -1, 1, 0, 0, 0]
     assert all(payout == test_payout
                for payout, test_payout in zip(payouts, test_payouts))
+    test_stacks = [200, 199, 201, 200, 200, 200]
+    assert all(stack == test_stack
+               for stack, test_stack in zip(obs['stacks'], test_stacks))
 
 def test_all_all_in():
     random.seed(42)
@@ -38,6 +41,10 @@ def test_all_all_in():
     test_payouts = [-200, -200, -200, -200, -200, 1000]
     assert all(payout == test_payout
                for payout, test_payout in zip(payouts, test_payouts))
+    test_stacks = [0, 0, 0, 0, 0, 1200]
+    assert all(stack == test_stack
+               for stack, test_stack in zip(obs['stacks'], test_stacks))
+
 
 def test_action_after_round_end():
 
