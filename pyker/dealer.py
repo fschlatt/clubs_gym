@@ -266,7 +266,7 @@ class Dealer():
     @staticmethod
     def __clean_bet(bet, call, min_raise, max_raise):
         # find closest bet size to actual bet
-        # pessimistic approach: in ties order is fold -> call -> raise
+        # pessimistic approach: in ties order is fold/check -> call -> raise
         idx = np.argmin(np.absolute(
             np.array([0, call, min_raise, max_raise]) - bet))
         # if call closest
