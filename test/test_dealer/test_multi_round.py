@@ -67,7 +67,7 @@ def test_inactive_players():
         if all(done):
             break
 
-    obs = dealer.reset(reset_button=True, reset_stacks=False)
+    obs = dealer.reset(reset_button=False, reset_stacks=False)
 
-    assert obs['button'] == 0
+    assert obs['button'] == 1
     assert obs['action'] == 5
