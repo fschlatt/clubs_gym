@@ -130,3 +130,19 @@ def test_bet_rounding():
     action = {'fold': 0, 'bet': 9}
     obs, *_ = dealer.step(action)
     assert obs['street_commits'][8] == 10
+
+def test_big_blind_raise_chance():
+
+    config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
+
+    dealer = pyker.Dealer(**config)
+
+    _ = dealer.reset(reset_button=True, reset_stacks=True)
+
+    action = {'fold': 0, 'bet': 2} # all call
+    for _ in range(5):
+        obs, *_ = dealer.step(action)
+
+    assert obs['action'] == 2
+    assert obs['call'] == 0
+    assert obs['min_raise'] == 2
