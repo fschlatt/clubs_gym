@@ -344,6 +344,7 @@ class Dealer():
         elif self.street >= self.num_streets:
             payouts = self.__eval_round()
             payouts -= self.pot_commit
+        if any(payouts > 0):
         self.stacks += payouts + self.pot_commit
         return payouts
 
