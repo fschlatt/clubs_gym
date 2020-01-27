@@ -94,7 +94,7 @@ class Dealer():
             self.active = self.stacks > 0
             if sum(self.active) <= 1:
                 raise RuntimeError(
-            'not enough players have chips, set reset_stacks=True')
+                    'not enough players have chips, set reset_stacks=True')
         if reset_button:
             self.button = 0
         else:
@@ -210,7 +210,7 @@ class Dealer():
         all_in = self.active * (self.stacks == 0)
         community_cards = self.community_cards
         dealer = self.button
-        done = self.done.all()
+        done = all(self.done)
         hole_cards = self.hole_cards
         pot = self.pot
         payouts = self.payouts
@@ -236,14 +236,14 @@ class Dealer():
 
     def __all_agreed(self):
         # not all agreed if not all players had chance to act
-        if not self.street_option.all():
+        if not all(self.street_option):
             return False
         # all agreed if street commits equal to maximum street commit
         # or player is all in
         # or player is not active
-        return ((self.street_commits == self.street_commits.max()) |
-                (self.stacks == 0) |
-                np.logical_not(self.active)).all()
+        return all((self.street_commits == self.street_commits.max()) |
+                   (self.stacks == 0) |
+                   np.logical_not(self.active))
 
     def __bet_sizes(self):
         # call difference between commit and maximum commit
@@ -313,7 +313,7 @@ class Dealer():
         return np.logical_not(self.active)
 
     def __create_observation(self):
-        if self.done.all():
+        if all(self.done):
             call = min_raise = max_raise = 0
             self.action = -1
         else:
@@ -339,13 +339,13 @@ class Dealer():
         # players that have folded lose their bets
         payouts = -1 * self.pot_commit * np.logical_not(self.active)
         if sum(self.active) == 1:
-            payouts +=  self.active * (self.pot - self.pot_commit)
+            payouts += self.active * (self.pot - self.pot_commit)
         # if last street played and still multiple players active
         elif self.street >= self.num_streets:
             payouts = self.__eval_round()
             payouts -= self.pot_commit
         if any(payouts > 0):
-        self.stacks += payouts + self.pot_commit
+            self.stacks += payouts + self.pot_commit
         return payouts
 
     def __eval_round(self):
