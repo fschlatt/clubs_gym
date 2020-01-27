@@ -57,7 +57,7 @@ class Dealer():
         self.start_stack = start_stack
 
         # dealer
-        self.action = 0
+        self.action = -1
         self.active = np.ones(self.num_players, dtype=np.uint8)
         self.button = 0
         self.community_cards = []
@@ -76,12 +76,6 @@ class Dealer():
         self.street_commits = np.zeros(self.num_players, dtype=np.int32)
         self.street_option = np.zeros(self.num_players, dtype=np.uint8)
         self.street_raises = 0
-
-        # output
-        self.done = np.zeros(self.num_players, dtype=np.uint8)
-        self.observation = {}
-        self.payouts = np.zeros(self.num_players, dtype=np.uint8)
-        self.info = None
 
         # render
         self.viewer = None
@@ -122,18 +116,15 @@ class Dealer():
         self.__move_action()
         self.__move_action()
 
-        self.done[:] = 0
-        self.observation = self.__create_observation()
-        self.payouts[:] = 0
-        self.info = None
-        return self.observation
+        return self.__observation()
 
     def step(self, action):
 
-        if not self.observation:
-            raise RuntimeError('call reset before calling first step')
-        if all(self.done):
-            return self.observation, self.payouts, self.done, self.info
+        if self.action == -1:
+            if any(self.active):
+                return self.__output()
+            else:
+                raise RuntimeError('call reset before calling first step')
 
         fold = round(action['fold'])
         bet = round(action['bet'])
@@ -180,12 +171,11 @@ class Dealer():
             self.street_option = np.logical_not(self.active).astype(np.uint8)
             self.street_raises = 0
 
-        self.done = self.__create_done()
-        self.observation = self.__create_observation()
-        self.payouts = self.__create_payout()
-        self.info = None
-
-        return self.observation, self.payouts, self.done, self.info
+        observation, payouts, done, info = self.__output()
+        if all(done):
+            self.action = -1
+            observation['action'] = -1
+        return observation, payouts, done, info
 
     def render(self, mode='ascii'):
         if self.viewer is None:
@@ -210,10 +200,10 @@ class Dealer():
         all_in = self.active * (self.stacks == 0)
         community_cards = self.community_cards
         dealer = self.button
-        done = all(self.done)
+        done = all(self.__done())
         hole_cards = self.hole_cards
         pot = self.pot
-        payouts = self.payouts
+        payouts = self.__payouts()
         street_commits = self.street_commits
         stacks = self.stacks
 
@@ -306,16 +296,15 @@ class Dealer():
         self.street_commits[self.action] += bet
         self.stacks[self.action] -= bet
 
-    def __create_done(self):
+    def __done(self):
         if self.street >= self.num_streets or sum(self.active) <= 1:
             # end game
             return np.full(self.num_players, 1)
         return np.logical_not(self.active)
 
-    def __create_observation(self):
-        if all(self.done):
+    def __observation(self):
+        if all(self.__done()):
             call = min_raise = max_raise = 0
-            self.action = -1
         else:
             call, min_raise, max_raise = self.__bet_sizes()
         observation = {'action': self.action,
@@ -335,7 +324,7 @@ class Dealer():
                        'street_commits': self.street_commits}
         return observation
 
-    def __create_payout(self):
+    def __payouts(self):
         # players that have folded lose their bets
         payouts = -1 * self.pot_commit * np.logical_not(self.active)
         if sum(self.active) == 1:
@@ -347,6 +336,13 @@ class Dealer():
         if any(payouts > 0):
             self.stacks += payouts + self.pot_commit
         return payouts
+
+    def __output(self):
+        observation = self.__observation()
+        payouts = self.__payouts()
+        done = self.__done()
+        info = None
+        return observation, payouts, done, info
 
     def __eval_round(self):
         # grab array of hand strength and pot commits
