@@ -16,41 +16,41 @@ def test_split_pot():
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 5}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 5}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 5}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 5}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    obs, *_ = dealer.step(action)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 5
+    _ = dealer.step(bet)
+    bet = 5
+    _ = dealer.step(bet)
+    bet = 5
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 5
+    _ = dealer.step(bet)
+    bet = 4
+    _ = dealer.step(bet)
+    bet = -1
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 27
     # flop
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
-    obs, *_ = dealer.step(action)
+    bet = 4
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 4
+    _ = dealer.step(bet)
+    bet = 4
+    _ = dealer.step(bet)
+    bet = 4
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 43
 
     while True:
-        action = {'fold': 0, 'bet': 0}
-        obs, payouts, done, _ = dealer.step(action)
+        bet = 0
+        obs, payouts, done, _ = dealer.step(bet)
         if all(done):
             break
     assert not sum(payouts)
@@ -77,30 +77,30 @@ def test_all_in():
 
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 50}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 20}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 49}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    obs, *_ = dealer.step(action)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 50
+    _ = dealer.step(bet)
+    bet = 0
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 20
+    _ = dealer.step(bet)
+    bet = 49
+    _ = dealer.step(bet)
+    bet = -1
+    obs, *_ = dealer.step(bet)
 
     assert obs['pot'] == 122
 
     while True:
-        action = {'fold': 0, 'bet': 0}
-        obs, payouts, done, _ = dealer.step(action)
+        bet = 0
+        obs, payouts, done, _ = dealer.step(bet)
         if all(done):
             break
 
@@ -130,30 +130,30 @@ def test_all_in_split_pot():
 
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 45}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 35}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 20}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 44}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
-    obs, *_ = dealer.step(action)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 45
+    _ = dealer.step(bet)
+    bet = 35
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = -1
+    _ = dealer.step(bet)
+    bet = 20
+    _ = dealer.step(bet)
+    bet = 44
+    _ = dealer.step(bet)
+    bet = -1
+    obs, *_ = dealer.step(bet)
 
     assert obs['pot'] == 147
 
     while True:
-        action = {'fold': 0, 'bet': 0}
-        obs, payouts, done, _ = dealer.step(action)
+        bet = 0
+        obs, payouts, done, _ = dealer.step(bet)
         if all(done):
             break
 

@@ -15,9 +15,9 @@ def test_button_move():
     assert obs['button'] == 0
     assert obs['action'] == 0
 
-    action = {'fold': 0, 'bet': 0}
+    bet = 0
     while True:
-        obs, done, reward, _ = dealer.step(action)
+        obs, done, reward, _ = dealer.step(bet)
         if all(done):
             break
 
@@ -36,9 +36,9 @@ def test_button_move():
     assert obs['button'] == 0
     assert obs['action'] == 3
 
-    action = {'fold': 0, 'bet': 0}
+    bet = 0
     while True:
-        obs, payout, done, _ = dealer.step(action)
+        obs, payout, done, _ = dealer.step(bet)
         if all(done):
             break
 
@@ -57,13 +57,13 @@ def test_inactive_players():
     dealer = pyker.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 0, 'bet': 200}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 200}
-    _ = dealer.step(action)
-    action = {'fold': 1, 'bet': 0}
+    bet = 200
+    _ = dealer.step(bet)
+    bet = 200
+    _ = dealer.step(bet)
+    bet = -1
     while True:
-        obs, payout, done, _ = dealer.step(action)
+        obs, payout, done, _ = dealer.step(bet)
         if all(done):
             break
 

@@ -10,9 +10,9 @@ def test_all_but_one_fold():
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 1, 'bet': 0}
+    bet = -1
     for _ in range(5):
-        obs, payouts, done, _ = dealer.step(action)
+        obs, payouts, done, _ = dealer.step(bet)
     
     assert all(done)
     assert obs['pot'] == 3
@@ -32,9 +32,9 @@ def test_all_all_in():
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 0, 'bet': 200}
+    bet = 200
     for _ in range(6):
-        obs, payouts, done, _ = dealer.step(action)
+        obs, payouts, done, _ = dealer.step(bet)
     
     assert all(done)
     assert obs['pot'] == 1200
@@ -46,7 +46,7 @@ def test_all_all_in():
                for stack, test_stack in zip(obs['stacks'], test_stacks))
 
 
-def test_action_after_round_end():
+def test_bet_after_round_end():
 
     random.seed(42)
 
@@ -56,15 +56,15 @@ def test_action_after_round_end():
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 0, 'bet': 200}
+    bet = 200
     for _ in range(6):
-        obs, payouts, done, _ = dealer.step(action)
+        obs, payouts, done, _ = dealer.step(bet)
     
     assert all(done)
     assert obs['call'] == obs['min_raise'] == obs['max_raise'] == 0
     assert obs['action'] == -1
 
-    obs, payouts, done, _ = dealer.step(action)
+    obs, payouts, done, _ = dealer.step(bet)
 
     assert all(done)
     assert obs['call'] == obs['min_raise'] == obs['max_raise'] == 0

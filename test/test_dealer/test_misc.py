@@ -11,18 +11,18 @@ def test_game():
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 0, 'bet': 2}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 2}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 0}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 2}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 2}
-    obs, payout, done, info = dealer.step(action)
+    bet = 2
+    _ = dealer.step(bet)
+    bet = 4
+    _ = dealer.step(bet)
+    bet = 2
+    _ = dealer.step(bet)
+    bet = 0
+    _ = dealer.step(bet)
+    bet = 2
+    _ = dealer.step(bet)
+    bet = 2
+    obs, payout, done, info = dealer.step(bet)
 
     assert all(done)
     assert payout[0] > payout[1]
@@ -42,8 +42,8 @@ def test_heads_up():
     assert obs['min_raise'] == 3
     assert obs['max_raise'] == 199
 
-    action = {'fold': 0, 'bet': 1}
-    obs, *_ = dealer.step(action)
+    bet = 1
+    obs, *_ = dealer.step(bet)
 
     assert obs['call'] == 0
     assert obs['min_raise'] == 2

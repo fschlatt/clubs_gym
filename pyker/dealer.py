@@ -118,7 +118,7 @@ class Dealer():
 
         return self.__observation()
 
-    def step(self, action):
+    def step(self, bet):
 
         if self.action == -1:
             if any(self.active):
@@ -126,8 +126,8 @@ class Dealer():
             else:
                 raise RuntimeError('call reset before calling first step')
 
-        fold = round(action['fold'])
-        bet = round(action['bet'])
+        fold = bet < 0
+        bet = round(bet)
 
         call, min_raise, max_raise = self.__bet_sizes()
         # round bet to nearest sizing

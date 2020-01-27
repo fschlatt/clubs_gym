@@ -7,18 +7,18 @@ def test_limit_bet_size():
     dealer = pyker.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
-    action = {'fold': 0, 'bet': 2.1}
-    obs, *_ = dealer.step(action)
+    bet = 2.1
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 5
     assert obs['street_commits'].sum() == obs['pot']
 
-    action = {'fold': 0, 'bet': 10}
-    obs, *_ = dealer.step(action)
+    bet = 10
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 9
     assert obs['street_commits'].sum() == obs['pot']
 
-    action = {'fold': 1, 'bet': 4}
-    obs, *_ = dealer.step(action)
+    bet = -1
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 9
     assert not obs['active'].all()
 
@@ -32,11 +32,11 @@ def test_all_in_bet_size():
 
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
-    action = {'fold': 0, 'bet': 100}
-    obs, *_ = dealer.step(action)
+    bet = 100
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 52
-    action = {'fold': 0, 'bet': 1000}
-    obs, *_ = dealer.step(action)
+    bet = 1000
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 400
 
 def test_incomplete_raise():
@@ -50,25 +50,25 @@ def test_incomplete_raise():
 
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
-    action = {'fold': 1, 'bet': 0}
-    _ = dealer.step(action)
-    _ = dealer.step(action)
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 8}
-    obs, *_ = dealer.step(action)
+    bet = -1
+    _ = dealer.step(bet)
+    _ = dealer.step(bet)
+    _ = dealer.step(bet)
+    bet = 8
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 11
     assert obs['call'] == 7
     assert obs['min_raise'] == 9
     assert obs['max_raise'] == 9
 
-    action = {'fold': 0, 'bet': 9}
-    obs, *_ = dealer.step(action)
+    bet = 9
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 20
     assert obs['call'] == 8
     assert obs['min_raise'] == 14  # call 8 + 6 largest valid raise
 
-    action = {'fold': 0, 'bet': 8}
-    obs, *_ = dealer.step(action)
+    bet = 8
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 28
     assert obs['call'] == 2
     assert obs['min_raise'] == 0
@@ -85,18 +85,18 @@ def test_pot_limit_bet_size():
     assert obs['min_raise'] == 4
     assert obs['max_raise'] == 7
 
-    action = {'fold': 0, 'bet': 4}
-    obs, *_ = dealer.step(action)
+    bet = 4
+    obs, *_ = dealer.step(bet)
     assert obs['pot'] == 7
     assert obs['call'] == 4
     assert obs['min_raise'] == 6
     assert obs['max_raise'] == 15  # call + call + pot (2 * 4 + 7)
 
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
-    _ = dealer.step(action)
-    action = {'fold': 0, 'bet': 4}
+    bet = 4
+    _ = dealer.step(bet)
+    bet = 4
+    _ = dealer.step(bet)
+    bet = 4
 
 def test_bet_rounding():
 
@@ -106,29 +106,29 @@ def test_bet_rounding():
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 0, 'bet': 1}
-    obs, *_ = dealer.step(action)
+    bet = 1
+    obs, *_ = dealer.step(bet)
     assert obs['street_commits'][3] == 0
 
-    action = {'fold': 0, 'bet': 6}
-    obs, *_ = dealer.step(action)
+    bet = 6
+    obs, *_ = dealer.step(bet)
     assert obs['street_commits'][4] == 6
 
-    action = {'fold': 0, 'bet': 3}
-    obs, *_ = dealer.step(action)
+    bet = 3
+    obs, *_ = dealer.step(bet)
     assert obs['street_commits'][5] == 0
     assert not obs['active'][5]
 
-    action = {'fold': 0, 'bet': 4}
-    obs, *_ = dealer.step(action)
+    bet = 4
+    obs, *_ = dealer.step(bet)
     assert obs['street_commits'][6] == 6
 
-    action = {'fold': 0, 'bet': 8}
-    obs, *_ = dealer.step(action)
+    bet = 8
+    obs, *_ = dealer.step(bet)
     assert obs['street_commits'][7] == 6
 
-    action = {'fold': 0, 'bet': 9}
-    obs, *_ = dealer.step(action)
+    bet = 9
+    obs, *_ = dealer.step(bet)
     assert obs['street_commits'][8] == 10
 
 def test_big_blind_raise_chance():
@@ -139,9 +139,9 @@ def test_big_blind_raise_chance():
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
-    action = {'fold': 0, 'bet': 2} # all call
+    bet = 2 # all call
     for _ in range(5):
-        obs, *_ = dealer.step(action)
+        obs, *_ = dealer.step(bet)
 
     assert obs['action'] == 2
     assert obs['call'] == 0
