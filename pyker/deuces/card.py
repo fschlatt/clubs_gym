@@ -24,13 +24,9 @@ PRETTY_SUITS = {
 
 class Card:
     '''
-    Class that represents card in deck. Initialize using cards string
-    representation '{rank}{suit}' where rank is from [2-9, T/t, J/j, 
-    Q/q, K/k, A/a] and suit is from [S/s, H/h, D/d, C/c]. 
-    Examples: Card('TC'), Card('7H'), Card('ad')...
-
-    Cards are represented as 32-bit integers. Most of the bits are used,
-    and have a specific meaning, check the deuces README for details:
+    Class that represents card. Cards are represented as 32-bit
+    integers. Most of the bits are used and have a specific meaning,
+    check the deuces README for details:
 
                             Card:
 
@@ -44,6 +40,13 @@ class Card:
         3) cdhs = suit of card (bit turned on based on suit of card)
         4) b = bit turned on depending on rank of card
         5) x = unused
+
+    Args:
+        string (str): card string of format '{rank}{suit}' where
+                      rank is from [2-9, T/t, J/j, Q/q, K/k, A/a] 
+                      and suit is from [S/s, H/h, D/d, C/c]
+
+    Examples: Card('T', 'C'), Card('7', 'H'), Card('a', 'd')...
     '''
 
     def __init__(self, string: str):
