@@ -99,7 +99,8 @@ class LookupTable():
             (three_of_a_kinds, 'three of a kind'),
             (two_pairs, 'two pair'),
             (pairs, 'pair'),
-            (high_cards, 'high card')]
+            (high_cards, 'high card')
+        ]
 
         # sort suited hands and rank unsuited hands by suited
         # rank order or by order provided
@@ -129,7 +130,7 @@ class LookupTable():
         self.max_rank = cumulative_hands
 
         # list of hands ordered by rank from best to worst
-        self.hand_dict['ranked hands'] = ranked_hands
+        self.ranked_hands = ranked_hands
 
         # create dictionaries
         self.suited_lookup = {}
@@ -531,7 +532,7 @@ class LookupTable():
         rank = self.hand_dict[hand]['rank']
         if not rank:
             return 0
-        better_hand = self.hand_dict['ranked hands'][rank - 1]
+        better_hand = self.ranked_hands[rank - 1]
         return self.hand_dict[better_hand]['cumulative unsuited'] + 1
 
     def __lexographic_next_bit(self, bits):

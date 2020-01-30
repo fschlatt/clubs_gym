@@ -29,17 +29,17 @@ class Evaluator(object):
         self.cards_for_hand = cards_for_hand
         self.mandatory_h_cards = mandatory_h_cards
 
-        self.table = lookup.LookupTable(suits, ranks, cards_for_hand, 
-            low_end_straight=low_end_straight, order=order)
+        self.table = lookup.LookupTable(suits, ranks, cards_for_hand,
+                                        low_end_straight=low_end_straight, order=order)
 
         total = sum(
             self.table.hand_dict[hand]['suited']
-            for hand in self.table.hand_dict['ranked hands'])
+            for hand in self.table.ranked_hands)
 
         hands = [
             '{} ({:.4%})'.format(
                 hand, self.table.hand_dict[hand]['suited'] / total)
-            for hand in self.table.hand_dict['ranked hands']]
+            for hand in self.table.ranked_hands]
         self.hand_ranks = ' > '.join(hands)
 
     def __str__(self):
@@ -74,7 +74,7 @@ class Evaluator(object):
             all_card_combs = itertools.combinations(
                 all_cards, self.cards_for_hand)
 
-        worst_hand = self.table.hand_dict['ranked hands'][-1]
+        worst_hand = self.table.ranked_hands[-1]
         minimum = self.table.hand_dict[worst_hand]['cumulative unsuited']
 
         for card_comb in all_card_combs:
@@ -103,41 +103,18 @@ class Evaluator(object):
         Returns the class of hand given the hand hand_rank
         returned from evaluate
         '''
-
-        hands = self.table.hand_dict
-
-        rank = None
-        for hand in hands['ranked hands']:
-            if hand_rank >= 0 and hand_rank <= hands[hand]['cumulative unsuited']:
-                rank = hands[hand]['rank']
-                break
-        if rank is not None:
-            return rank
-        else:
-            raise Exception('Inavlid hand rank, cannot return rank class')
-
-    def get_rank_string(self, hand_rank):
-        '''
-        Returns the string of the hand for a given hand rank
-        '''
-        hands = self.table.hand_dict
-
-        rank = None
-        for hand in hands['ranked hands']:
-            if not hands[hand]['cumulative unsuited']:
-                continue
-            if hand_rank >= 0 and hand_rank <= hands[hand]['cumulative unsuited']:
-                rank = hand
-                break
-        if rank is not None:
-            return rank
-        else:
-            raise Exception('Inavlid hand rank, cannot return rank class')
+        if hand_rank < 0 or hand_rank > self.table.max_rank:
+            raise ValueError(
+                (f'invalid hand rank, expected 0 <= hand_rank'
+                 f' {self.table.max_rank}, got {hand_rank}'))
+        for hand in self.table.ranked_hands:
+            if hand_rank <= self.table.hand_dict[hand]['cumulative unsuited']:
+                return hand
 
     def get_five_card_rank_percentage(self, hand_rank):
         '''
-        Scales the hand rank score to the [0.0, 1.0] range.
+        Scales the hand rank score between [0, 1]
         '''
-        worst_hand = self.table.hand_dict['ranked hands'][-1]
+        worst_hand = self.table.ranked_hands[-1]
         worst_hand_rank = self.table.hand_dict[worst_hand]['cumulative unsuited']
         return float(hand_rank) / float(worst_hand_rank)
