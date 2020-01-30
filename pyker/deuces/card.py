@@ -1,3 +1,5 @@
+from pyker import error
+
 STR_RANKS = '23456789TJQKA'
 INT_RANKS = list(range(13))
 PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
@@ -50,13 +52,13 @@ class Card:
         try:
             rank_int = CHAR_RANK_TO_INT_RANK[rank_char]
         except KeyError:
-            raise KeyError(
+            raise error.InvalidRankError(
                 (f'invalid rank {rank_char}, choose one '
                  f'of {list(CHAR_RANK_TO_INT_RANK.keys())}'))
         try:
             suit_int = CHAR_SUIT_TO_INT_SUIT[suit_char]
         except KeyError:
-            raise KeyError(
+            raise error.InvalidSuitError(
                 (f'invalid suit {suit_char}, choose one '
                  f'of {list(CHAR_SUIT_TO_INT_SUIT.keys())}'))
 
