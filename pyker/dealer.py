@@ -28,6 +28,12 @@ class Dealer():
         else:
             antes = [antes] * num_players
 
+        num_cards = num_suits * num_ranks
+        num_req_cards = num_players * num_hole_cards + sum(num_community_cards)
+        if num_cards < num_req_cards:
+            raise ValueError(
+                f'deck too small - {num_cards} in deck, {num_req_cards} needed')
+
         def clean_rs(_raise_size):
             if isinstance(_raise_size, int):
                 return _raise_size
