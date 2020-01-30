@@ -5,10 +5,11 @@ from pyker import deuces, render
 
 class Dealer():
 
-    def __init__(self, num_players, num_streets, blinds,
-                 antes, raise_size, num_raises, num_suits, num_ranks,
-                 num_hole_cards, num_community_cards, num_cards_for_hand,
-                 mandatory_num_hole_cards, start_stack):
+    def __init__(self, num_players, num_streets, blinds, antes, raise_size,
+                 num_raises, num_suits, num_ranks, num_hole_cards,
+                 num_community_cards, num_cards_for_hand,
+                 mandatory_num_hole_cards, start_stack, low_end_straight=True,
+                 order=None):
 
         if isinstance(raise_size, list):
             assert len(raise_size) == num_streets
@@ -64,7 +65,8 @@ class Dealer():
         self.deck = deuces.Deck(self.num_suits, self.num_ranks)
         self.evaluator = deuces.Evaluator(
             self.num_suits, self.num_ranks, self.num_hole_cards,
-            self.num_cards_for_hand, self.mandatory_num_hole_cards)
+            self.num_cards_for_hand, self.mandatory_num_hole_cards,
+            low_end_straight=low_end_straight, order=order)
         self.history = []
         self.hole_cards = []
         self.largest_raise = 0

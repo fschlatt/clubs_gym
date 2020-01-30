@@ -203,7 +203,8 @@ SHORT_DECK_2P_ENV = {
     'num_community_cards': [0, 3, 1, 1],
     'num_cards_for_hand': 5,
     'mandatory_num_hole_cards': 0,
-    'start_stack': 200
+    'start_stack': 200,
+    'order': ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
 }
 
 SHORT_DECK_6P_ENV = {
@@ -219,7 +220,8 @@ SHORT_DECK_6P_ENV = {
     'num_community_cards': [0, 3, 1, 1],
     'num_cards_for_hand': 5,
     'mandatory_num_hole_cards': 0,
-    'start_stack': 200
+    'start_stack': 200,
+    'order': ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
 }
 
 SHORT_DECK_9P_ENV = {
@@ -235,5 +237,6 @@ SHORT_DECK_9P_ENV = {
     'num_community_cards': [0, 3, 1, 1],
     'num_cards_for_hand': 5,
     'mandatory_num_hole_cards': 0,
-    'start_stack': 200
+    'start_stack': 200,
+    'order': ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
 }
