@@ -1,19 +1,17 @@
-# the basics
 STR_RANKS = '23456789TJQKA'
-INT_RANKS = range(13)
+INT_RANKS = list(range(13))
 PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
 
-# conversion from string => int
+# conversion string to int
 CHAR_RANK_TO_INT_RANK = dict(zip(list(STR_RANKS), INT_RANKS))
 CHAR_SUIT_TO_INT_SUIT = {
-    's': 1,  # spades
-    'h': 2,  # hearts
-    'd': 4,  # diamonds
-    'c': 8,  # clubs
+    'S': 1,  # spades
+    'H': 2,  # hearts
+    'D': 4,  # diamonds
+    'C': 8,  # clubs
 }
-INT_SUIT_TO_CHAR_SUIT = 'xshxdxxxc'
 
-# for pretty printing
+# pretty suits
 PRETTY_SUITS = {
     1: chr(9824),   # spades
     2: chr(9829),   # hearts
@@ -24,43 +22,31 @@ PRETTY_SUITS = {
 
 class Card:
     '''
-    Static class that handles cards. Cards are represented as 32-bit
-    integers, so there is no object instantiation, just ints. Most of 
-    the bits are used, and have a specific meaning. See below: 
+    Class that represents card in deck. Initialize using cards string
+    representation '{rank}{suit}' where rank is from [2-9, T/t, J/j, 
+    Q/q, K/k, A/a] and suit is from [S/s, H/h, D/d, C/c]. 
+    Examples: Card('TC'), Card('7H'), Card('ad')...
 
-                                    Card:
+    Cards are represented as 32-bit integers. Most of the bits are used,
+    and have a specific meaning, check the deuces README for details:
 
-                          bitrank     suit rank   prime
-                    +--------+--------+--------+--------+
-                    |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
-                    +--------+--------+--------+--------+
+                            Card:
+
+                    bitrank     suit rank   prime
+            +--------+--------+--------+--------+
+            |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
+            +--------+--------+--------+--------+
 
         1) p = prime number of rank (deuce=2,trey=3,four=5,...,ace=41)
         2) r = rank of card (deuce=0,trey=1,four=2,five=3,...,ace=12)
         3) cdhs = suit of card (bit turned on based on suit of card)
         4) b = bit turned on depending on rank of card
         5) x = unused
-
-    This representation will allows things like:
-    - Making a unique prime product for each hand
-    - Detecting flushes
-    - Detecting straights
-
-    and is also quite performant.
     '''
 
     def __init__(self, string: str):
-        '''Converts card string into binary int representation
-
-        Args:
-            string (str): card string e.g. ('5d', 'Th', 'As'...)
-
-        Returns:
-            int: binary card int
-        '''
-
-        rank_char = string[0]
-        suit_char = string[1]
+        rank_char = string[0].upper()
+        suit_char = string[1].upper()
         try:
             rank_int = CHAR_RANK_TO_INT_RANK[rank_char]
         except KeyError:
@@ -82,35 +68,9 @@ class Card:
 
         self._int = bitrank | suit | rank | rank_prime
 
-    @staticmethod
-    def _get_rank_int(card_int: int) -> int:
-        '''Grabs rank int from binary card int
-
-        Args:
-            card_int (int): binary card int
-
-        Returns:
-            int: rank int
-        '''
-        return (card_int >> 8) & 0xF
-
-    @staticmethod
-    def _get_suit_int(card_int: int) -> int:
-        '''Grabs suit int from binary card int
-
-        Args:
-            card_int (int): binary card int
-
-        Returns:
-            int: suit in
-        '''
-        return (card_int >> 12) & 0xF
-
     def __str__(self):
-
-        # suit and rank
-        suit_int = self._get_suit_int(self._int)
-        rank_int = self._get_rank_int(self._int)
+        suit_int = (self._int >> 12) & 0xF
+        rank_int = (self._int >> 8) & 0xF
 
         suit = PRETTY_SUITS[suit_int]
         rank = STR_RANKS[rank_int]
@@ -128,7 +88,7 @@ class Card:
 
     def __or__(self, other):
         return self._int | other
-    
+
     def __ror__(self, other):
         return other | self._int
 
@@ -158,7 +118,6 @@ def prime_product_from_rankbits(rankbits: int) -> int:
         # if the ith bit is set
         if rankbits & (1 << i):
             product *= PRIMES[i]
-
     return product
 
 
