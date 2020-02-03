@@ -1,3 +1,7 @@
+'''Classes and functions to create and manipulate cards and lists of 
+cards from a standard 52 card poker deck'''
+import random
+
 from pyker import error
 
 STR_RANKS = '23456789TJQKA'
@@ -24,7 +28,7 @@ PRETTY_SUITS = {
 
 class Card:
     '''
-    Class that represents card. Cards are represented as 32-bit
+    Class that represents  Cards are represented as 32-bit
     integers. Most of the bits are used and have a specific meaning,
     check the deuces README for details:
 
@@ -140,3 +144,123 @@ def prime_product_from_hand(cards: list) -> int:
     for card in cards:
         product *= (card & 0xFF)
     return product
+
+
+class Deck:
+    '''
+    Class representing a deck of at most 52 cards, with tricking 
+    support. Any "subdeck" of the standard 52 card deck is valid, i.e.
+    the number of suits must be between 1 and 4 and number of ranks 
+    between 1 and 13.
+
+    Args:
+        num_suits (int): number of suits to use in deck
+        num_ranks (int): number of ranks to use in deck
+    '''
+
+    def __init__(self, num_suits: int, num_ranks: int):
+        if num_suits < 0 or num_suits > 4:
+            raise error.InvalidSuitError(
+                f'Invalid number of suits, expected number of suits '
+                f'between 1 and 4, got {num_suits}')
+        if num_ranks < 0 or num_ranks > 13:
+            raise error.InvalidSuitError(
+                f'Invalid number of suits, expected number of suits '
+                f'between 1 and 13, got {num_ranks}')
+        self.num_ranks = num_ranks
+        self.num_suits = num_suits
+        self.full_deck = []
+        ranks = STR_RANKS[-num_ranks:]
+        suits = list(CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
+        for rank in ranks:
+            for suit in suits:
+                self.full_deck.append(Card(rank + suit))
+        self._tricked = False
+        self._top_idcs = None
+        self._bottom_idcs = None
+        self.shuffle()
+
+    def __str__(self):
+        string = ','.join([str(card) for card in self.cards])
+        string = f'[{string}]'
+        return string
+    
+    def __repr__(self):
+        return str(self)
+
+    def draw(self, n: int = 1):
+        '''
+        Draws cards from the top of the deck. If the number of cards
+        to draw exceeds the number of cards in the deck, all cards
+        left in the deck are returned.
+
+        Args:
+            n (int, optional): number of cards to draw. Defaults to 1.
+
+        Returns:
+            list: cards drawn from the deck
+        '''
+        cards = []
+        for _ in range(n):
+            if self.cards:
+                cards.append(self.cards.pop(0))
+            else:
+                break
+        return cards
+
+    def shuffle(self):
+        '''
+        Shuffles the deck. If a tricking order is given, the desired
+        cards are placed on the top of the deck after shuffling.
+
+        Returns:
+            Deck: self
+        '''
+        self.cards = list(self.full_deck)
+        if self._tricked:
+            top_cards = [self.full_deck[idx] for idx in self._top_idcs]
+            bottom_cards = [self.full_deck[idx] for idx in self._bottom_idcs]
+            random.shuffle(bottom_cards)
+            self.cards = top_cards + bottom_cards
+        else:
+            random.shuffle(self.cards)
+        return self
+
+    def trick(self, top_cards: list = None):
+        '''
+        Tricks the deck by placing a fixed order of cards on the top
+        of the deck and shuffling the rest. E.g. 
+        deck.trick(['AS', '2H']) places the ace of spades and deuce of 
+        hearts on the top of the deck. The order of tricked cards 
+        persists even after untricking. That is, calling 
+        deck.trick(...).untrick().trick() will keep the deck tricked
+        in the order given in the first trick call.
+
+        Args:
+            top_cards (list, optional): list of cards to be placed on
+            the top of the deck. Defaults to None.
+
+        Returns:
+            Deck: self
+        '''
+        if top_cards is None and not self._top_idcs:
+            self._tricked = False
+            return self.shuffle()
+        if top_cards:
+            self._top_idcs = [self.full_deck.index(Card(top_card))
+                              for top_card in top_cards]
+            all_idcs = set(range(self.num_ranks * self.num_suits))
+            self._bottom_idcs = list(all_idcs.difference(set(self._top_idcs)))
+        self._tricked = True
+        return self.shuffle()
+
+    def untrick(self):
+        '''
+        Removes the tricked cards from the top of the deck.
+
+        Returns:
+            Deck: self
+        '''
+        self._tricked = False
+        return self
+
