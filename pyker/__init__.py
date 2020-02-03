@@ -1,2 +1,2 @@
-from . import configs
+from . import configs, deuces
 from .dealer import Dealer
