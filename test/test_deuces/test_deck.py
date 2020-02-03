@@ -23,7 +23,7 @@ def test_draw():
 def test_trick():
     random.seed(42)
 
-    deck = deuces.Deck(4, 13, ['Ah', '2s'])
+    deck = deuces.Deck(4, 13).trick(['Ah', '2s'])
 
     cards = deck.draw(2)
     assert cards[0] == deuces.Card('Ah')
