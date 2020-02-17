@@ -78,25 +78,10 @@ class Evaluator(object):
         minimum = self.table.hand_dict[worst_hand]['cumulative unsuited']
 
         for card_comb in all_card_combs:
-            score = self.__lookup(list(card_comb))
+            score = self.table.lookup(list(card_comb))
             if score < minimum:
                 minimum = score
         return minimum
-
-    def __lookup(self, cards):
-        '''
-        Performs an evaluation given cards in integer form, mapping them to
-        a rank dependent on number of cards and suits in the deck. Lower ranks
-        are better
-        '''
-        # if all flush bits equal then use flush lookup
-        if functools.reduce(operator.and_, cards + [0xF000]):
-            hand_or = functools.reduce(operator.or_, cards) >> 16
-            prime = card.prime_product_from_rankbits(hand_or)
-            return self.table.suited_lookup[prime]
-        else:
-            prime = card.prime_product_from_hand(cards)
-            return self.table.unsuited_lookup[prime]
 
     def get_rank_class(self, hand_rank):
         '''
