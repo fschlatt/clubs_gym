@@ -147,10 +147,10 @@ def prime_product_from_hand(cards: list) -> int:
 
 class Deck:
     '''
-    Class representing a deck of at most 52 cards, with tricking 
-    support. Any "subdeck" of the standard 52 card deck is valid, i.e.
-    the number of suits must be between 1 and 4 and number of ranks 
-    between 1 and 13.
+    A deck contains at most 52 cards, 13 ranks 4 suits. Any "subdeck" 
+    of the standard 52 card deck is valid, i.e. the number of suits 
+    must be between 1 and 4 and number of ranks between 1 and 13. A
+    deck can be tricked to ensure a certain order of cards.
 
     Args:
         num_suits (int): number of suits to use in deck
