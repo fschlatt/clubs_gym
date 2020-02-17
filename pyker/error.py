@@ -3,3 +3,6 @@ class InvalidRankError(Exception):
 
 class InvalidSuitError(Exception):
     pass
+
+class InvalidOrder(Exception):
+    pass

@@ -2,42 +2,39 @@
 Lookup table which maps a hand's unique prime product to
 unique hand rank
 '''
-
+from pyker import error
 import itertools
-import operator as op
-from functools import reduce
+import operator
+import functools
 
 from . import card
 
 
-def ncr(n, r):
-    r = min(r, n-r)
-    numer = reduce(op.mul, range(n, n-r, -1), 1)
-    denom = reduce(op.mul, range(1, r+1), 1)
-    return numer / denom
-
-
 class LookupTable():
     '''
-    Lookup table which maps a hand's unique prime product to
-    unique hand rank
-    Examples for 5 card hands:
-    * Royal flush (best hand possible)          => 1
-    * 7-5-4-3-2 unsuited (worst hand possible)  => 7462
+    Lookup table maps unique prime product of hands to unique
+    integer hand rank. The lower the rank the better the hand
+
+    Args:
+        suits (int): number of suits in deck
+        ranks (int): number of ranks in deck
+        cards_for_hand (int): number of cards used for a poker hand
+        low_end_straight (bool, optional): toggle to include straights
+                                           where ace is the lowest
+                                           card. defaults to True.
+        order (list, optional): custom hand rank order, if None hands
+                                are ranked by rarity. defaults to None.
     '''
 
     ORDER_STRINGS = ['sf', 'fk', 'fh', 'fl', 'st', 'tk', 'tp', 'pa', 'hc']
 
-    def __init__(self, suits, ranks, cards_for_hand,
-                 low_end_straight=True, order=None):
-        '''
-        Calculates lookup tables
-        '''
+    def __init__(self, suits: int, ranks: int, cards_for_hand: int,
+                 low_end_straight: bool = True, order: list = None):
         if order is not None:
             if any(string not in order for string in self.ORDER_STRINGS):
-                raise ValueError(
-                    (f'invalid order list, '
-                     'order list be permutation of {self.ORDER_STRINGS}'))
+                raise error.InvalidOrder(
+                    (f'invalid order list {order},'
+                     f'order list must be permutation of {self.ORDER_STRINGS}'))
 
         # number of suited and unsuited possibilities of different hands
         straight_flushes, u_straight_flushes = self.__straight_flush(
@@ -47,7 +44,7 @@ class LookupTable():
         full_houses, u_full_houses = self.__full_house(
             suits, ranks, cards_for_hand)
         flushes, u_flushes = self.__flush(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand, low_end_straight)
         straights, u_straights = self.__straight(
             suits, ranks, cards_for_hand, low_end_straight)
         three_of_a_kinds, u_three_of_a_kinds = self.__three_of_a_kind(
@@ -57,7 +54,7 @@ class LookupTable():
         pairs, u_pairs = self.__pair(
             suits, ranks, cards_for_hand)
         high_cards, u_high_cards = self.__high_card(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand, low_end_straight)
 
         self.hand_dict = {
             'straight flush': {
@@ -132,13 +129,9 @@ class LookupTable():
         # list of hands ordered by rank from best to worst
         self.ranked_hands = ranked_hands
 
-        # create dictionaries
+        # create lookup tables
         self.suited_lookup = {}
         self.unsuited_lookup = {}
-
-        # create the lookup table in piecewise fashion
-        # this will call straights and high cards method,
-        # we reuse some of the bit sequences
         self.__flushes(ranks, cards_for_hand, low_end_straight)
         self.__multiples(ranks, cards_for_hand)
 
@@ -146,6 +139,24 @@ class LookupTable():
         # lookup table equal to the unsuited table
         if not self.hand_dict['flush']['cumulative unsuited']:
             self.suited_lookup = self.unsuited_lookup
+
+    def lookup(self, cards: list):
+        '''Returns unique hand rank for list of cards
+        
+        Args:
+            cards (list): card list to be evaluated
+        
+        Returns:
+            int: hand rank
+        '''
+        # if all flush bits equal then use flush lookup
+        if functools.reduce(operator.and_, cards + [0xF000]):
+            hand_or = functools.reduce(operator.or_, cards) >> 16
+            prime = card.prime_product_from_rankbits(hand_or)
+            return self.suited_lookup[prime]
+        else:
+            prime = card.prime_product_from_hand(cards)
+            return self.unsuited_lookup[prime]
 
     def __straight_flush(self, suits, ranks, cards_for_hand, low_end_straight):
         if cards_for_hand < 3 or suits < 2:
@@ -161,8 +172,9 @@ class LookupTable():
     def __four_of_a_kind(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 4 or suits < 4:
             return 0, 0
-        # choose 1 rank for quads multiplied by choice for 1 card from remaining rank
-        unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 4)
+        # choose 1 rank for quads multiplied by
+        # rank choice for remaining cards
+        unsuited = _ncr(ranks, 1) * _ncr(ranks - 1, cards_for_hand - 4)
         # mutliplied with number of suit choices for remaining cards
         suited = max(unsuited, unsuited * suits**(cards_for_hand - 4))
         if suits < 2:
@@ -172,23 +184,25 @@ class LookupTable():
     def __full_house(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 5 or suits < 3:
             return 0, 0
-        # choose one rank for trips and one rank for pair
-        unsuited = ncr(ranks, 1) * ncr(ranks - 1, 1) * \
-            ncr(ranks - 2, cards_for_hand - 5)
-        # multiplied with number of suit choices for trips, pair and remaining cards
-        suited = max(unsuited, unsuited * ncr(suits, 3) * ncr(suits, 2) *
+        # choose one rank for trips and pair multiplied by
+        # rank choice for remaining cards
+        unsuited = _ncr(ranks, 1) * _ncr(ranks - 1, 1) * \
+            _ncr(ranks - 2, cards_for_hand - 5)
+        # multiplied with number of suit choices for
+        # trips + pair and remaining cards
+        suited = max(unsuited, unsuited * _ncr(suits, 3) * _ncr(suits, 2) *
                      suits**(cards_for_hand - 5))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
 
-    def __flush(self, suits, ranks, cards_for_hand):
+    def __flush(self, suits, ranks, cards_for_hand, low_end_straight):
         if cards_for_hand < 3 or suits < 2:
             return 0, 0
         # all straight combinations
-        straight_flushes = ranks - (cards_for_hand - 1) + int(ranks == 13)
+        straight_flushes = ranks - (cards_for_hand - 1) + low_end_straight
         # choose all cards from ranks minus straight flushes
-        unsuited = ncr(ranks, cards_for_hand) - straight_flushes
+        unsuited = _ncr(ranks, cards_for_hand) - straight_flushes
         # multiplied by number of suits
         suited = max(unsuited, unsuited * suits)
         if suits < 2:
@@ -204,9 +218,10 @@ class LookupTable():
         straight_flushes = 0
         if suits > 1:
             straight_flushes = unsuited * suits
-        # multiplied with suit choice for every card minus straight flushes
+        # multiplied with suit choice for every card
+        # minus straight flushes
         suited = max(unsuited, unsuited * suits **
-                     (cards_for_hand) - straight_flushes)
+                     cards_for_hand - straight_flushes)
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -214,11 +229,12 @@ class LookupTable():
     def __three_of_a_kind(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 3 or suits < 3:
             return 0, 0
-        # choose one rank for trips and remaining cards from remaining ranks
-        unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 3)
-        # multiplied with suit choices for trips and suit choices for remaining cards
-        suited = max(unsuited, unsuited * ncr(suits, 3) *
-                     ncr(suits, 3)**(cards_for_hand - 3))
+        # choose one rank for trips multiplied by
+        # rank choice for remaining cards
+        unsuited = _ncr(ranks, 1) * _ncr(ranks - 1, cards_for_hand - 3)
+        # multiplied with suit choices for trips and remaining cards
+        suited = max(unsuited, unsuited * _ncr(suits, 3) *
+                     _ncr(suits, 3)**(cards_for_hand - 3))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
@@ -226,10 +242,12 @@ class LookupTable():
     def __two_pair(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 4 or suits < 2:
             return 0, 0
-        # choose two ranks for pairs and ranks for remaining cards
-        unsuited = ncr(ranks, 2) * ncr(ranks - 2, cards_for_hand - 4)
-        # multiplied with suit choices for both pairs and suit choices for remaining cards
-        suited = max(unsuited, unsuited * ncr(suits, 2)
+        # choose two ranks for pairs multiplied by
+        # ranks for remaining cards
+        unsuited = _ncr(ranks, 2) * _ncr(ranks - 2, cards_for_hand - 4)
+        # multiplied with suit choices for both pairs
+        # and suit choices for remaining cards
+        suited = max(unsuited, unsuited * _ncr(suits, 2)
                      ** 2 * suits**(cards_for_hand - 4))
         if suits < 2:
             suited = unsuited
@@ -238,36 +256,31 @@ class LookupTable():
     def __pair(self, suits, ranks, cards_for_hand):
         if cards_for_hand < 2 or suits < 2:
             return 0, 0
-        # choose rank for pair and ranks for remaining cards
-        unsuited = ncr(ranks, 1) * ncr(ranks - 1, cards_for_hand - 2)
-        # multiplied with suit choices for pair and suit choices for remaining cards
-        suited = max(unsuited, unsuited * ncr(suits, 2)
+        # choose rank for pair multiplied by
+        # ranks for remaining cards
+        unsuited = _ncr(ranks, 1) * _ncr(ranks - 1, cards_for_hand - 2)
+        # multiplied with suit choices for pair and remaining cards
+        suited = max(unsuited, unsuited * _ncr(suits, 2)
                      * suits**(cards_for_hand - 2))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
 
-    def __high_card(self, suits, ranks, cards_for_hand):
+    def __high_card(self, suits, ranks, cards_for_hand, low_end_straight):
         # number of smallest cards which start straight
-        # add 1 for top and bottom if ace included
         straights = 0
         if cards_for_hand > 2:
-            straights = ranks - (cards_for_hand - 1) + int(ranks == 13)
+            straights = ranks - (cards_for_hand - 1) + low_end_straight
         # any combination of rank and subtract straights
-        unsuited = ncr(ranks, cards_for_hand) - straights
-        # multiplied with suit choices for all cards, all same suits not allowed
+        unsuited = _ncr(ranks, cards_for_hand) - straights
+        # multiplied with suit choices for all cards
+        # all same suits not allowed
         suited = max(unsuited, unsuited * (suits**cards_for_hand - suits))
         if suits < 2:
             suited = unsuited
         return int(suited), int(unsuited)
 
     def __flushes(self, ranks, cards_for_hand, low_end_straight):
-        '''
-        Straight flushes and flushes.
-        Lookup is done on 13 bit integer (2^13 > 7462):
-        xxxbbbbb bbbbbbbb => integer hand index
-        '''
-
         # straight flushes in rank order
         straight_flushes = []
 
@@ -277,16 +290,17 @@ class LookupTable():
                 self.hand_dict['straight']['cumulative unsuited']):
             # start with best straight (flush)
             # for 5 card hand with 13 ranks: 0b1111100000000
-            bin_num_str = '0b' + '1' * cards_for_hand + \
-                '0' * (13 - cards_for_hand)
+            bin_num_str = ('0b' + '1' * cards_for_hand
+                           + '0' * (13 - cards_for_hand))
             # remove one 0 for every straight (flush)
             for _ in range(ranks - (cards_for_hand - 1)):
                 straight_flushes.append(int(bin_num_str, 2))
                 bin_num_str = bin_num_str[:-1]
-            if low_end_straight:
+            if low_end_straight:  # TODO fix number of straight flushes
                 # add low end straight
-                bin_num_str = '0b1' + '0' * \
-                    (13 - cards_for_hand) + '1' * (cards_for_hand - 1)
+                bin_num_str = ('0b1' + '0' * (ranks - cards_for_hand) 
+                               + '1' * (cards_for_hand - 1)
+                               + '0' * (13 - ranks))
                 straight_flushes.append(int(bin_num_str, 2))
 
         # if any flushes/high cards exist in card configuration
@@ -299,19 +313,13 @@ class LookupTable():
             # start with lowest non pair hand
             # for 5 card hand with 13 ranks: 0b11111
             bin_num_str = '0b' + ('1' * cards_for_hand)
-            gen = self.__lexographic_next_bit(
-                int(bin_num_str, 2))
+            gen = _lexographic_next_bit(int(bin_num_str, 2))
             # iterate over all possibilities of unique hands
-            for _ in range(int(ncr(ranks, cards_for_hand))):
+            for _ in range(int(_ncr(ranks, cards_for_hand))):
                 # pull the next flush pattern from generator
+                # offset by number of ranks not in play
                 flush = next(gen) << (13 - ranks)
-
-                for straight_flush in straight_flushes:
-                    # if flush XOR straight_flush == 0 then bit pattern
-                    # is same and shouldn't be added
-                    if not flush ^ straight_flush:
-                        break
-                else:
+                if flush not in straight_flushes:
                     flushes.append(flush)
 
         # hand generation started from worst hand
@@ -321,57 +329,47 @@ class LookupTable():
         # add prime products to look up maps
         # use ranks of hands computed beforehand
         if self.hand_dict['straight flush']['cumulative unsuited']:
+            num_ranks = len(straight_flushes)
+            assert (num_ranks == self.hand_dict['straight flush']['unsuited'])
             rank = self.__get_rank('straight flush')
             for straight_flush in straight_flushes:
                 prime_product = card.prime_product_from_rankbits(
                     straight_flush)
                 self.suited_lookup[prime_product] = rank
                 rank += 1
-            num_ranks = rank - self.__get_rank('straight flush')
-            assert (num_ranks == self.hand_dict['straight flush']['unsuited'])
 
         if self.hand_dict['flush']['cumulative unsuited']:
+            num_ranks = len(flushes)
+            assert (num_ranks == self.hand_dict['flush']['unsuited'])
             rank = self.__get_rank('flush')
             for flush in flushes:
                 prime_product = card.prime_product_from_rankbits(flush)
                 self.suited_lookup[prime_product] = rank
                 rank += 1
-            num_ranks = rank - self.__get_rank('flush')
-            assert (num_ranks == self.hand_dict['flush']['unsuited'])
 
         # straight flush and flush bit sequences can be reused for
         # straights and high cards since they are inherently related
         # and differ only by context
-        self.__straight_and_highcards(straight_flushes, flushes)
-
-    def __straight_and_highcards(self, straights, highcards):
-
         if self.hand_dict['straight']['cumulative unsuited']:
+            num_ranks = len(straight_flushes)
+            assert (num_ranks == self.hand_dict['straight']['unsuited'])
             rank = self.__get_rank('straight')
-            for straight in straights:
+            for straight in straight_flushes:
                 prime_product = card.prime_product_from_rankbits(straight)
                 self.unsuited_lookup[prime_product] = rank
                 rank += 1
-            num_ranks = rank - self.__get_rank('straight')
-            assert (num_ranks == self.hand_dict['straight']['unsuited'])
 
         if self.hand_dict['high card']['cumulative unsuited']:
+            num_ranks = len(flushes)
+            assert (num_ranks == self.hand_dict['high card']['unsuited'])
             rank = self.__get_rank('high card')
-            for high_card in highcards:
-                prime_product = card.prime_product_from_rankbits(
-                    high_card)
+            for high_card in flushes:
+                prime_product = card.prime_product_from_rankbits(high_card)
                 self.unsuited_lookup[prime_product] = rank
                 rank += 1
-            num_ranks = rank - self.__get_rank('high card')
-            assert (num_ranks == self.hand_dict['high card']['unsuited'])
 
     def __multiples(self, ranks, cards_for_hand):
-        '''
-        Pair, Two Pair, Three of a Kind, Full House, and 4 of a Kind.
-        '''
         backwards_ranks = list(range(13 - 1, 13 - 1 - ranks, -1))
-
-        # 1) Four of a Kind
 
         if self.hand_dict['four of a kind']['cumulative unsuited']:
             rank = self.__get_rank('four of a kind')
@@ -379,7 +377,6 @@ class LookupTable():
             for four_of_a_kind in backwards_ranks:
                 # compute prime product for selected rank
                 base_product = card.PRIMES[four_of_a_kind]**4
-
                 # and for each possible combination of kicker ranks
                 kickers = backwards_ranks[:]
                 kickers.remove(four_of_a_kind)
@@ -401,19 +398,16 @@ class LookupTable():
             num_ranks = rank - self.__get_rank('four of a kind')
             assert (num_ranks == self.hand_dict['four of a kind']['unsuited'])
 
-        # 2) Full House
         if self.hand_dict['full house']['cumulative unsuited']:
             rank = self.__get_rank('full house')
             # for each three of a kind
             for three_of_a_kind in backwards_ranks:
-
                 # and for each choice of pair rank
                 pairs = backwards_ranks[:]
                 pairs.remove(three_of_a_kind)
                 for pair in pairs:
                     base_product = card.PRIMES[three_of_a_kind]**3 * \
                         card.PRIMES[pair]**2
-
                     kickers = pairs[:]
                     kickers.remove(pair)
                     combinations = list(itertools.combinations(
@@ -434,19 +428,16 @@ class LookupTable():
             num_ranks = rank - self.__get_rank('full house')
             assert (num_ranks == self.hand_dict['full house']['unsuited'])
 
-        # 3) Three of a Kind
-        # pick three of one rank
         if self.hand_dict['three of a kind']['cumulative unsuited']:
             rank = self.__get_rank('three of a kind')
+            # for each three of a kind
             for three_of_a_kind in backwards_ranks:
-
                 base_product = card.PRIMES[three_of_a_kind]**3
-
                 kickers = backwards_ranks[:]
                 kickers.remove(three_of_a_kind)
                 combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 3))
-
+                # if at least one kicker exists
                 if combinations[0]:
                     for combination in combinations:
                         product = base_product
@@ -462,21 +453,20 @@ class LookupTable():
             num_ranks = rank - self.__get_rank('three of a kind')
             assert (num_ranks == self.hand_dict['three of a kind']['unsuited'])
 
-        # 4) Two Pair
         if self.hand_dict['two pair']['cumulative unsuited']:
             rank = self.__get_rank('two pair')
-            # choose two pairs
-            tpgen = itertools.combinations(backwards_ranks, 2)
-            for two_pair in tpgen:
+            # for each two pair
+            tp_gen = itertools.combinations(backwards_ranks, 2)
+            for two_pair in tp_gen:
                 pair1, pair2 = two_pair
                 base_product = (card.PRIMES[pair1]**2 *
                                 card.PRIMES[pair2]**2)
-
                 kickers = backwards_ranks[:]
                 kickers.remove(pair1)
                 kickers.remove(pair2)
                 combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 4))
+                # if at least one kicker exists
                 if combinations[0]:
                     for combination in combinations:
                         product = base_product
@@ -492,19 +482,16 @@ class LookupTable():
             num_ranks = rank - self.__get_rank('two pair')
             assert (num_ranks == self.hand_dict['two pair']['unsuited'])
 
-        # 5) Pair
-        # choose a pair
         if self.hand_dict['pair']['cumulative unsuited']:
             rank = self.__get_rank('pair')
-            for pairrank in backwards_ranks:
-
-                base_product = card.PRIMES[pairrank]**2
-
+            # for each pair
+            for pair in backwards_ranks:
+                base_product = card.PRIMES[pair]**2
                 kickers = backwards_ranks[:]
-                kickers.remove(pairrank)
+                kickers.remove(pair)
                 combinations = list(itertools.combinations(
                     kickers, cards_for_hand - 2))
-
+                # if at least one kicker exists
                 if combinations[0]:
                     for combination in combinations:
                         product = base_product
@@ -520,14 +507,6 @@ class LookupTable():
             num_ranks = rank - self.__get_rank('pair')
             assert (num_ranks == self.hand_dict['pair']['unsuited'])
 
-    def write_table_to_disk(self, table, filepath):
-        '''
-        Writes lookup table to disk
-        '''
-        with open(filepath, 'w') as ofile:
-            for prime_prod, rank in table.iteritems():
-                ofile.write(str(prime_prod) + ',' + str(rank) + '\n')
-
     def __get_rank(self, hand):
         rank = self.hand_dict[hand]['rank']
         if not rank:
@@ -535,16 +514,22 @@ class LookupTable():
         better_hand = self.ranked_hands[rank - 1]
         return self.hand_dict[better_hand]['cumulative unsuited'] + 1
 
-    def __lexographic_next_bit(self, bits):
-        '''
-        Bit hack from here:
-        http://www.graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
-        Generator even does this in poker order rank
-        so no need to sort when done! Perfect.
-        '''
-        lex = bits
+
+def _lexographic_next_bit(bits):
+    # generator next legographic bit sequence given a bit sequence with
+    # N bits set e.g.
+    # 00010011 -> 00010101 -> 00010110 -> 00011001 ->
+    # 00011010 -> 00011100 -> 00100011 -> 00100101
+    lex = bits
+    yield lex
+    while True:
+        temp = (lex | (lex - 1)) + 1
+        lex = temp | ((((temp & -temp) // (lex & -lex)) >> 1) - 1)
         yield lex
-        while True:
-            temp = (lex | (lex - 1)) + 1
-            lex = temp | ((((temp & -temp) // (lex & -lex)) >> 1) - 1)
-            yield lex
+
+
+def _ncr(n, r):
+    r = min(r, n-r)
+    numer = functools.reduce(operator.mul, range(n, n-r, -1), 1)
+    denom = functools.reduce(operator.mul, range(1, r+1), 1)
+    return numer / denom
