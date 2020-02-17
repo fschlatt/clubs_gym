@@ -28,9 +28,8 @@ PRETTY_SUITS = {
 
 class Card:
     '''
-    Class that represents  Cards are represented as 32-bit
-    integers. Most of the bits are used and have a specific meaning,
-    check the deuces README for details:
+    Cards are represented as 32-bit integers. Most of the bits are used 
+    and have a specific meaning, check the deuces README for details:
 
                             Card:
 
