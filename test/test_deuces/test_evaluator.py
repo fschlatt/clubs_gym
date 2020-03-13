@@ -394,8 +394,24 @@ def test_short_deck():
     # flush > full house
     hand1 = [deuces.Card('8h'), deuces.Card('7h')]
     hand2 = [deuces.Card('Jd'), deuces.Card('As')]
+    comm_cards = [deuces.Card('Jh'), deuces.Card('9h'),
+                  deuces.Card('Ah'), deuces.Card('Ac')]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
+
+def test_mandatory_hole_cards():
+
+    evaluator = deuces.Evaluator(4, 13, 5, 2)
+
+    # mandatory hole cards
+    hand1 = [deuces.Card('Th'), deuces.Card('Jc'),
+             deuces.Card('2c'), deuces.Card('5c')]
+    hand2 = [deuces.Card('Ah'), deuces.Card('Qc'),
+             deuces.Card('2h'), deuces.Card('5s')]
     comm_cards = [
-        deuces.Card('Jh'), deuces.Card('9h'),
-        deuces.Card('Ah'), deuces.Card('Ac')]
+        deuces.Card('9s'), deuces.Card('8c'), deuces.Card('7d'),
+        deuces.Card('6c'), deuces.Card('5d')
+    ]
     assert evaluator.evaluate(
         hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
