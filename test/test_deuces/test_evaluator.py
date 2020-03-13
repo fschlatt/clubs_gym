@@ -3,7 +3,7 @@ from pyker import deuces
 
 def test_1_card():
     # no community cards
-    evaluator = deuces.Evaluator(1, 3, 1, 1, 0)
+    evaluator = deuces.Evaluator(1, 3, 1, 0)
     hand1 = [deuces.Card('As')]
     hand2 = [deuces.Card('Ks')]
     assert evaluator.evaluate(hand1, []) < evaluator.evaluate(hand2, [])
@@ -22,7 +22,7 @@ def test_1_card():
         hand1, comm_cards) == evaluator.evaluate(hand2, comm_cards)
 
     # mandatory hole card
-    evaluator = deuces.Evaluator(1, 3, 1, 1, 1)
+    evaluator = deuces.Evaluator(1, 3, 1, 1)
     hand1 = [deuces.Card('Ks')]
     hand2 = [deuces.Card('Qs')]
     comm_cards = [deuces.Card('As')]
@@ -31,7 +31,7 @@ def test_1_card():
 
     # 2 suits
     # 1 card for hand, no community cards
-    evaluator = deuces.Evaluator(2, 3, 1, 1, 0)
+    evaluator = deuces.Evaluator(2, 3, 1, 0)
     hand1 = [deuces.Card('Ah')]
     hand2 = [deuces.Card('As')]
     assert evaluator.evaluate(hand1, []) == evaluator.evaluate(hand2, [])
@@ -39,7 +39,7 @@ def test_1_card():
 
 def test_2_card():
     # 1 suit
-    evaluator = deuces.Evaluator(1, 3, 1, 2, 0)
+    evaluator = deuces.Evaluator(1, 3, 2, 0)
     hand1 = [deuces.Card('Ks')]
     hand2 = [deuces.Card('Qs')]
     comm_cards = [deuces.Card('As')]
@@ -48,7 +48,7 @@ def test_2_card():
 
     # 2 suits
     # pair > high card
-    evaluator = deuces.Evaluator(2, 3, 1, 2, 0)
+    evaluator = deuces.Evaluator(2, 3, 2, 0)
     hand1 = [deuces.Card('Qs')]
     hand2 = [deuces.Card('Ks')]
     comm_cards = [deuces.Card('Qh')]
@@ -66,7 +66,7 @@ def test_2_card():
 def test_3_card():
     # 1 suit
     # straight > high card
-    evaluator = deuces.Evaluator(1, 13, 1, 3, 0)
+    evaluator = deuces.Evaluator(1, 13, 3, 0)
     hand1 = [deuces.Card('Js')]
     hand2 = [deuces.Card('Qs')]
     comm_cards = [deuces.Card('9s'), deuces.Card('Ts')]
@@ -89,7 +89,7 @@ def test_3_card():
 
     # 2 suits
     # straight flush > straight
-    evaluator = deuces.Evaluator(2, 13, 1, 3, 0)
+    evaluator = deuces.Evaluator(2, 13, 3, 0)
     hand1 = [deuces.Card('Js')]
     hand2 = [deuces.Card('Jc')]
     comm_cards = [deuces.Card('9s'), deuces.Card('Ts')]
@@ -119,7 +119,7 @@ def test_3_card():
 
     # 4 suits
     # straight flush > straight
-    evaluator = deuces.Evaluator(4, 13, 1, 3, 0)
+    evaluator = deuces.Evaluator(4, 13, 3, 0)
     hand1 = [deuces.Card('Js')]
     hand2 = [deuces.Card('Jc')]
     comm_cards = [deuces.Card('9s'), deuces.Card('Ts')]
@@ -151,7 +151,7 @@ def test_3_card():
 def test_4_card():
     # 1 suit
     # straight > high card
-    evaluator = deuces.Evaluator(1, 13, 2, 4, 0)
+    evaluator = deuces.Evaluator(1, 13, 4, 0)
     hand1 = [deuces.Card('Js'), deuces.Card('Ts')]
     hand2 = [deuces.Card('Qs'), deuces.Card('3s')]
     comm_cards = [deuces.Card('8s'), deuces.Card('9s')]
@@ -174,7 +174,7 @@ def test_4_card():
 
     # 2 suits
     # straight flush > two pair
-    evaluator = deuces.Evaluator(2, 13, 2, 4, 0)
+    evaluator = deuces.Evaluator(2, 13, 4, 0)
     hand1 = [deuces.Card('Js'), deuces.Card('Ts')]
     hand2 = [deuces.Card('8h'), deuces.Card('9h')]
     comm_cards = [deuces.Card('8s'), deuces.Card('9s')]
@@ -211,7 +211,7 @@ def test_4_card():
 
     # 4 suits
     # four of a kind > straight flush
-    evaluator = deuces.Evaluator(4, 13, 2, 4, 0)
+    evaluator = deuces.Evaluator(4, 13, 4, 0)
     hand1 = [deuces.Card('As'), deuces.Card('Ac')]
     hand2 = [deuces.Card('Jh'), deuces.Card('Qh')]
     comm_cards = [deuces.Card('Kh'), deuces.Card('Ah'), deuces.Card('Ad')]
@@ -264,7 +264,7 @@ def test_4_card():
 def test_5_card():
     # 1 suit
     # straight > high card
-    evaluator = deuces.Evaluator(1, 13, 2, 5, 0)
+    evaluator = deuces.Evaluator(1, 13, 5, 0)
     hand1 = [deuces.Card('Js'), deuces.Card('Ts')]
     hand2 = [deuces.Card('Qs'), deuces.Card('3s')]
     comm_cards = [deuces.Card('7s'), deuces.Card('8s'), deuces.Card('9s')]
@@ -289,7 +289,7 @@ def test_5_card():
 
     # 2 suits
     # straight flush > straight
-    evaluator = deuces.Evaluator(2, 13, 2, 5, 0)
+    evaluator = deuces.Evaluator(2, 13, 5, 0)
     hand1 = [deuces.Card('Js'), deuces.Card('Ts')]
     hand2 = [deuces.Card('Jh'), deuces.Card('Th')]
     comm_cards = [deuces.Card('7s'), deuces.Card('8s'), deuces.Card('9s')]
@@ -326,7 +326,7 @@ def test_5_card():
 
     # 4 suits
     # straight flush > four of a kind
-    evaluator = deuces.Evaluator(4, 13, 2, 5, 0)
+    evaluator = deuces.Evaluator(4, 13, 5, 0)
     hand1 = [deuces.Card('Jh'), deuces.Card('Qh')]
     hand2 = [deuces.Card('As'), deuces.Card('Ac')]
     comm_cards = [deuces.Card('Th'), deuces.Card(
@@ -389,7 +389,7 @@ def test_short_deck():
 
     order = ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
 
-    evaluator = deuces.Evaluator(4, 9, 2, 5, 0, order=order)
+    evaluator = deuces.Evaluator(4, 9, 5, 0, order=order)
 
     # flush > full house
     hand1 = [deuces.Card('8h'), deuces.Card('7h')]
