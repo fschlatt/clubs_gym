@@ -70,9 +70,10 @@ class Dealer():
         self.community_cards = []
         self.deck = deuces.Deck(self.num_suits, self.num_ranks)
         self.evaluator = deuces.Evaluator(
-            self.num_suits, self.num_ranks, self.num_hole_cards,
-            self.num_cards_for_hand, self.mandatory_num_hole_cards,
-            low_end_straight=low_end_straight, order=order)
+            self.num_suits, self.num_ranks, self.num_cards_for_hand,
+            self.mandatory_num_hole_cards,
+            low_end_straight=low_end_straight, order=order
+        )
         self.history = []
         self.hole_cards = []
         self.largest_raise = 0
