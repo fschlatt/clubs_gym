@@ -106,7 +106,7 @@ class Evaluator(object):
                 minimum = score
         return minimum
 
-    def get_rank_class(self, hand_rank: int):  # TODO finish docs for evaluator
+    def get_rank_class(self, hand_rank: int):
         '''Outputs hand rank string from integer hand rank
 
         Args:
