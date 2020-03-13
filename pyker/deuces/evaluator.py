@@ -1,3 +1,4 @@
+'''Classes and functions to evaluate poker hands'''
 import functools
 import itertools
 import operator
@@ -8,76 +9,96 @@ from . import card
 
 
 class Evaluator(object):
-    '''
-    Evaluates hand strengths using a variant of Cactus Kev's algorithm:
-    http://suffe.cool/poker/evaluator.html
+    '''Evalutes poker hands using hole and community cards
 
-    I make considerable optimizations in terms of speed and memory usage,
-    in fact the lookup table generation can be done in under a second and
-    consequent evaluations are very fast. Won't beat C, but very fast as
-    all calculations are done with bit arithmetic and table lookups.
+    Args:
+        suits (int): number of suits
+        ranks (int): number of ranks
+        cards_for_hand (int): number of cards used for a poker hand
+        mandatory_hole_cards (int): number of hole cards which must be
+                                    be used for a hand
+        low_end_straight (bool, optional): toggle to include straights
+                                           where ace is the lowest
+                                           card. defaults to True.
+        order (list, optional): custom hand rank order, if None hands 
+                                are ranked by rarity. defaults to None.
     '''
 
-    def __init__(self, suits, ranks, h_cards, cards_for_hand,
-                 mandatory_h_cards, low_end_straight=True, order=None):
+    def __init__(self, suits: int, ranks: int, cards_for_hand: int,
+                 mandatory_hole_cards: int, low_end_straight: bool = True,
+                 order: list = None):
 
         if cards_for_hand < 0 or cards_for_hand > 5:
-            raise NotImplementedError(
-                f'Evaluation not implemented for {cards_for_hand} card hands')
+            raise error.InvalidHandSizeError(
+                f'Evaluation for {cards_for_hand} card hands is not supported. '
+                f'pyker currently supports 1-5 card poker hands'
+            )
 
         self.suits = suits
         self.ranks = ranks
-        self.h_cards = h_cards
         self.cards_for_hand = cards_for_hand
-        self.mandatory_h_cards = mandatory_h_cards
+        self.mandatory_hole_cards = mandatory_hole_cards
 
-        self.table = LookupTable(suits, ranks, cards_for_hand,
-                                 low_end_straight=low_end_straight, order=order)
+        self.table = LookupTable(
+            suits, ranks, cards_for_hand,
+            low_end_straight=low_end_straight, order=order
+        )
 
         total = sum(
             self.table.hand_dict[hand]['suited']
-            for hand in self.table.ranked_hands)
+            for hand in self.table.ranked_hands
+        )
 
         hands = [
             '{} ({:.4%})'.format(
                 hand, self.table.hand_dict[hand]['suited'] / total)
-            for hand in self.table.ranked_hands]
+            for hand in self.table.ranked_hands
+        ]
         self.hand_ranks = ' > '.join(hands)
 
     def __str__(self):
         return self.hand_ranks
 
-    def evaluate(self, cards, board):
-        '''
-        This is the function that the user calls to get a hand rank.
+    def __repr__(self):
+        return str(self)
 
-        Supports empty board, etc very flexible. No input validation
-        because that's cycles!
+    def evaluate(self, hole_cards: list, community_cards: list):
+        '''Evaluates the hand rank of a poker hand from a list of hole
+        and a list of community cards. Empty hole and community cards
+        are supported as well as requiring a minimum number of hole
+        cards to be used.
+
+        Args:
+            hole_cards (list): list of hole cards of a player
+            community_cards (list): list of community cards
+
+        Returns:
+            int: hand rank
         '''
 
         # compute all possible hand combinations
         all_card_combs = []
         # if a number of hole cards are mandatory
-        if self.mandatory_h_cards:
-            num_board_cards = self.cards_for_hand - self.mandatory_h_cards
-            # get all hole card combinations
-            h_cards_combs = list(itertools.combinations(
-                cards, self.mandatory_h_cards))
-            # and board card combinations
-            b_cards_combs = list(
-                itertools.combinations(board, num_board_cards))
+        if self.mandatory_hole_cards:
+            # get all hole and community card combinations
+            hole_card_combs = list(itertools.combinations(
+                hole_cards, self.mandatory_hole_cards))
+            num_comm_cards = self.cards_for_hand - self.mandatory_hole_cards
+            comm_card_combs = list(
+                itertools.combinations(community_cards, num_comm_cards)
+            )
             # and combine them together
-            for h_cards_comb in h_cards_combs:
-                for b_cards_comb in b_cards_combs:
-                    all_card_combs.append(h_cards_comb + b_cards_comb)
+            for hole_card_comb in hole_card_combs:
+                for comm_card_comb in comm_card_combs:
+                    all_card_combs.append(hole_card_comb + comm_card_comb)
         # else create combinations from all cards
         else:
-            all_cards = cards + board
+            all_cards = hole_cards + community_cards
             all_card_combs = itertools.combinations(
-                all_cards, self.cards_for_hand)
+                all_cards, self.cards_for_hand
+            )
 
-        worst_hand = self.table.ranked_hands[-1]
-        minimum = self.table.hand_dict[worst_hand]['cumulative unsuited']
+        minimum = self.table.max_rank
 
         for card_comb in all_card_combs:
             score = self.table.lookup(list(card_comb))
@@ -85,26 +106,22 @@ class Evaluator(object):
                 minimum = score
         return minimum
 
-    def get_rank_class(self, hand_rank):
-        '''
-        Returns the class of hand given the hand hand_rank
-        returned from evaluate
+    def get_rank_class(self, hand_rank: int):  # TODO finish docs for evaluator
+        '''Outputs hand rank string from integer hand rank
+
+        Args:
+            hand_rank (int): integer hand rank
+
+        Returns:
+            str: hand rank string
         '''
         if hand_rank < 0 or hand_rank > self.table.max_rank:
-            raise ValueError(
+            raise error.InvalidHandRankError(
                 (f'invalid hand rank, expected 0 <= hand_rank'
-                 f' {self.table.max_rank}, got {hand_rank}'))
+                 f' <= {self.table.max_rank}, got {hand_rank}'))
         for hand in self.table.ranked_hands:
             if hand_rank <= self.table.hand_dict[hand]['cumulative unsuited']:
                 return hand
-
-    def get_five_card_rank_percentage(self, hand_rank):
-        '''
-        Scales the hand rank score between [0, 1]
-        '''
-        worst_hand = self.table.ranked_hands[-1]
-        worst_hand_rank = self.table.hand_dict[worst_hand]['cumulative unsuited']
-        return float(hand_rank) / float(worst_hand_rank)
 
 
 class LookupTable():
@@ -129,58 +146,77 @@ class LookupTable():
                  low_end_straight: bool = True, order: list = None):
         if order is not None:
             if any(string not in order for string in self.ORDER_STRINGS):
-                raise error.InvalidOrder(
+                raise error.InvalidOrderError(
                     (f'invalid order list {order},'
-                     f'order list must be permutation of {self.ORDER_STRINGS}'))
+                     f'order list must be permutation of {self.ORDER_STRINGS}')
+                )
 
         # number of suited and unsuited possibilities of different hands
         straight_flushes, u_straight_flushes = self.__straight_flush(
-            suits, ranks, cards_for_hand, low_end_straight)
+            suits, ranks, cards_for_hand, low_end_straight
+        )
         four_of_a_kinds, u_four_of_a_kinds = self.__four_of_a_kind(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand
+        )
         full_houses, u_full_houses = self.__full_house(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand
+        )
         flushes, u_flushes = self.__flush(
-            suits, ranks, cards_for_hand, low_end_straight)
+            suits, ranks, cards_for_hand, low_end_straight
+        )
         straights, u_straights = self.__straight(
-            suits, ranks, cards_for_hand, low_end_straight)
+            suits, ranks, cards_for_hand, low_end_straight
+        )
         three_of_a_kinds, u_three_of_a_kinds = self.__three_of_a_kind(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand
+        )
         two_pairs, u_two_pairs = self.__two_pair(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand
+        )
         pairs, u_pairs = self.__pair(
-            suits, ranks, cards_for_hand)
+            suits, ranks, cards_for_hand
+        )
         high_cards, u_high_cards = self.__high_card(
-            suits, ranks, cards_for_hand, low_end_straight)
+            suits, ranks, cards_for_hand, low_end_straight
+        )
 
         self.hand_dict = {
             'straight flush': {
                 'suited': straight_flushes,
-                'unsuited': u_straight_flushes},
+                'unsuited': u_straight_flushes
+            },
             'four of a kind': {
                 'suited': four_of_a_kinds,
-                'unsuited': u_four_of_a_kinds},
+                'unsuited': u_four_of_a_kinds
+            },
             'full house': {
                 'suited': full_houses,
-                'unsuited': u_full_houses},
+                'unsuited': u_full_houses
+            },
             'flush': {
                 'suited': flushes,
-                'unsuited': u_flushes},
+                'unsuited': u_flushes
+            },
             'straight': {
                 'suited': straights,
-                'unsuited': u_straights},
+                'unsuited': u_straights
+            },
             'three of a kind': {
                 'suited': three_of_a_kinds,
-                'unsuited': u_three_of_a_kinds},
+                'unsuited': u_three_of_a_kinds
+            },
             'two pair': {
                 'suited': two_pairs,
-                'unsuited': u_two_pairs},
+                'unsuited': u_two_pairs
+            },
             'pair': {
                 'suited': pairs,
-                'unsuited': u_pairs},
+                'unsuited': u_pairs
+            },
             'high card': {
                 'suited': high_cards,
-                'unsuited': u_high_cards}
+                'unsuited': u_high_cards
+            }
         }
 
         # suited hands
@@ -205,8 +241,10 @@ class LookupTable():
             s_hands = [s_hands[idx] for idx in idcs]
         # lookup is done on unsuited hands but hand
         # rank is dependent on suited hands
-        u_hands = [(self.hand_dict[u_hand[1]]['unsuited'], u_hand[1])
-                   for u_hand in s_hands]
+        u_hands = [
+            (self.hand_dict[u_hand[1]]['unsuited'], u_hand[1])
+            for u_hand in s_hands
+        ]
 
         # compute cumulative number of unsuited hands for each hand
         # cumulative unsuited is the maximum rank a hand can have
@@ -393,7 +431,7 @@ class LookupTable():
             for _ in range(ranks - (cards_for_hand - 1)):
                 straight_flushes.append(int(bin_num_str, 2))
                 bin_num_str = bin_num_str[:-1]
-            if low_end_straight:  # TODO fix number of straight flushes
+            if low_end_straight:
                 # add low end straight
                 bin_num_str = ('0b1' + '0' * (ranks - cards_for_hand)
                                + '1' * (cards_for_hand - 1)
