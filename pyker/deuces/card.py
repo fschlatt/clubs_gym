@@ -1,16 +1,17 @@
 '''Classes and functions to create and manipulate cards and lists of 
 cards from a standard 52 card poker deck'''
 import random
+from typing import Dict, List, Optional, Union
 
 from pyker import error
 
-STR_RANKS = '23456789TJQKA'
-INT_RANKS = list(range(13))
-PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
+STR_RANKS: str = '23456789TJQKA'
+INT_RANKS: List[int] = list(range(13))
+PRIMES: List[int] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41]
 
 # conversion string to int
-CHAR_RANK_TO_INT_RANK = dict(zip(list(STR_RANKS), INT_RANKS))
-CHAR_SUIT_TO_INT_SUIT = {
+CHAR_RANK_TO_INT_RANK: Dict[str, int] = dict(zip(list(STR_RANKS), INT_RANKS))
+CHAR_SUIT_TO_INT_SUIT: Dict[str, int] = {
     'S': 1,  # spades
     'H': 2,  # hearts
     'D': 4,  # diamonds
@@ -18,7 +19,7 @@ CHAR_SUIT_TO_INT_SUIT = {
 }
 
 # pretty suits
-PRETTY_SUITS = {
+PRETTY_SUITS: Dict[int, str] = {
     1: chr(9824),   # spades
     2: chr(9829),   # hearts
     4: chr(9830),   # diamonds
@@ -52,7 +53,7 @@ class Card:
     Examples: Card('T', 'C'), Card('7', 'H'), Card('a', 'd')...
     '''
 
-    def __init__(self, string: str):
+    def __init__(self, string: str) -> None:
         rank_char = string[0].upper()
         suit_char = string[1].upper()
         try:
@@ -74,9 +75,9 @@ class Card:
         suit = suit_int << 12
         rank = rank_int << 8
 
-        self._int = bitrank | suit | rank | rank_prime
+        self._int: int = bitrank | suit | rank | rank_prime
 
-    def __str__(self):
+    def __str__(self) -> str:
         suit_int = (self._int >> 12) & 0xF
         rank_int = (self._int >> 8) & 0xF
 
@@ -85,29 +86,44 @@ class Card:
 
         return f'{rank}{suit}'
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __and__(self, other):
+    def __and__(self, other: Union[Card, int]) -> int:
+        if isinstance(other, Card):
+            other = other._int
         return self._int & other
 
-    def __rand__(self, other):
+    def __rand__(self, other: Union[Card, int]) -> int:
+        if isinstance(other, Card):
+            other = other._int
         return other & self._int
 
-    def __or__(self, other):
+    def __or__(self, other: Union[Card, int]) -> int:
+        if isinstance(other, Card):
+            other = other._int
         return self._int | other
 
-    def __ror__(self, other):
+    def __ror__(self, other: Union[Card, int]) -> int:
+        if isinstance(other, Card):
+            other = other._int
         return other | self._int
 
-    def __lshift__(self, other):
+    def __lshift__(self, other: Union[Card, int]) -> int:
+        if isinstance(other, Card):
+            other = other._int
         return self._int << other
 
-    def __rshift__(self, other):
+    def __rshift__(self, other: Union[Card, int]) -> int:
+        if isinstance(other, Card):
+            other = other._int
         return self._int >> other
 
-    def __eq__(self, other):
-        return self._int == other
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Card):
+            return bool(self._int == other)
+        else:
+            raise NotImplementedError('only comparisons of two cards allowed')
 
 
 def prime_product_from_rankbits(rankbits: int) -> int:
@@ -129,7 +145,7 @@ def prime_product_from_rankbits(rankbits: int) -> int:
     return product
 
 
-def prime_product_from_hand(cards: list) -> int:
+def prime_product_from_hand(cards: List[Card]) -> int:
     '''Computes unique prime product for a list of cards. Used for
     evaluating hands
 
@@ -157,7 +173,7 @@ class Deck:
         num_ranks (int): number of ranks to use in deck
     '''
 
-    def __init__(self, num_suits: int, num_ranks: int):
+    def __init__(self, num_suits: int, num_ranks: int) -> None:
         if num_suits < 0 or num_suits > 4:
             raise error.InvalidSuitError(
                 f'Invalid number of suits, expected number of suits '
@@ -168,26 +184,26 @@ class Deck:
                 f'between 1 and 13, got {num_ranks}')
         self.num_ranks = num_ranks
         self.num_suits = num_suits
-        self.full_deck = []
+        self.full_deck: List[Card] = []
         ranks = STR_RANKS[-num_ranks:]
         suits = list(CHAR_SUIT_TO_INT_SUIT.keys())[:num_suits]
         for rank in ranks:
             for suit in suits:
                 self.full_deck.append(Card(rank + suit))
         self._tricked = False
-        self._top_idcs = None
-        self._bottom_idcs = None
+        self._top_idcs: List[int] = []
+        self._bottom_idcs: List[int] = []
         self.shuffle()
 
-    def __str__(self):
+    def __str__(self) -> str:
         string = ','.join([str(card) for card in self.cards])
         string = f'[{string}]'
         return string
-    
-    def __repr__(self):
+
+    def __repr__(self) -> str:
         return str(self)
 
-    def draw(self, n: int = 1):
+    def draw(self, n: int = 1) -> List[Card]:
         '''
         Draws cards from the top of the deck. If the number of cards
         to draw exceeds the number of cards in the deck, all cards
@@ -207,7 +223,7 @@ class Deck:
                 break
         return cards
 
-    def shuffle(self):
+    def shuffle(self) -> Deck:
         '''
         Shuffles the deck. If a tricking order is given, the desired
         cards are placed on the top of the deck after shuffling.
@@ -216,7 +232,7 @@ class Deck:
             Deck: self
         '''
         self.cards = list(self.full_deck)
-        if self._tricked:
+        if self._tricked and self._top_idcs and self._bottom_idcs:
             top_cards = [self.full_deck[idx] for idx in self._top_idcs]
             bottom_cards = [self.full_deck[idx] for idx in self._bottom_idcs]
             random.shuffle(bottom_cards)
@@ -225,7 +241,7 @@ class Deck:
             random.shuffle(self.cards)
         return self
 
-    def trick(self, top_cards: list = None):
+    def trick(self, top_cards: Optional[List[Union[str, Card]]] = None) -> Deck:
         '''
         Tricks the deck by placing a fixed order of cards on the top
         of the deck and shuffling the rest. E.g. 
@@ -246,14 +262,19 @@ class Deck:
             self._tricked = False
             return self.shuffle()
         if top_cards:
-            self._top_idcs = [self.full_deck.index(Card(top_card))
-                              for top_card in top_cards]
+            cards = [
+                Card(top_card)
+                if isinstance(top_card, str) else top_card
+                for top_card in top_cards
+            ]
+            self._top_idcs = [self.full_deck.index(top_card)
+                              for top_card in cards]
             all_idcs = set(range(self.num_ranks * self.num_suits))
             self._bottom_idcs = list(all_idcs.difference(set(self._top_idcs)))
         self._tricked = True
         return self.shuffle()
 
-    def untrick(self):
+    def untrick(self) -> Deck:
         '''
         Removes the tricked cards from the top of the deck.
 
@@ -262,4 +283,3 @@ class Deck:
         '''
         self._tricked = False
         return self
-
