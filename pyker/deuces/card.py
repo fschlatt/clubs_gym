@@ -28,16 +28,13 @@ PRETTY_SUITS: Dict[int, str] = {
 
 
 class Card:
-    '''
-    Cards are represented as 32-bit integers. Most of the bits are used 
+    '''Cards are represented as 32-bit integers. Most of the bits are used 
     and have a specific meaning, check the deuces README for details:
 
-                            Card:
-
-                    bitrank     suit rank   prime
-            +--------+--------+--------+--------+
-            |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
-            +--------+--------+--------+--------+
+                  bitrank  suit rank   prime
+        +--------+--------+--------+--------+
+        |xxxbbbbb|bbbbbbbb|cdhsrrrr|xxpppppp|
+        +--------+--------+--------+--------+
 
         1) p = prime number of rank (deuce=2,trey=3,four=5,...,ace=41)
         2) r = rank of card (deuce=0,trey=1,four=2,five=3,...,ace=12)
@@ -45,15 +42,20 @@ class Card:
         4) b = bit turned on depending on rank of card
         5) x = unused
 
-    Args:
-        string (str): card string of format '{rank}{suit}' where
-                      rank is from [2-9, T/t, J/j, Q/q, K/k, A/a] 
-                      and suit is from [S/s, H/h, D/d, C/c]
+    Parameters
+    ----------
+    string : str
+        card string of format '{rank}{suit}' where rank is from 
+        [2-9, T/t, J/j, Q/q, K/k, A/a] and suit is from 
+        [S/s, H/h, D/d, C/c]
 
-    Examples: Card('T', 'C'), Card('7', 'H'), Card('a', 'd')...
+    Examples
+    ------
+    Card('TC'), Card('7H'), Card('ad')...
     '''
 
     def __init__(self, string: str) -> None:
+
         rank_char = string[0].upper()
         suit_char = string[1].upper()
         try:
@@ -131,12 +133,17 @@ def prime_product_from_rankbits(rankbits: int) -> int:
     for evaluating flushes and straights. Expects 13 bit integer 
     with bits of the cards in the hand flipped.
 
-    Args:
-        rankbits (int): 13 bit integer with flipped rank bits
+    Parameters
+    ----------
+    rankbits : int
+        13 bit integer with flipped rank bits
 
-    Returns:
-        int: prime product if bit flipped cards
+    Returns
+    -------
+    int
+        prime product of rank cards
     '''
+
     product = 1
     for i in INT_RANKS:
         # if the ith bit is set
@@ -149,12 +156,17 @@ def prime_product_from_hand(cards: List[Card]) -> int:
     '''Computes unique prime product for a list of cards. Used for
     evaluating hands
 
-    Args:
-        card_ints (list): list of cards
+    Parameters
+    ----------
+    cards : List[Card]
+        list of cards
 
-    Returns:
-        int: prime product of cards
+    Returns
+    -------
+    int
+        prime product of cards
     '''
+
     product = 1
     for card in cards:
         product *= (card & 0xFF)
@@ -162,15 +174,17 @@ def prime_product_from_hand(cards: List[Card]) -> int:
 
 
 class Deck:
-    '''
-    A deck contains at most 52 cards, 13 ranks 4 suits. Any "subdeck" 
+    '''A deck contains at most 52 cards, 13 ranks 4 suits. Any "subdeck" 
     of the standard 52 card deck is valid, i.e. the number of suits 
     must be between 1 and 4 and number of ranks between 1 and 13. A
     deck can be tricked to ensure a certain order of cards.
 
-    Args:
-        num_suits (int): number of suits to use in deck
-        num_ranks (int): number of ranks to use in deck
+    Parameters
+    ----------
+    num_suits : int
+        number of suits to use in deck
+    num_ranks : int
+        number of ranks to use in deck
     '''
 
     def __init__(self, num_suits: int, num_ranks: int) -> None:
@@ -204,16 +218,19 @@ class Deck:
         return str(self)
 
     def draw(self, n: int = 1) -> List[Card]:
-        '''
-        Draws cards from the top of the deck. If the number of cards
+        '''Draws cards from the top of the deck. If the number of cards
         to draw exceeds the number of cards in the deck, all cards
         left in the deck are returned.
 
-        Args:
-            n (int, optional): number of cards to draw. Defaults to 1.
+        Parameters
+        ----------
+        n : int, optional
+            number of cards to draw, by default 1
 
-        Returns:
-            list: cards drawn from the deck
+        Returns
+        -------
+        List[Card]
+            cards drawn from the deck
         '''
         cards = []
         for _ in range(n):
@@ -224,12 +241,13 @@ class Deck:
         return cards
 
     def shuffle(self) -> Deck:
-        '''
-        Shuffles the deck. If a tricking order is given, the desired
+        '''Shuffles the deck. If a tricking order is given, the desired
         cards are placed on the top of the deck after shuffling.
 
-        Returns:
-            Deck: self
+        Returns
+        -------
+        Deck
+            self
         '''
         self.cards = list(self.full_deck)
         if self._tricked and self._top_idcs and self._bottom_idcs:
@@ -241,22 +259,28 @@ class Deck:
             random.shuffle(self.cards)
         return self
 
-    def trick(self, top_cards: Optional[List[Union[str, Card]]] = None) -> Deck:
-        '''
-        Tricks the deck by placing a fixed order of cards on the top
+    def trick(self, top_cards: Optional[List[Union[str, Card]]] = None,
+              shuffle: bool = True) -> Deck:
+        '''Tricks the deck by placing a fixed order of cards on the top
         of the deck and shuffling the rest. E.g. 
         deck.trick(['AS', '2H']) places the ace of spades and deuce of 
         hearts on the top of the deck. The order of tricked cards 
         persists even after untricking. That is, calling 
         deck.trick(...).untrick().trick() will keep the deck tricked
         in the order given in the first trick call.
-
-        Args:
-            top_cards (list, optional): list of cards to be placed on
-            the top of the deck. Defaults to None.
-
-        Returns:
-            Deck: self
+        
+        Parameters
+        ----------
+        top_cards : Optional[List[Union[str, Card]]], optional
+            list of cards to be placed on the top of the deck, by 
+            default None, by default None
+        shuffle : bool, optional
+            shuffles the deck after tricking, by default True
+        
+        Returns
+        -------
+        Deck
+            self
         '''
         if top_cards is None and not self._top_idcs:
             self._tricked = False
@@ -275,11 +299,15 @@ class Deck:
         return self.shuffle()
 
     def untrick(self) -> Deck:
-        '''
-        Removes the tricked cards from the top of the deck.
+        '''Removes the tricked cards from the top of the deck. The order
+        of tricked cards persists even after untricking. That is, 
+        calling deck.trick(...).untrick().trick() will keep the deck 
+        tricked in the order given in the first trick call.
 
-        Returns:
-            Deck: self
+        Returns
+        -------
+        Deck
+            self
         '''
         self._tricked = False
         return self
