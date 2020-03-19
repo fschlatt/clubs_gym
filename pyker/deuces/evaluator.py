@@ -75,27 +75,32 @@ class Evaluator(object):
         Returns:
             int: hand rank
         '''
-
-        # compute all possible hand combinations
-        all_card_combs = []
         # if a number of hole cards are mandatory
         if self.mandatory_hole_cards:
             # get all hole and community card combinations
-            hole_card_combs = list(itertools.combinations(
-                hole_cards, self.mandatory_hole_cards))
-            num_comm_cards = self.cards_for_hand - self.mandatory_hole_cards
-            comm_card_combs = list(
-                itertools.combinations(community_cards, num_comm_cards)
+            hole_card_combs = itertools.combinations(
+                hole_cards, self.mandatory_hole_cards
             )
-            # and combine them together
-            for hole_card_comb in hole_card_combs:
-                for comm_card_comb in comm_card_combs:
-                    all_card_combs.append(hole_card_comb + comm_card_comb)
+            num_comm_cards = self.cards_for_hand - self.mandatory_hole_cards
+            if num_comm_cards:
+                comm_card_combs = itertools.combinations(
+                    community_cards, num_comm_cards
+                )
+                iterator = itertools.product(
+                    hole_card_combs, comm_card_combs
+                )
+                all_card_combs = list(
+                    (sum(card_comb, ()) for card_comb in
+                     iterator)
+            )
+            else:
+                all_card_combs = list(hole_card_combs)
         # else create combinations from all cards
         else:
-            all_cards = hole_cards + community_cards
-            all_card_combs = itertools.combinations(
-                all_cards, self.cards_for_hand
+            all_card_combs = list(
+                itertools.combinations(
+                    hole_cards + community_cards, self.cards_for_hand
+                )
             )
 
         minimum = self.table.max_rank
