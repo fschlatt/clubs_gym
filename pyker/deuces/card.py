@@ -1,4 +1,4 @@
-'''Classes and functions to create and manipulate cards and lists of 
+'''Classes and functions to create and manipulate cards and lists of
 cards from a standard 52 card poker deck'''
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ PRETTY_SUITS: Dict[int, str] = {
 
 
 class Card:
-    '''Cards are represented as 32-bit integers. Most of the bits are used 
+    '''Cards are represented as 32-bit integers. Most of the bits are used
     and have a specific meaning, check the deuces README for details:
 
                   bitrank  suit rank   prime
@@ -47,8 +47,8 @@ class Card:
     Parameters
     ----------
     string : str
-        card string of format '{rank}{suit}' where rank is from 
-        [2-9, T/t, J/j, Q/q, K/k, A/a] and suit is from 
+        card string of format '{rank}{suit}' where rank is from
+        [2-9, T/t, J/j, Q/q, K/k, A/a] and suit is from
         [S/s, H/h, D/d, C/c]
 
     Examples
@@ -132,7 +132,7 @@ class Card:
 
 def prime_product_from_rankbits(rankbits: int) -> int:
     '''Computes prime product from rankbits of cards, primarily used
-    for evaluating flushes and straights. Expects 13 bit integer 
+    for evaluating flushes and straights. Expects 13 bit integer
     with bits of the cards in the hand flipped.
 
     Parameters
@@ -176,8 +176,8 @@ def prime_product_from_hand(cards: List[Card]) -> int:
 
 
 class Deck:
-    '''A deck contains at most 52 cards, 13 ranks 4 suits. Any "subdeck" 
-    of the standard 52 card deck is valid, i.e. the number of suits 
+    '''A deck contains at most 52 cards, 13 ranks 4 suits. Any "subdeck"
+    of the standard 52 card deck is valid, i.e. the number of suits
     must be between 1 and 4 and number of ranks between 1 and 13. A
     deck can be tricked to ensure a certain order of cards.
 
@@ -264,21 +264,21 @@ class Deck:
     def trick(self, top_cards: Optional[List[Union[str, Card]]] = None,
               shuffle: bool = True) -> Deck:
         '''Tricks the deck by placing a fixed order of cards on the top
-        of the deck and shuffling the rest. E.g. 
-        deck.trick(['AS', '2H']) places the ace of spades and deuce of 
-        hearts on the top of the deck. The order of tricked cards 
-        persists even after untricking. That is, calling 
+        of the deck and shuffling the rest. E.g.
+        deck.trick(['AS', '2H']) places the ace of spades and deuce of
+        hearts on the top of the deck. The order of tricked cards
+        persists even after untricking. That is, calling
         deck.trick(...).untrick().trick() will keep the deck tricked
         in the order given in the first trick call.
-        
+
         Parameters
         ----------
         top_cards : Optional[List[Union[str, Card]]], optional
-            list of cards to be placed on the top of the deck, by 
+            list of cards to be placed on the top of the deck, by
             default None, by default None
         shuffle : bool, optional
             shuffles the deck after tricking, by default True
-        
+
         Returns
         -------
         Deck
@@ -302,8 +302,8 @@ class Deck:
 
     def untrick(self) -> Deck:
         '''Removes the tricked cards from the top of the deck. The order
-        of tricked cards persists even after untricking. That is, 
-        calling deck.trick(...).untrick().trick() will keep the deck 
+        of tricked cards persists even after untricking. That is,
+        calling deck.trick(...).untrick().trick() will keep the deck
         tricked in the order given in the first trick call.
 
         Returns
