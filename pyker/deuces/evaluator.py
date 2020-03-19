@@ -2,6 +2,7 @@
 import functools
 import itertools
 import operator
+from typing import Dict, List
 
 from pyker import error
 
@@ -11,17 +12,23 @@ from . import card
 class Evaluator(object):
     '''Evalutes poker hands using hole and community cards
 
-    Args:
-        suits (int): number of suits
-        ranks (int): number of ranks
-        cards_for_hand (int): number of cards used for a poker hand
-        mandatory_hole_cards (int): number of hole cards which must be
-                                    be used for a hand
-        low_end_straight (bool, optional): toggle to include straights
-                                           where ace is the lowest
-                                           card. defaults to True.
-        order (list, optional): custom hand rank order, if None hands 
-                                are ranked by rarity. defaults to None.
+    Parameters
+    ----------
+    suits : int
+        number of suits in deck
+    ranks : int
+        number of ranks in deck
+    cards_for_hand : int
+        number of cards used for valid poker hand
+    mandatory_hole_cards : int
+        number of hole cards which must be used for a hands
+    low_end_straight : bool, optional
+        toggle to include the low ace straight within valid hands, by
+        default True
+    order : list, optional
+        optional custom order of hand ranks, must be permutation of
+        ['sf', 'fk', 'fh', 'fl', 'st', 'tk', 'tp', 'pa', 'hc']. if
+        order=None, hands are ranked by rarity. by default None
     '''
 
     def __init__(self, suits: int, ranks: int, cards_for_hand: int,
@@ -56,24 +63,30 @@ class Evaluator(object):
         ]
         self.hand_ranks = ' > '.join(hands)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.hand_ranks
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def evaluate(self, hole_cards: list, community_cards: list):
+    def evaluate(self, hole_cards: List[card.Card],
+                 community_cards: List[card.Card]) -> int:
         '''Evaluates the hand rank of a poker hand from a list of hole
         and a list of community cards. Empty hole and community cards
         are supported as well as requiring a minimum number of hole
         cards to be used.
 
-        Args:
-            hole_cards (list): list of hole cards of a player
-            community_cards (list): list of community cards
+        Parameters
+        ----------
+        hole_cards : List[card.Card]
+            list of hole cards
+        community_cards : List[card.Card]
+            list of community cards
 
-        Returns:
-            int: hand rank
+        Returns
+        -------
+        int
+            hand rank
         '''
         # if a number of hole cards are mandatory
         if self.mandatory_hole_cards:
@@ -92,7 +105,7 @@ class Evaluator(object):
                 all_card_combs = list(
                     (sum(card_comb, ()) for card_comb in
                      iterator)
-            )
+                )
             else:
                 all_card_combs = list(hole_card_combs)
         # else create combinations from all cards
@@ -111,14 +124,18 @@ class Evaluator(object):
                 minimum = score
         return minimum
 
-    def get_rank_class(self, hand_rank: int):
+    def get_rank_class(self, hand_rank: int) -> str:
         '''Outputs hand rank string from integer hand rank
 
-        Args:
+        Parameters
+        ----------
+        hand_rank : int
             hand_rank (int): integer hand rank
 
-        Returns:
-            str: hand rank string
+        Returns
+        -------
+        str
+            hand rank string
         '''
         if hand_rank < 0 or hand_rank > self.table.max_rank:
             raise error.InvalidHandRankError(
@@ -127,28 +144,36 @@ class Evaluator(object):
         for hand in self.table.ranked_hands:
             if hand_rank <= self.table.hand_dict[hand]['cumulative unsuited']:
                 return hand
+        raise error.InvalidHandRankError(
+            (f'invalid hand rank, expected 0 <= hand_rank'
+             f' <= {self.table.max_rank}, got {hand_rank}')
+        )
 
 
 class LookupTable():
-    '''
-    Lookup table maps unique prime product of hands to unique
+    '''Lookup table maps unique prime product of hands to unique
     integer hand rank. The lower the rank the better the hand
 
-    Args:
-        suits (int): number of suits in deck
-        ranks (int): number of ranks in deck
-        cards_for_hand (int): number of cards used for a poker hand
-        low_end_straight (bool, optional): toggle to include straights
-                                           where ace is the lowest
-                                           card. defaults to True.
-        order (list, optional): custom hand rank order, if None hands
-                                are ranked by rarity. defaults to None.
+    Parameters
+    ----------
+    suits : int
+        number of suits in deck
+    ranks : int
+        number of ranks in deck
+    cards_for_hand : int
+        number of cards used for a poker hand
+    low_end_straight : bool, optional
+        toggle to include straights where ace is the lowest card, by
+        default True
+    order : List[str], optional
+        custom hand rank order, if None hands are ranked by rarity, by
+        default None
     '''
-
     ORDER_STRINGS = ['sf', 'fk', 'fh', 'fl', 'st', 'tk', 'tp', 'pa', 'hc']
 
     def __init__(self, suits: int, ranks: int, cards_for_hand: int,
-                 low_end_straight: bool = True, order: list = None):
+                 low_end_straight: bool = True, order: List[str] = None):
+
         if order is not None:
             if any(string not in order for string in self.ORDER_STRINGS):
                 raise error.InvalidOrderError(
@@ -270,8 +295,8 @@ class LookupTable():
         self.ranked_hands = ranked_hands
 
         # create lookup tables
-        self.suited_lookup = {}
-        self.unsuited_lookup = {}
+        self.suited_lookup: Dict[int, int] = {}
+        self.unsuited_lookup: Dict[int, int] = {}
         self.__flushes(ranks, cards_for_hand, low_end_straight)
         self.__multiples(ranks, cards_for_hand)
 
@@ -280,17 +305,21 @@ class LookupTable():
         if not self.hand_dict['flush']['cumulative unsuited']:
             self.suited_lookup = self.unsuited_lookup
 
-    def lookup(self, cards: list):
-        '''Returns unique hand rank for list of cards
+    def lookup(self, cards: List[card.Card]) -> int:
+        '''Return unique hand rank for list of cards
 
-        Args:
-            cards (list): card list to be evaluated
+        Parameters
+        ----------
+        cards : List[card.Card]
+            list of cards to be evaluated
 
-        Returns:
-            int: hand rank
+        Returns
+        -------
+        int
+            hand rank
         '''
         # if all flush bits equal then use flush lookup
-        if functools.reduce(operator.and_, cards + [0xF000]):
+        if functools.reduce(operator.and_, cards, 0xF000):
             hand_or = functools.reduce(operator.or_, cards) >> 16
             prime = card.prime_product_from_rankbits(hand_or)
             return self.suited_lookup[prime]
