@@ -6,5 +6,5 @@ class PokerViewer():
         self.num_hole_cards = num_hole_cards
         self.num_community_cards = num_community_cards
 
-    def render(self):
+    def render(self, config):
         raise NotImplementedError
