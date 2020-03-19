@@ -180,11 +180,11 @@ class Dealer():
             self.street_option = np.logical_not(self.active).astype(np.uint8)
             self.street_raises = 0
 
-        observation, payouts, done, info = self.__output()
+        observation, payouts, done = self.__output()
         if all(done):
             self.action = -1
             observation['action'] = -1
-        return observation, payouts, done, info
+        return observation, payouts, done
 
     def render(self, mode='ascii'):
         if self.viewer is None:
@@ -346,12 +346,11 @@ class Dealer():
             self.stacks += payouts + self.pot_commit
         return payouts
 
-    def __output(self):
+    def __output(self) -> Tuple[Observation, np.ndarray, np.ndarray]:
         observation = self.__observation()
         payouts = self.__payouts()
         done = self.__done()
-        info = None
-        return observation, payouts, done, info
+        return observation, payouts, done
 
     def __eval_round(self):
         # grab array of hand strength and pot commits
