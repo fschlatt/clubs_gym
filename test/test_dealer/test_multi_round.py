@@ -17,7 +17,7 @@ def test_button_move():
 
     bet = 0
     while True:
-        obs, done, reward, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
         if all(done):
             break
 
@@ -38,7 +38,7 @@ def test_button_move():
 
     bet = 0
     while True:
-        obs, payout, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
         if all(done):
             break
 
@@ -63,7 +63,7 @@ def test_inactive_players():
     _ = dealer.step(bet)
     bet = -1
     while True:
-        obs, payout, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
         if all(done):
             break
 

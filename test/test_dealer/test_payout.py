@@ -50,7 +50,7 @@ def test_split_pot():
 
     while True:
         bet = 0
-        obs, payouts, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
         if all(done):
             break
     assert not sum(payouts)
@@ -100,7 +100,7 @@ def test_all_in():
 
     while True:
         bet = 0
-        obs, payouts, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
         if all(done):
             break
 
@@ -153,7 +153,7 @@ def test_all_in_split_pot():
 
     while True:
         bet = 0
-        obs, payouts, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
         if all(done):
             break
 

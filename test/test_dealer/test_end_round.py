@@ -12,7 +12,7 @@ def test_all_but_one_fold():
 
     bet = -1
     for _ in range(5):
-        obs, payouts, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
     
     assert all(done)
     assert obs['pot'] == 3
@@ -34,7 +34,7 @@ def test_all_all_in():
 
     bet = 200
     for _ in range(6):
-        obs, payouts, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
     
     assert all(done)
     assert obs['pot'] == 1200
@@ -58,13 +58,13 @@ def test_bet_after_round_end():
 
     bet = 200
     for _ in range(6):
-        obs, payouts, done, _ = dealer.step(bet)
+        obs, payouts, done = dealer.step(bet)
     
     assert all(done)
     assert obs['call'] == obs['min_raise'] == obs['max_raise'] == 0
     assert obs['action'] == -1
 
-    obs, payouts, done, _ = dealer.step(bet)
+    obs, payouts, done = dealer.step(bet)
 
     assert all(done)
     assert obs['call'] == obs['min_raise'] == obs['max_raise'] == 0

@@ -22,7 +22,7 @@ def test_game():
     bet = 2
     _ = dealer.step(bet)
     bet = 2
-    obs, payout, done, info = dealer.step(bet)
+    obs, payout, done = dealer.step(bet)
 
     assert all(done)
     assert payout[0] > payout[1]
