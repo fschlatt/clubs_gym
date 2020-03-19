@@ -1,2 +1,2 @@
-from . import configs, deuces
-from .engine import Dealer
+from . import configs, poker
+from .poker.engine import Dealer

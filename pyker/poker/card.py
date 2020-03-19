@@ -31,7 +31,7 @@ PRETTY_SUITS: Dict[int, str] = {
 
 class Card:
     '''Cards are represented as 32-bit integers. Most of the bits are used
-    and have a specific meaning, check the deuces README for details:
+    and have a specific meaning, check the poker README for details:
 
                   bitrank  suit rank   prime
         +--------+--------+--------+--------+

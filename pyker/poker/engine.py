@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
-from pyker import deuces, error, render
+from pyker import poker, error, render
 
 
 class Observation(TypedDict):
@@ -175,15 +175,15 @@ class Dealer():
         self.action = -1
         self.active = np.ones(self.num_players, dtype=np.uint8)
         self.button = 0
-        self.community_cards: List[deuces.Card] = []
-        self.deck = deuces.Deck(self.num_suits, self.num_ranks)
-        self.evaluator = deuces.Evaluator(
+        self.community_cards: List[poker.Card] = []
+        self.deck = poker.Deck(self.num_suits, self.num_ranks)
+        self.evaluator = poker.Evaluator(
             self.num_suits, self.num_ranks, self.num_cards_for_hand,
             self.mandatory_num_hole_cards,
             low_end_straight=low_end_straight, order=order
         )
         self.history: List[Tuple[int, int, bool]] = []
-        self.hole_cards: List[List[deuces.Card]] = []
+        self.hole_cards: List[List[poker.Card]] = []
         self.largest_raise = 0
         self.pot = 0
         self.pot_commit = np.zeros(self.num_players, dtype=np.int32)
