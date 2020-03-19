@@ -12,3 +12,12 @@ class InvalidHandSizeError(Exception):
 
 class InvalidHandRankError(Exception):
     pass
+
+class TooFewActivePlayersError(Exception):
+    pass
+
+class TableResetError(Exception):
+    pass
+
+class UnknownRenderModeError(Exception):
+    pass
