@@ -123,7 +123,7 @@ class Card:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Card):
-            return bool(self._int == other)
+            return bool(self._int == other._int)
         else:
             raise NotImplementedError('only comparisons of two cards allowed')
 
