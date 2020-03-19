@@ -1,7 +1,6 @@
 import os
 
 from . import viewer
-from pyker import deuces
 
 
 class ASCIIViewer(viewer.PokerViewer):
