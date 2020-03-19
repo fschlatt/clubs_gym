@@ -1,5 +1,7 @@
 '''Classes and functions to create and manipulate cards and lists of 
 cards from a standard 52 card poker deck'''
+from __future__ import annotations
+
 import random
 from typing import Dict, List, Optional, Union
 
