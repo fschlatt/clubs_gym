@@ -81,7 +81,7 @@ pyker adopts the [Open AI gym](https://github.com/openai/gym) interface. See [py
 
 ## Universal Deuces
 
-The hand evaluator is heavily inspired by the library deuces found here: https://github.com/worldveil/deuces/. The basic logic is identical, but the evaluator and lookup table are generalized to work for any deck configuration with number of ranks <= 13 and number of suits <= 4 and poker hands with 5 or less cards. See the poker [README](./pyker/poker/README.md) for further details.
+The hand evaluator is heavily inspired by the [deuces](https://github.com/worldveil/deuces/) library. The basic logic is identical, but the evaluator and lookup table are generalized to work for any deck configuration with number of ranks <= 13 and number of suits <= 4 and poker hands with 5 or less cards. See the poker [README](./pyker/poker/README.md) for further details.
 
 ## Limitations
 
