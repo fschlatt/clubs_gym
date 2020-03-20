@@ -1,8 +1,8 @@
-<a href="https://github.com/fschlatt/pyker">
-  <p align="center">
-    <img src="./pyker/resources/images/black_red_logo_text.png" alt="pyker logo" href/>
-  </p>
-</a>
+<div align="center">
+
+![Logo](/pyker/resources/images/black_red_logo_text.png)
+
+</div>
 
 # pyker
 
