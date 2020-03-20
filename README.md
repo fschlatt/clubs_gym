@@ -1,6 +1,6 @@
 <a href="">
   <p align="center">
-    <img src="./pyker/resources/images/black_red_logo_text.png" alt="pyker logo" style="width:400px;" href/>
+    <img src="./pyker/resources/images/black_red_logo_text.png" alt="pyker logo" style="width:200px;" href/>
   </p>
 </a>
 
