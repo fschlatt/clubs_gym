@@ -1,24 +1,9 @@
 '''Classes and functions for running poker games'''
-from typing import Dict, List, Optional, Tuple, TypedDict, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
 from pyker import poker, error, render
-
-
-class Observation(TypedDict):
-
-    action: int
-    active: np.ndarray
-    button: int
-    call: int
-    community_cards: List[str]
-    hole_cards: List[List[str]]
-    max_raise: int
-    min_raise: int
-    pot: int
-    stacks: np.ndarray
-    street_commits: np.ndarray
 
 
 class Dealer():
@@ -199,7 +184,7 @@ class Dealer():
         self.viewer = None
 
     def reset(self, reset_button: bool = False,
-              reset_stacks: bool = False) -> Observation:
+              reset_stacks: bool = False) -> Dict:
         '''Resets the table. Shuffles the deck, deals new hole cards
         to all players, moves the button and collects blinds and antes.
 
@@ -212,7 +197,7 @@ class Dealer():
 
         Returns
         -------
-        Observation
+        Dict
             observation dictionary containing following info
 
                 {
@@ -268,7 +253,7 @@ class Dealer():
 
         return self.__observation()
 
-    def step(self, bet: int) -> Tuple[Observation, np.ndarray, np.ndarray]:
+    def step(self, bet: int) -> Tuple[Dict, np.ndarray, np.ndarray]:
         '''Advances poker game to next player. If the bet is 0, it is
         either considered a check or fold, depending on the previous
         action. The given bet is always rounded to the closest valid bet
@@ -283,7 +268,7 @@ class Dealer():
 
         Returns
         -------
-        Tuple[Observation, np.ndarray, np.ndarray]
+        Tuple[Dict, np.ndarray, np.ndarray]
             observation dictionary containing following info
 
                 {
@@ -501,12 +486,12 @@ class Dealer():
             return out
         return np.logical_not(self.active)
 
-    def __observation(self) -> Observation:
+    def __observation(self) -> Dict:
         if all(self.__done()):
             call = min_raise = max_raise = 0
         else:
             call, min_raise, max_raise = self.__bet_sizes()
-        observation: Observation = {
+        observation: dict = {
             'action': self.action,
             'active': self.active,
             'button': self.button,
@@ -538,7 +523,7 @@ class Dealer():
             self.stacks += payouts + self.pot_commit
         return payouts
 
-    def __output(self) -> Tuple[Observation, np.ndarray, np.ndarray]:
+    def __output(self) -> Tuple[Dict, np.ndarray, np.ndarray]:
         observation = self.__observation()
         payouts = self.__payouts()
         done = self.__done()
