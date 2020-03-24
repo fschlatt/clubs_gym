@@ -1,7 +1,5 @@
 '''Classes and functions to create and manipulate cards and lists of
 cards from a standard 52 card poker deck'''
-from __future__ import annotations
-
 import random
 from typing import Dict, List, Optional, Union
 
@@ -93,32 +91,32 @@ class Card:
     def __repr__(self) -> str:
         return str(self)
 
-    def __and__(self, other: Union[Card, int]) -> int:
+    def __and__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
             other = other._int
         return self._int & other
 
-    def __rand__(self, other: Union[Card, int]) -> int:
+    def __rand__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
             other = other._int
         return other & self._int
 
-    def __or__(self, other: Union[Card, int]) -> int:
+    def __or__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
             other = other._int
         return self._int | other
 
-    def __ror__(self, other: Union[Card, int]) -> int:
+    def __ror__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
             other = other._int
         return other | self._int
 
-    def __lshift__(self, other: Union[Card, int]) -> int:
+    def __lshift__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
             other = other._int
         return self._int << other
 
-    def __rshift__(self, other: Union[Card, int]) -> int:
+    def __rshift__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
             other = other._int
         return self._int >> other
@@ -242,7 +240,7 @@ class Deck:
                 break
         return cards
 
-    def shuffle(self) -> Deck:
+    def shuffle(self) -> 'Deck':
         '''Shuffles the deck. If a tricking order is given, the desired
         cards are placed on the top of the deck after shuffling.
 
@@ -262,7 +260,7 @@ class Deck:
         return self
 
     def trick(self, top_cards: Optional[List[Union[str, Card]]] = None,
-              shuffle: bool = True) -> Deck:
+              shuffle: bool = True) -> 'Deck':
         '''Tricks the deck by placing a fixed order of cards on the top
         of the deck and shuffling the rest. E.g.
         deck.trick(['AS', '2H']) places the ace of spades and deuce of
@@ -300,7 +298,7 @@ class Deck:
         self._tricked = True
         return self.shuffle()
 
-    def untrick(self) -> Deck:
+    def untrick(self) -> 'Deck':
         '''Removes the tricked cards from the top of the deck. The order
         of tricked cards persists even after untricking. That is,
         calling deck.trick(...).untrick().trick() will keep the deck
