@@ -36,7 +36,7 @@ setup(
     packages=find_packages(where='pyker'),
     python_requires='>=3.5',
     install_requires=['numpy>=1.16'],
-    project_urls={  # Optional
+    project_urls={
         'Bug Reports': 'https://github.com/fschlatt/pyker/issues',
         'Source': 'https://github.com/fschlatt/pyker/',
     },
