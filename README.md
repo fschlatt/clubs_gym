@@ -1,6 +1,6 @@
 <div align="center">
 
-![Logo](/pyker/resources/images/black_red_logo_text.png)
+<img src="./pyker/resources/images/black_red_logo.svg" alt="Logo" width=200px>
 
 </div>
 
