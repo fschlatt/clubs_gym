@@ -37,7 +37,8 @@ class Evaluator(object):
 
         if cards_for_hand < 0 or cards_for_hand > 5:
             raise error.InvalidHandSizeError(
-                f'Evaluation for {cards_for_hand} card hands is not supported. '
+                f'Evaluation for {cards_for_hand} '
+                f'card hands is not supported. '
                 f'pyker currently supports 1-5 card poker hands'
             )
 

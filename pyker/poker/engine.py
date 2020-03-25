@@ -131,7 +131,7 @@ class Dealer():
         num_req_cards = num_players * num_hole_cards + sum(num_community_cards)
         if num_cards < num_req_cards:
             raise ValueError(
-                f'deck too small - {num_cards} in deck, {num_req_cards} needed')
+                f'deck too small; {num_cards} in deck, {num_req_cards} needed')
 
         def clean_rs(raise_size):
             if isinstance(raise_size, (int, float)):
@@ -232,7 +232,8 @@ class Dealer():
         self.community_cards = self.deck.draw(self.num_community_cards[0])
         self.history = []
         self.hole_cards = [
-            self.deck.draw(self.num_hole_cards) for _ in range(self.num_players)
+            self.deck.draw(self.num_hole_cards)
+            for _ in range(self.num_players)
         ]
         self.largest_raise = self.big_blind
         self.pot = 0
@@ -350,8 +351,8 @@ class Dealer():
         return observation, payouts, done
 
     def render(self, mode: str = 'ascii'):
-        '''Renders poker table. Render mode options are: ascii, 
-        asciimatics 
+        '''Renders poker table. Render mode options are: ascii,
+        asciimatics
 
         Parameters
         ----------
@@ -447,7 +448,8 @@ class Dealer():
         return call, min_raise, max_raise
 
     @staticmethod
-    def __clean_bet(bet: int, call: int, min_raise: int, max_raise: int) -> int:
+    def __clean_bet(bet: int, call: int, min_raise: int,
+                    max_raise: int) -> int:
         # find closest bet size to actual bet
         # pessimistic approach: in ties order is fold/check -> call -> raise
         idx = np.argmin(np.absolute(
@@ -461,7 +463,8 @@ class Dealer():
         # if fold closest
         return 0
 
-    def __collect_multiple_bets(self, bets: List[int], street_commits: bool = True):
+    def __collect_multiple_bets(self, bets: List[int],
+                                street_commits: bool = True):
         bets = np.roll(bets, self.action)
         bets = (self.stacks > 0) * self.active * bets
         if street_commits:

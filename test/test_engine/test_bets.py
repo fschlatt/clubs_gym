@@ -1,5 +1,6 @@
 import pyker
 
+
 def test_limit_bet_size():
 
     config = pyker.configs.LIMIT_HOLDEM_6P_ENV
@@ -22,6 +23,7 @@ def test_limit_bet_size():
     assert obs['pot'] == 9
     assert not obs['active'].all()
 
+
 def test_all_in_bet_size():
     config = pyker.configs.NOLIMIT_HOLDEM_2P_ENV
 
@@ -38,6 +40,7 @@ def test_all_in_bet_size():
     bet = 1000
     obs, *_ = dealer.step(bet)
     assert obs['pot'] == 400
+
 
 def test_incomplete_raise():
 
@@ -98,6 +101,7 @@ def test_pot_limit_bet_size():
     _ = dealer.step(bet)
     bet = 4
 
+
 def test_bet_rounding():
 
     config = pyker.configs.NOLIMIT_HOLDEM_9P_ENV
@@ -131,6 +135,7 @@ def test_bet_rounding():
     obs, *_ = dealer.step(bet)
     assert obs['street_commits'][8] == 10
 
+
 def test_big_blind_raise_chance():
 
     config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
@@ -139,7 +144,7 @@ def test_big_blind_raise_chance():
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
-    bet = 2 # all call
+    bet = 2  # all call
     for _ in range(5):
         obs, *_ = dealer.step(bet)
 

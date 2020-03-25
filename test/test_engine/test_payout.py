@@ -55,8 +55,8 @@ def test_split_pot():
             break
     assert not sum(payouts)
     test_payouts = [12, -9, -2, 0, -5, 13, -9, 0, 0]
-    assert all(payout == test_payout 
-    for payout, test_payout in zip(payouts, test_payouts))
+    assert all(payout == test_payout
+               for payout, test_payout in zip(payouts, test_payouts))
 
 
 def test_all_in():

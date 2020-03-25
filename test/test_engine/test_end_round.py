@@ -2,6 +2,7 @@ import random
 
 import pyker
 
+
 def test_all_but_one_fold():
 
     config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
@@ -13,7 +14,7 @@ def test_all_but_one_fold():
     bet = -1
     for _ in range(5):
         obs, payouts, done = dealer.step(bet)
-    
+
     assert all(done)
     assert obs['pot'] == 3
     test_payouts = [0, -1, 1, 0, 0, 0]
@@ -22,6 +23,7 @@ def test_all_but_one_fold():
     test_stacks = [200, 199, 201, 200, 200, 200]
     assert all(stack == test_stack
                for stack, test_stack in zip(obs['stacks'], test_stacks))
+
 
 def test_all_all_in():
     random.seed(42)
@@ -35,7 +37,7 @@ def test_all_all_in():
     bet = 200
     for _ in range(6):
         obs, payouts, done = dealer.step(bet)
-    
+
     assert all(done)
     assert obs['pot'] == 1200
     test_payouts = [-200, -200, -200, -200, -200, 1000]
@@ -59,7 +61,7 @@ def test_bet_after_round_end():
     bet = 200
     for _ in range(6):
         obs, payouts, done = dealer.step(bet)
-    
+
     assert all(done)
     assert obs['call'] == obs['min_raise'] == obs['max_raise'] == 0
     assert obs['action'] == -1
