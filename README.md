@@ -6,6 +6,8 @@
 
 # pyker
 
+![Python package](https://github.com/fschlatt/pyker/workflows/Python%20package/badge.svg?branch=master)
+
 pyker is a python library for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
 
 ## Example
