@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from pyker import poker, error, render
+from pyker_engine import poker, error, render
 
 
 class Dealer():

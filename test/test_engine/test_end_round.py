@@ -1,13 +1,13 @@
 import random
 
-import pyker
+import pyker_engine
 
 
 def test_all_but_one_fold():
 
-    config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
@@ -28,9 +28,9 @@ def test_all_but_one_fold():
 def test_all_all_in():
     random.seed(42)
 
-    config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
@@ -52,9 +52,9 @@ def test_bet_after_round_end():
 
     random.seed(42)
 
-    config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 

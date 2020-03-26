@@ -3,7 +3,7 @@ cards from a standard 52 card poker deck'''
 import random
 from typing import Dict, List, Optional, Union
 
-from pyker import error
+from pyker_engine import error
 
 STR_RANKS: str = '23456789TJQKA'
 INT_RANKS: List[int] = list(range(13))

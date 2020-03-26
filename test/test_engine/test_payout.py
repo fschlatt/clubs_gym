@@ -1,11 +1,11 @@
-import pyker
+import pyker_engine
 
 
 def test_split_pot():
 
-    config = pyker.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_9P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     hands = [
         ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['Js', 'Jc'],
@@ -61,9 +61,9 @@ def test_split_pot():
 
 def test_all_in():
 
-    config = pyker.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_9P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     hands = [
         ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['Js', 'Jc'],
@@ -112,9 +112,9 @@ def test_all_in():
 
 def test_all_in_split_pot():
 
-    config = pyker.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_9P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     hands = [
         ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['6d', '8h'],

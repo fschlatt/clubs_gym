@@ -1,11 +1,11 @@
-import pyker
+import pyker_engine
 
 
 def test_game():
 
-    config = pyker.configs.LEDUC_2P_ENV
+    config = pyker_engine.configs.LEDUC_2P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     dealer.deck = dealer.deck.trick(['Qs', 'Ks', 'Qh'])
 
@@ -31,9 +31,9 @@ def test_game():
 
 def test_heads_up():
 
-    config = pyker.configs.NOLIMIT_HOLDEM_2P_ENV
+    config = pyker_engine.configs.NOLIMIT_HOLDEM_2P_ENV
 
-    dealer = pyker.Dealer(**config)
+    dealer = pyker_engine.Dealer(**config)
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
