@@ -2,7 +2,7 @@ import os
 
 from setuptools import find_packages, setup
 
-import pyker
+import pyker_engine
 
 file_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -10,14 +10,14 @@ with open(os.path.join(file_dir, 'README.md'), encoding='utf-8') as file:
     long_description = file.read()
 
 setup(
-    name='pyker',
-    version=pyker.__version__,
-    description=pyker.__docs__,
+    name='pyker_engine',
+    version=pyker_engine.__version__,
+    description=pyker_engine.__docs__,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author=pyker.__author__,
-    url=pyker.__homepage__,
-    license=pyker.__license__,
+    author=pyker_engine.__author__,
+    url=pyker_engine.__homepage__,
+    license=pyker_engine.__license__,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -32,11 +32,11 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     keywords=['reinforcment learning', 'poker', 'AI', 'gym'],
-    packages=find_packages(where='pyker'),
+    packages=['pyker_engine'],
     python_requires='>=3.6',
     install_requires=['numpy>=1.16'],
     project_urls={
-        'Bug Reports': 'https://github.com/fschlatt/pyker/issues',
-        'Source': 'https://github.com/fschlatt/pyker/',
+        'Bug Reports': 'https://github.com/fschlatt/pyker_engine/issues',
+        'Source': 'https://github.com/fschlatt/pyker_engine/',
     },
 )

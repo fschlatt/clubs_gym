@@ -1,4 +1,4 @@
-from pyker import poker
+from pyker_engine import poker
 
 
 def test_1_card():

@@ -1,6 +1,6 @@
 import random
 
-from pyker import poker
+from pyker_engine import poker
 
 
 def test_draw():

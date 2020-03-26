@@ -1,22 +1,22 @@
 <div align="center">
 
-<img src="./pyker/resources/images/black_red_logo.svg" alt="Logo" width=200px>
+<img src="./pyker_engine/resources/images/black_red_logo.svg" alt="Logo" width=200px>
 
 </div>
 
-# pyker
+# pyker_engine
 
-pyker is a python library for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
+pyker_engine is a python library for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
 
 ## Example
 
 ```python
 import random
 
-import pyker
+import pyker_engine
 
-config = pyker.configs.NOLIMIT_HOLDEM_6P_ENV
-dealer = pyker.Dealer(**config)
+config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
+dealer = pyker_engine.Dealer(**config)
 obs = dealer.reset()
 
 while True:
@@ -41,7 +41,7 @@ print(rewards)
 
 ## Configuration
 
-The type of poker game is defined using a configuration dictionary. See [configs.py](./pyker/configs.py) for some example configurations. A configuration dictionary has to have the following key value structure:
+The type of poker game is defined using a configuration dictionary. See [configs.py](./pyker_engine/configs.py) for some example configurations. A configuration dictionary has to have the following key value structure:
 * num_players
   * int: maximum number of players
 * num_streets
@@ -77,11 +77,11 @@ The type of poker game is defined using a configuration dictionary. See [configs
 
 ## API
 
-pyker adopts the [Open AI gym](https://github.com/openai/gym) interface. See [pyker gym](https://github.com/fschlatt/pyker_gym.git) for a full pyker gym environment. To deal a new hand, call `dealer.reset()`, which returns a dictionary of observations for the current active player. To advance the game, call `dealer.step({bet})` with an integer bet size. Invalid bet sizes are always rounded to the nearest valid bet size. When the bet lies exactly between 2 valid bet sizes, it is always rounded down. For example, if the minimum raise size is 10 and the bet is 5, the bet is rounded down to 0, i.e. call or fold.
+pyker_engine adopts the [Open AI gym](https://github.com/openai/gym) interface. See [pyker_engine gym](https://github.com/fschlatt/pyker_gym.git) for a full pyker_engine gym environment. To deal a new hand, call `dealer.reset()`, which returns a dictionary of observations for the current active player. To advance the game, call `dealer.step({bet})` with an integer bet size. Invalid bet sizes are always rounded to the nearest valid bet size. When the bet lies exactly between 2 valid bet sizes, it is always rounded down. For example, if the minimum raise size is 10 and the bet is 5, the bet is rounded down to 0, i.e. call or fold.
 
 ## Universal Deuces
 
-The hand evaluator is heavily inspired by the [deuces](https://github.com/worldveil/deuces/) library. The basic logic is identical, but the evaluator and lookup table are generalized to work for any deck configuration with number of ranks <= 13 and number of suits <= 4 and poker hands with 5 or less cards. See the poker [README](./pyker/poker/README.md) for further details.
+The hand evaluator is heavily inspired by the [deuces](https://github.com/worldveil/deuces/) library. The basic logic is identical, but the evaluator and lookup table are generalized to work for any deck configuration with number of ranks <= 13 and number of suits <= 4 and poker hands with 5 or less cards. See the poker [README](./pyker_engine/poker/README.md) for further details.
 
 ## Limitations
 
