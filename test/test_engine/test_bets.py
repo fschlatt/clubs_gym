@@ -1,11 +1,11 @@
-import pyker_engine
+import clubs
 
 
 def test_limit_bet_size():
 
-    config = pyker_engine.configs.LIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.LIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
     bet = 2.1
@@ -25,9 +25,9 @@ def test_limit_bet_size():
 
 
 def test_all_in_bet_size():
-    config = pyker_engine.configs.NOLIMIT_HOLDEM_2P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_2P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
 
     dealer.stacks[0] -= 150
     dealer.stacks[1] += 150
@@ -44,9 +44,9 @@ def test_all_in_bet_size():
 
 def test_incomplete_raise():
 
-    config = dict(**pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV)
+    config = dict(**clubs.configs.NOLIMIT_HOLDEM_6P_ENV)
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
 
     dealer.stacks[1] = dealer.stacks[1] - 190
     dealer.stacks[2] = dealer.stacks[2] + 190
@@ -80,9 +80,9 @@ def test_incomplete_raise():
 
 def test_pot_limit_bet_size():
 
-    config = pyker_engine.configs.POT_LIMIT_OMAHA_6P_ENV
+    config = clubs.configs.POT_LIMIT_OMAHA_6P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
     assert obs['min_raise'] == 4
@@ -104,9 +104,9 @@ def test_pot_limit_bet_size():
 
 def test_bet_rounding():
 
-    config = pyker_engine.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_9P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
@@ -138,9 +138,9 @@ def test_bet_rounding():
 
 def test_big_blind_raise_chance():
 
-    config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 

@@ -4,7 +4,7 @@ import itertools
 import operator
 from typing import Dict, List
 
-from pyker_engine import error
+from clubs import error
 
 from . import card
 
@@ -39,7 +39,7 @@ class Evaluator(object):
             raise error.InvalidHandSizeError(
                 f'Evaluation for {cards_for_hand} '
                 f'card hands is not supported. '
-                f'pyker_engine currently supports 1-5 card poker hands'
+                f'clubs currently supports 1-5 card poker hands'
             )
 
         self.suits = suits

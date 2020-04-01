@@ -1,15 +1,15 @@
 import random
 
-import pyker_engine
+import clubs
 
 
 def test_button_move():
 
     random.seed(42)
 
-    config = pyker_engine.configs.NOLIMIT_HOLDEM_2P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_2P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
     assert obs['button'] == 0
@@ -28,9 +28,9 @@ def test_button_move():
 
     random.seed(42)
 
-    config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
     assert obs['button'] == 0
@@ -52,9 +52,9 @@ def test_inactive_players():
 
     random.seed(42)
 
-    config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
 
-    dealer = pyker_engine.Dealer(**config)
+    dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
     bet = 200

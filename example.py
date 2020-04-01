@@ -1,10 +1,10 @@
 import random
 
-import pyker_engine
+import clubs
 
 # 1-2 no limit 6 player texas hold'em
-config = pyker_engine.configs.NOLIMIT_HOLDEM_6P_ENV
-dealer = pyker_engine.Dealer(**config)
+config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
+dealer = clubs.Dealer(**config)
 obs = dealer.reset()
 
 while True:
