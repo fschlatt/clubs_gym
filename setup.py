@@ -31,10 +31,10 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    keywords=['reinforcment learning', 'poker', 'AI', 'gym'],
+    keywords=['reinforcement learning', 'poker', 'AI', 'gym'],
     packages=['clubs'],
     python_requires='>=3.6',
-    install_requires=['numpy>=1.16'],
+    install_requires=['numpy>=1.16.6'],
     project_urls={
         'Bug Reports': 'https://github.com/fschlatt/clubs/issues',
         'Source': 'https://github.com/fschlatt/clubs/',
