@@ -25,6 +25,9 @@ def test_draw():
 def test_trick():
     random.seed(42)
 
+    deck = poker.Deck(4, 13)
+    assert deck.cards[0] != deck.trick().cards[0]
+
     deck = poker.Deck(4, 13).trick(['Ah', '2s'])
 
     cards = deck.draw(2)
@@ -46,6 +49,34 @@ def test_invalid_init():
     with pytest.raises(error.InvalidRankError):
         poker.Card('1s')
         poker.Card('1t')
+        poker.Deck(0, 0)
+        poker.Deck(2, 14)
 
     with pytest.raises(error.InvalidSuitError):
         poker.Card('At')
+        poker.Deck(0, 1)
+        poker.Deck(5, 1)
+
+
+def test_ops():
+    card = poker.Card('Ac')
+
+    assert card & card
+    assert card & card._int
+    assert card | card
+    assert card | card._int
+    assert card << 0 == card._int
+    assert card._int << 0 == card._int
+    assert card >> 0 == card._int
+    assert card._int >> 0 == card._int
+
+    with pytest.raises(NotImplementedError):
+        card == 0
+
+
+def test_str_repr():
+    card = poker.Card('Ac')
+    assert repr(card) == f'Card ({id(card)}): {card}'
+
+    deck = poker.Deck(4, 13)
+    assert repr(deck) == f'Deck ({id(deck)}): {str(deck)}'
