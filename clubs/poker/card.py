@@ -188,14 +188,14 @@ class Deck:
     '''
 
     def __init__(self, num_suits: int, num_ranks: int) -> None:
+        if num_ranks < 0 or num_ranks > 13:
+            raise error.InvalidRankError(
+                f'Invalid number of suits, expected number of suits '
+                f'between 1 and 13, got {num_ranks}')
         if num_suits < 0 or num_suits > 4:
             raise error.InvalidSuitError(
                 f'Invalid number of suits, expected number of suits '
                 f'between 1 and 4, got {num_suits}')
-        if num_ranks < 0 or num_ranks > 13:
-            raise error.InvalidSuitError(
-                f'Invalid number of suits, expected number of suits '
-                f'between 1 and 13, got {num_ranks}')
         self.num_ranks = num_ranks
         self.num_suits = num_suits
         self.full_deck: List[Card] = []
