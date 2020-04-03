@@ -147,7 +147,7 @@ class ASCIIViewer(viewer.PokerViewer):
             iterables = [config['payouts'], positions]
             for payout, pos in zip(*iterables):
                 str_config[pos + 'c'] = '{:,}'.format(payout)
-            if (config['payouts'] > 0).sum() > 1:
+            if sum((config['payouts'] > 0)) > 1:
                 win_string += 's {} won {} respectively'
             else:
                 win_string += ' {} won {}'
