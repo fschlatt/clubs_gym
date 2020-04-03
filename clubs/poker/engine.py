@@ -351,7 +351,8 @@ class Dealer():
                 if full_streets:
                     break
                 self.community_cards += self.deck.draw(
-                    self.num_community_cards[self.street])
+                    self.num_community_cards[self.street]
+                )
                 if not all_all_in:
                     break
             self.street_commits.fill(0)
@@ -516,10 +517,12 @@ class Dealer():
             'call': call,
             'community_cards': [
                 str(card)
-                for card in self.community_cards],
+                for card in self.community_cards
+            ],
             'hole_cards': [
                 [str(card) for card in cards]
-                for cards in self.hole_cards],
+                for cards in self.hole_cards
+            ],
             'max_raise': max_raise,
             'min_raise': min_raise,
             'pot': self.pot,
@@ -558,7 +561,8 @@ class Dealer():
             hand_strength = worst_hand
             if self.active[player]:
                 hand_strength = self.evaluator.evaluate(
-                    self.hole_cards[player], self.community_cards)
+                    self.hole_cards[player], self.community_cards
+                )
             hand_list.append([player, hand_strength, self.pot_commit[player]])
         hands = np.array(hand_list)
         # sort hands by hand strength and pot commits
