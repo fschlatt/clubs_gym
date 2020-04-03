@@ -123,3 +123,13 @@ def test_str_repr():
         f'num streets: {dealer.num_streets}'
     )
     assert repr(dealer) == string
+
+
+def test_init_step():
+
+    config = clubs.configs.NOLIMIT_HOLDEM_2P_ENV
+
+    dealer = clubs.Dealer(**config)
+
+    with pytest.raises(error.TableResetError):
+        dealer.step(0)
