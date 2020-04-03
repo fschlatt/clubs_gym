@@ -96,9 +96,7 @@ class Card:
             other = other._int
         return self._int & other
 
-    def __rand__(self, other: Union['Card', int]) -> int:
-        if isinstance(other, Card):
-            other = other._int
+    def __rand__(self, other: int) -> int:
         return other & self._int
 
     def __or__(self, other: Union['Card', int]) -> int:
@@ -106,19 +104,13 @@ class Card:
             other = other._int
         return self._int | other
 
-    def __ror__(self, other: Union['Card', int]) -> int:
-        if isinstance(other, Card):
-            other = other._int
+    def __ror__(self, other: int) -> int:
         return other | self._int
 
-    def __lshift__(self, other: Union['Card', int]) -> int:
-        if isinstance(other, Card):
-            other = other._int
+    def __lshift__(self, other: int) -> int:
         return self._int << other
 
-    def __rshift__(self, other: Union['Card', int]) -> int:
-        if isinstance(other, Card):
-            other = other._int
+    def __rshift__(self, other: int) -> int:
         return self._int >> other
 
     def __eq__(self, other: object) -> bool:
