@@ -48,13 +48,18 @@ def test_trick():
 def test_invalid_init():
     with pytest.raises(error.InvalidRankError):
         poker.Card('1s')
+    with pytest.raises(error.InvalidRankError):
         poker.Card('1t')
+    with pytest.raises(error.InvalidRankError):
         poker.Deck(0, 0)
+    with pytest.raises(error.InvalidRankError):
         poker.Deck(2, 14)
 
     with pytest.raises(error.InvalidSuitError):
         poker.Card('At')
+    with pytest.raises(error.InvalidSuitError):
         poker.Deck(0, 1)
+    with pytest.raises(error.InvalidSuitError):
         poker.Deck(5, 1)
 
 
