@@ -182,6 +182,20 @@ class Dealer():
         # render
         self.viewer: Optional[render.PokerViewer]
         self.viewer = None
+        self.ascii_viewer = render.ASCIIViewer(
+            num_players, num_hole_cards, sum(num_community_cards)
+        )
+
+    def __str__(self) -> str:
+        config = self._render_config()
+        return self.ascii_viewer.parse_string(config)
+
+    def __repr__(self) -> str:
+        string = (
+            f'Dealer ({id(self)}) - num players: {self.num_players}, '
+            f'num streets: {self.num_streets}'
+        )
+        return string
 
     def reset(self, reset_button: bool = False,
               reset_stacks: bool = False) -> Dict:
@@ -350,35 +364,7 @@ class Dealer():
             observation['action'] = -1
         return observation, payouts, done
 
-    def render(self, mode: str = 'ascii'):
-        '''Renders poker table. Render mode options are: ascii,
-        asciimatics
-
-        Parameters
-        ----------
-        mode : str, optional
-            toggle for using different renderer, by default 'ascii'
-        '''
-        if self.viewer is None:
-            if mode == 'ascii':
-                self.viewer = render.ASCIIViewer(
-                    self.num_players,
-                    self.num_hole_cards,
-                    sum(self.num_community_cards)
-                )
-            elif mode == 'asciimatics':
-                self.viewer = render.AsciimaticsViewer(
-                    self.num_players,
-                    self.num_hole_cards,
-                    sum(self.num_community_cards)
-                )
-            else:
-                render_modes = ', '.join(['ascii', 'asciimatics'])
-                raise error.UnknownRenderModeError(
-                    (f'incorrect render mode {mode},'
-                     f'use one of[{render_modes}]')
-                )
-
+    def _render_config(self):
         action = self.action
         active = self.active
         all_in = self.active * (self.stacks == 0)
@@ -406,7 +392,36 @@ class Dealer():
             'stacks': stacks,
         }
 
-        self.viewer.render(config)
+        return config
+
+    def render(self, mode: str = 'ascii', **kwargs):
+        '''Renders poker table. Render mode options are: ascii,
+        asciimatics
+
+        Parameters
+        ----------
+        mode : str, optional
+            toggle for using different renderer, by default 'ascii'
+        '''
+        if self.viewer is None:
+            if mode == 'ascii':
+                self.viewer = self.ascii_viewer
+            elif mode == 'asciimatics':
+                self.viewer = render.AsciimaticsViewer(
+                    self.num_players,
+                    self.num_hole_cards,
+                    sum(self.num_community_cards)
+                )
+            else:
+                render_modes = ', '.join(['ascii', 'asciimatics'])
+                raise error.UnknownRenderModeError(
+                    (f'incorrect render mode {mode},'
+                     f'use one of[{render_modes}]')
+                )
+
+        config = self._render_config()
+
+        self.viewer.render(config, **kwargs)
 
     def __all_agreed(self) -> bool:
         # not all agreed if not all players had chance to act

@@ -89,7 +89,7 @@ class Card:
         return f'{rank}{suit}'
 
     def __repr__(self) -> str:
-        return str(self)
+        return f'Card ({id(self)}): {str(self)}'
 
     def __and__(self, other: Union['Card', int]) -> int:
         if isinstance(other, Card):
@@ -215,7 +215,7 @@ class Deck:
         return string
 
     def __repr__(self) -> str:
-        return str(self)
+        return f'Deck ({id(self)}): {str(self)}'
 
     def draw(self, n: int = 1) -> List[Card]:
         '''Draws cards from the top of the deck. If the number of cards
