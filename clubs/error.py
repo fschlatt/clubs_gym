@@ -1,3 +1,11 @@
+class InvalidConfigError(Exception):
+    pass
+
+
+class InvalidRaiseSizeError(Exception):
+    pass
+
+
 class InvalidRankError(Exception):
     pass
 
