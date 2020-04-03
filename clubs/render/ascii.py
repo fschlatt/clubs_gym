@@ -4,6 +4,18 @@ from . import viewer
 
 
 class ASCIIViewer(viewer.PokerViewer):
+    '''Poker game renderer which prints an ascii representation of the
+    table state to the terminal
+
+    Parameters
+    ----------
+    num_players : int
+        number of players
+    num_hole_cards : int
+        number of hole cards
+    num_community_cards : int
+        number of community cards
+    '''
 
     POS_DICT = {2: [0, 5],
                 3: [0, 3, 6],
@@ -21,7 +33,8 @@ class ASCIIViewer(viewer.PokerViewer):
             + ['b{}'.format(idx) for idx in range(10)]
             + ['sb', 'bb', 'ccs', 'pot', 'action'])
 
-    def __init__(self, num_players, num_hole_cards, num_community_cards):
+    def __init__(self, num_players: int, num_hole_cards: int,
+                 num_community_cards: int) -> None:
         super(ASCIIViewer, self).__init__(
             num_players, num_hole_cards, num_community_cards)
 
@@ -34,7 +47,38 @@ class ASCIIViewer(viewer.PokerViewer):
 
         self.player_pos = self.POS_DICT[num_players]
 
-    def _parse_string(self, config):
+    def parse_string(self, config: dict) -> str:
+        '''Parses game config and inserts values into ascii table
+
+        Parameters
+        ----------
+        config : dict
+            game configuration dictionary,
+                config = {
+                    'action': int - position of active player,
+                    'active': List[bool] - list of active players,
+                    'all_in': List[bool] - list of all in players,
+                    'community_cards': List[Card] - list of community
+                                       cards,
+                    'dealer': int - position of dealer,
+                    'done': List[bool] - list of done players,
+                    'hole_cards': List[List[Card]] - list of hole cards,
+                    'pot': int - chips in pot,
+                    'payouts': List[int] - list of chips won for each
+                               player,
+                    'prev_action': Tuple[int, int, int] - last
+                                   position bet and fold,
+                    'street_commits': List[int] - list of number of
+                                      chips added to pot from each
+                                      player on current street,
+                    'stacks': List[int] - list of stack sizes,
+                }
+
+        Returns
+        -------
+        str
+            ascii table representation
+        '''
 
         action = config['action']
         dealer = config['dealer']
@@ -44,9 +88,9 @@ class ASCIIViewer(viewer.PokerViewer):
 
         ccs = [str(card) for card in config['community_cards']]
         ccs += ['--'] * (self.num_community_cards - len(ccs))
-        ccs = '[' + ','.join(ccs) + ']'
+        ccs_string = '[' + ','.join(ccs) + ']'
 
-        str_config['ccs'] = ccs
+        str_config['ccs'] = ccs_string
         if not done:
             str_config['pot'] = '{:,}'.format(config['pot'])
             str_config['a{}'.format(self.player_pos[action])] = 'X'
@@ -73,9 +117,10 @@ class ASCIIViewer(viewer.PokerViewer):
                            ' {:,}'.format(stack))
 
         positions = ['p{}'.format(idx) for idx in self.player_pos]
-        iterator = zip(
-            players, config['street_commits'], positions, config['all_in'])
-        for player, street_commit, pos, all_in in iterator:
+        iterables = [
+            players, config['street_commits'], positions, config['all_in']
+        ]
+        for player, street_commit, pos, all_in in zip(*iterables):
             str_config[pos] = player
             str_config[pos + 'c'] = '{:,}'.format(street_commit)
             if all_in and not done:
@@ -99,9 +144,8 @@ class ASCIIViewer(viewer.PokerViewer):
 
         if done:
             win_string = 'Player'
-            iterator = zip(
-                config['payouts'], positions)
-            for payout, pos in iterator:
+            iterables = [config['payouts'], positions]
+            for payout, pos in zip(*iterables):
                 str_config[pos + 'c'] = '{:,}'.format(payout)
             if (config['payouts'] > 0).sum() > 1:
                 win_string += 's {} won {} respectively'
@@ -125,8 +169,35 @@ class ASCIIViewer(viewer.PokerViewer):
 
         return string
 
-    def render(self, config):
+    def render(self, config: dict, **kwargs) -> None:
+        '''Render ascii table representation based on the table
+        configuration
 
-        string = self._parse_string(config)
+        Parameters
+        ----------
+        config : dict
+            game configuration dictionary,
+                config = {
+                    'action': int - position of active player,
+                    'active': List[bool] - list of active players,
+                    'all_in': List[bool] - list of all in players,
+                    'community_cards': List[Card] - list of community
+                                       cards,
+                    'dealer': int - position of dealer,
+                    'done': List[bool] - list of done players,
+                    'hole_cards': List[List[Card]] - list of hole cards,
+                    'pot': int - chips in pot,
+                    'payouts': List[int] - list of chips won for each
+                               player,
+                    'prev_action': Tuple[int, int, int] - last
+                                   position bet and fold,
+                    'street_commits': List[int] - list of number of
+                                      chips added to pot from each
+                                      player on current street,
+                    'stacks': List[int] - list of stack sizes,
+                }
+        '''
+
+        string = self.parse_string(config)
 
         print(string)
