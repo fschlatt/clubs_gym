@@ -175,7 +175,7 @@ class Dealer():
 
         # dealer
         self.action = -1
-        self.active = np.ones(self.num_players, dtype=np.uint8)
+        self.active = np.zeros(self.num_players, dtype=np.uint8)
         self.button = 0
         self.community_cards: List[poker.Card] = []
         self.deck = poker.Deck(self.num_suits, self.num_ranks)
