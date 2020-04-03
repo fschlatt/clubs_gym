@@ -107,38 +107,55 @@ class Dealer():
                  order: Optional[List[str]] = None) -> None:
 
         if isinstance(blinds, list):
-            assert len(blinds) == num_players
+            if len(blinds) != num_players:
+                raise error.InvalidConfigError(
+                    f'incorrect blind distribution, expected list of '
+                    f'length {num_players}, got {blinds}'
+                )
         else:
             blinds = [blinds] * num_players
         if isinstance(antes, list):
-            assert len(antes) == num_players
+            if len(antes) != num_players:
+                raise error.InvalidConfigError(
+                    f'incorrect ante distribution, expected list of '
+                    f'length {num_players}, got {antes}'
+                )
         else:
             antes = [antes] * num_players
         if isinstance(raise_sizes, list):
-            assert len(raise_sizes) == num_streets
+            if len(raise_sizes) != num_streets:
+                raise error.InvalidConfigError(
+                    f'incorrect raise size distribution, expected list '
+                    f'of length {num_streets}, got {raise_sizes}'
+                )
         else:
             raise_sizes = [raise_sizes] * num_streets
         if isinstance(num_raises, list):
-            assert len(num_raises) == num_streets
+            if len(num_raises) != num_streets:
+                raise error.InvalidConfigError(
+                    f'incorrect number of raises distributions, expected '
+                    f'list of length {num_streets}, got {num_raises}'
+                )
         else:
             num_raises = [num_raises] * num_streets
         if isinstance(num_community_cards, list):
-            assert len(num_community_cards) == num_streets
+            if len(num_community_cards) != num_streets:
+                raise error.InvalidConfigError(
+                    f'incorrect community card distribution, expected '
+                    f'list of length {num_streets}, got {num_community_cards}'
+                )
         else:
             num_community_cards = [num_community_cards] * num_streets
-
-        num_cards = num_suits * num_ranks
-        num_req_cards = num_players * num_hole_cards + sum(num_community_cards)
-        if num_cards < num_req_cards:
-            raise ValueError(
-                f'deck too small; {num_cards} in deck, {num_req_cards} needed')
 
         def clean_rs(raise_size):
             if isinstance(raise_size, (int, float)):
                 return raise_size
             if raise_size == 'pot':
                 return raise_size
-            raise ValueError(f'unknown raise sizes: {raise_size}')
+            raise error.InvalidRaiseSizeError(
+                f'unknown raise size, expected one of (int, float, "pot"),'
+                f' got {raise_size}'
+            )
 
         # config
         self.num_players = num_players
