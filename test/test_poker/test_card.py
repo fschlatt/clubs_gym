@@ -1,6 +1,8 @@
 import random
 
-from clubs import poker
+import pytest
+
+from clubs import error, poker
 
 
 def test_draw():
