@@ -33,6 +33,18 @@ def test_str_repr():
     assert repr(evaluator) == repr_string
 
 
+def test_hand_rank():
+
+    evaluator = poker.Evaluator(4, 13, 5)
+
+    assert evaluator.get_rank_class(0) == 'straight flush'
+    assert evaluator.get_rank_class(7462) == 'high card'
+    with pytest.raises(error.InvalidHandRankError):
+        evaluator.get_rank_class(-1)
+    with pytest.raises(error.InvalidHandRankError):
+        evaluator.get_rank_class(7463)
+
+
 def test_1_card():
     # no community cards
     evaluator = poker.Evaluator(1, 3, 1)
