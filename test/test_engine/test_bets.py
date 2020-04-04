@@ -11,16 +11,26 @@ def test_limit_bet_size():
     bet = 2.1
     obs, *_ = dealer.step(bet)
     assert obs['pot'] == 5
-    assert obs['street_commits'].sum() == obs['pot']
+    assert sum(obs['street_commits']) == obs['pot']
 
     bet = 10
     obs, *_ = dealer.step(bet)
     assert obs['pot'] == 9
-    assert obs['street_commits'].sum() == obs['pot']
+    assert sum(obs['street_commits']) == obs['pot']
+
+    bet = 6
+    _ = dealer.step(bet)
+    bet = 8
+    obs, *_ = dealer.step(bet)
+    assert obs['pot'] == 23
+    assert obs['max_raise'] == 0
+    assert obs['call'] == 7
+    bet = 7
+    obs, *_ = dealer.step(bet)
 
     bet = -1
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 9
+    assert obs['pot'] == 30
     assert not obs['active'].all()
 
 
