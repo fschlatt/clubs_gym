@@ -69,7 +69,7 @@ class Evaluator(object):
         return self.hand_ranks
 
     def __repr__(self) -> str:
-        return str(self)
+        return f'Evaluator ({id(self)}): {str(self)}'
 
     def evaluate(self, hole_cards: List[card.Card],
                  community_cards: List[card.Card]) -> int:
