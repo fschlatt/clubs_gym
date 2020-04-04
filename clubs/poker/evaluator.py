@@ -35,7 +35,7 @@ class Evaluator(object):
                  mandatory_hole_cards: int, low_end_straight: bool = True,
                  order: list = None):
 
-        if cards_for_hand < 0 or cards_for_hand > 5:
+        if cards_for_hand < 1 or cards_for_hand > 5:
             raise error.InvalidHandSizeError(
                 f'Evaluation for {cards_for_hand} '
                 f'card hands is not supported. '
