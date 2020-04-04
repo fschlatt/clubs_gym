@@ -11,6 +11,28 @@ def test_init():
         poker.Evaluator(4, 13, 6)
 
 
+def test_str_repr():
+
+    evaluator = poker.Evaluator(4, 13, 5)
+
+    string = (
+        'straight flush (0.0015%) > four of a kind (0.0240%) > '
+        'full house (0.1441%) > flush (0.1965%) > straight (0.3925%) > '
+        'three of a kind (2.1128%) > two pair (4.7539%) > '
+        'pair (42.2569%) > high card (50.1177%)'
+    )
+    repr_string = (
+        f'Evaluator ({id(evaluator)}): straight flush (0.0015%) > '
+        f'four of a kind (0.0240%) > full house (0.1441%) > '
+        f'flush (0.1965%) > straight (0.3925%) > '
+        f'three of a kind (2.1128%) > two pair (4.7539%) > '
+        f'pair (42.2569%) > high card (50.1177%)'
+    )
+
+    assert str(evaluator) == string
+    assert repr(evaluator) == repr_string
+
+
 def test_1_card():
     # no community cards
     evaluator = poker.Evaluator(1, 3, 1)
