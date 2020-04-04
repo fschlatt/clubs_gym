@@ -1,4 +1,14 @@
-from clubs import poker
+import pytest
+
+from clubs import error, poker
+
+
+def test_init():
+
+    with pytest.raises(error.InvalidHandSizeError):
+        poker.Evaluator(4, 13, 0, 0)
+    with pytest.raises(error.InvalidHandSizeError):
+        poker.Evaluator(4, 13, 6, 0)
 
 
 def test_1_card():
