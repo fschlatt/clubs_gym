@@ -1,6 +1,9 @@
 import random
 
+import pytest
 import clubs
+
+from clubs import error
 
 
 def test_all_but_one_fold():
