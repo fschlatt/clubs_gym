@@ -146,10 +146,6 @@ class Evaluator(object):
         for hand in self.table.ranked_hands:
             if hand_rank <= self.table.hand_dict[hand]['cumulative unsuited']:
                 return hand
-        raise error.InvalidHandRankError(
-            (f'invalid hand rank, expected 0 <= hand_rank'
-             f' <= {self.table.max_rank}, got {hand_rank}')
-        )
 
 
 class LookupTable():
