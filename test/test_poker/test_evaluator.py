@@ -6,14 +6,14 @@ from clubs import error, poker
 def test_init():
 
     with pytest.raises(error.InvalidHandSizeError):
-        poker.Evaluator(4, 13, 0, 0)
+        poker.Evaluator(4, 13, 0)
     with pytest.raises(error.InvalidHandSizeError):
-        poker.Evaluator(4, 13, 6, 0)
+        poker.Evaluator(4, 13, 6)
 
 
 def test_1_card():
     # no community cards
-    evaluator = poker.Evaluator(1, 3, 1, 0)
+    evaluator = poker.Evaluator(1, 3, 1)
     hand1 = [poker.Card('As')]
     hand2 = [poker.Card('Ks')]
     assert evaluator.evaluate(hand1, []) < evaluator.evaluate(hand2, [])
@@ -41,7 +41,7 @@ def test_1_card():
 
     # 2 suits
     # 1 card for hand, no community cards
-    evaluator = poker.Evaluator(2, 3, 1, 0)
+    evaluator = poker.Evaluator(2, 3, 1)
     hand1 = [poker.Card('Ah')]
     hand2 = [poker.Card('As')]
     assert evaluator.evaluate(hand1, []) == evaluator.evaluate(hand2, [])
@@ -49,7 +49,7 @@ def test_1_card():
 
 def test_2_card():
     # 1 suit
-    evaluator = poker.Evaluator(1, 3, 2, 0)
+    evaluator = poker.Evaluator(1, 3, 2)
     hand1 = [poker.Card('Ks')]
     hand2 = [poker.Card('Qs')]
     comm_cards = [poker.Card('As')]
@@ -58,7 +58,7 @@ def test_2_card():
 
     # 2 suits
     # pair > high card
-    evaluator = poker.Evaluator(2, 3, 2, 0)
+    evaluator = poker.Evaluator(2, 3, 2)
     hand1 = [poker.Card('Qs')]
     hand2 = [poker.Card('Ks')]
     comm_cards = [poker.Card('Qh')]
@@ -76,7 +76,7 @@ def test_2_card():
 def test_3_card():
     # 1 suit
     # straight > high card
-    evaluator = poker.Evaluator(1, 13, 3, 0)
+    evaluator = poker.Evaluator(1, 13, 3)
     hand1 = [poker.Card('Js')]
     hand2 = [poker.Card('Qs')]
     comm_cards = [poker.Card('9s'), poker.Card('Ts')]
@@ -99,7 +99,7 @@ def test_3_card():
 
     # 2 suits
     # straight flush > straight
-    evaluator = poker.Evaluator(2, 13, 3, 0)
+    evaluator = poker.Evaluator(2, 13, 3)
     hand1 = [poker.Card('Js')]
     hand2 = [poker.Card('Jc')]
     comm_cards = [poker.Card('9s'), poker.Card('Ts')]
@@ -129,7 +129,7 @@ def test_3_card():
 
     # 4 suits
     # straight flush > straight
-    evaluator = poker.Evaluator(4, 13, 3, 0)
+    evaluator = poker.Evaluator(4, 13, 3)
     hand1 = [poker.Card('Js')]
     hand2 = [poker.Card('Jc')]
     comm_cards = [poker.Card('9s'), poker.Card('Ts')]
@@ -161,7 +161,7 @@ def test_3_card():
 def test_4_card():
     # 1 suit
     # straight > high card
-    evaluator = poker.Evaluator(1, 13, 4, 0)
+    evaluator = poker.Evaluator(1, 13, 4)
     hand1 = [poker.Card('Js'), poker.Card('Ts')]
     hand2 = [poker.Card('Qs'), poker.Card('3s')]
     comm_cards = [poker.Card('8s'), poker.Card('9s')]
@@ -184,7 +184,7 @@ def test_4_card():
 
     # 2 suits
     # straight flush > two pair
-    evaluator = poker.Evaluator(2, 13, 4, 0)
+    evaluator = poker.Evaluator(2, 13, 4)
     hand1 = [poker.Card('Js'), poker.Card('Ts')]
     hand2 = [poker.Card('8h'), poker.Card('9h')]
     comm_cards = [poker.Card('8s'), poker.Card('9s')]
@@ -221,7 +221,7 @@ def test_4_card():
 
     # 4 suits
     # four of a kind > straight flush
-    evaluator = poker.Evaluator(4, 13, 4, 0)
+    evaluator = poker.Evaluator(4, 13, 4)
     hand1 = [poker.Card('As'), poker.Card('Ac')]
     hand2 = [poker.Card('Jh'), poker.Card('Qh')]
     comm_cards = [poker.Card('Kh'), poker.Card('Ah'), poker.Card('Ad')]
@@ -274,7 +274,7 @@ def test_4_card():
 def test_5_card():
     # 1 suit
     # straight > high card
-    evaluator = poker.Evaluator(1, 13, 5, 0)
+    evaluator = poker.Evaluator(1, 13, 5)
     hand1 = [poker.Card('Js'), poker.Card('Ts')]
     hand2 = [poker.Card('Qs'), poker.Card('3s')]
     comm_cards = [poker.Card('7s'), poker.Card('8s'), poker.Card('9s')]
@@ -299,7 +299,7 @@ def test_5_card():
 
     # 2 suits
     # straight flush > straight
-    evaluator = poker.Evaluator(2, 13, 5, 0)
+    evaluator = poker.Evaluator(2, 13, 5)
     hand1 = [poker.Card('Js'), poker.Card('Ts')]
     hand2 = [poker.Card('Jh'), poker.Card('Th')]
     comm_cards = [poker.Card('7s'), poker.Card('8s'), poker.Card('9s')]
@@ -336,7 +336,7 @@ def test_5_card():
 
     # 4 suits
     # straight flush > four of a kind
-    evaluator = poker.Evaluator(4, 13, 5, 0)
+    evaluator = poker.Evaluator(4, 13, 5)
     hand1 = [poker.Card('Jh'), poker.Card('Qh')]
     hand2 = [poker.Card('As'), poker.Card('Ac')]
     comm_cards = [poker.Card('Th'), poker.Card(

@@ -20,8 +20,9 @@ class Evaluator(object):
         number of ranks in deck
     cards_for_hand : int
         number of cards used for valid poker hand
-    mandatory_hole_cards : int
-        number of hole cards which must be used for a hands
+    mandatory_hole_cards : int, optional
+        number of hole cards which must be used for a hands, by default
+        0
     low_end_straight : bool, optional
         toggle to include the low ace straight within valid hands, by
         default True
@@ -32,7 +33,7 @@ class Evaluator(object):
     '''
 
     def __init__(self, suits: int, ranks: int, cards_for_hand: int,
-                 mandatory_hole_cards: int, low_end_straight: bool = True,
+                 mandatory_hole_cards: int = 0, low_end_straight: bool = True,
                  order: list = None):
 
         if cards_for_hand < 1 or cards_for_hand > 5:
