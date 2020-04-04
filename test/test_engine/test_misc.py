@@ -1,4 +1,7 @@
+import pytest
+
 import clubs
+from clubs import error
 
 
 def test_game():
