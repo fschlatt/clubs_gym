@@ -9,6 +9,8 @@ def test_init():
         poker.Evaluator(4, 13, 0)
     with pytest.raises(error.InvalidHandSizeError):
         poker.Evaluator(4, 13, 6)
+    with pytest.raises(error.InvalidOrderError):
+        poker.LookupTable(4, 13, 5, order=['lala'])
 
 
 def test_str_repr():
