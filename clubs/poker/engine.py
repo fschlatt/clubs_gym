@@ -343,7 +343,7 @@ class Dealer():
             bet = 0
 
         # if bet is full raise record as largest raise
-        if bet and (bet - call) > self.largest_raise:
+        if bet and (bet - call) >= self.largest_raise:
             self.largest_raise = bet - call
             self.street_raises += 1
 
