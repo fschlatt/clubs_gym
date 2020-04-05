@@ -145,7 +145,8 @@ class Evaluator(object):
                  f' <= {self.table.max_rank}, got {hand_rank}'))
         for hand in self.table.ranked_hands:
             if hand_rank <= self.table.hand_dict[hand]['cumulative unsuited']:
-                return hand
+                break
+        return hand
 
 
 class LookupTable():
