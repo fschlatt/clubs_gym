@@ -370,6 +370,56 @@ def test_5_card():
     assert evaluator.evaluate(
         hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
 
+    # 3 suits
+    # straight flush > four of a kind
+    evaluator = poker.Evaluator(3, 13, 5)
+    hand1 = [poker.Card('Jh'), poker.Card('Qh')]
+    hand2 = [poker.Card('Kc'), poker.Card('Kd')]
+    comm_cards = [
+        poker.Card('Th'), poker.Card('Kh'), poker.Card('Ah'), poker.Card('Ad')
+    ]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
+    # full house > three of a kind
+    hand1 = [poker.Card('Kc'), poker.Card('Kd')]
+    hand2 = [poker.Card('Ac'), poker.Card('Qh')]
+    comm_cards = [
+        poker.Card('Th'), poker.Card('Kh'), poker.Card('Ah'), poker.Card('Ad')
+    ]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
+    # three of a kind > straight
+    hand1 = [poker.Card('Ac'), poker.Card('Qh')]
+    hand2 = [poker.Card('Qc'), poker.Card('Jd')]
+    comm_cards = [
+        poker.Card('Th'), poker.Card('Kh'), poker.Card('Ah'), poker.Card('Ad')
+    ]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
+    # straight > two pair
+    hand1 = [poker.Card('Jd'), poker.Card('Td')]
+    hand2 = [poker.Card('Qd'), poker.Card('Kd')]
+    comm_cards = [poker.Card('Qh'), poker.Card('Kh'), poker.Card('Ah')]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
+    # two pair > pair
+    hand1 = [poker.Card('Qd'), poker.Card('Kd')]
+    hand2 = [poker.Card('Qc'), poker.Card('Td')]
+    comm_cards = [poker.Card('Qh'), poker.Card('Kh'), poker.Card('Ah')]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
+    # pair > high card
+    hand1 = [poker.Card('8s'), poker.Card('7h')]
+    hand2 = [poker.Card('Ah'), poker.Card('2s')]
+    comm_cards = [poker.Card('8h'), poker.Card('9h'), poker.Card('Ts')]
+    assert evaluator.evaluate(
+        hand1, comm_cards) < evaluator.evaluate(hand2, comm_cards)
+
     # 4 suits
     # straight flush > four of a kind
     evaluator = poker.Evaluator(4, 13, 5)
