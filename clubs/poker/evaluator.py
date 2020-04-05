@@ -333,8 +333,6 @@ class LookupTable():
         unsuited = ranks - (cards_for_hand - 1) + low_end_straight
         # multiplied with number of suits
         suited = max(unsuited, unsuited * suits)
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __four_of_a_kind(self, suits, ranks, cards_for_hand):
@@ -345,8 +343,6 @@ class LookupTable():
         unsuited = _ncr(ranks, 1) * _ncr(ranks - 1, cards_for_hand - 4)
         # mutliplied with number of suit choices for remaining cards
         suited = max(unsuited, unsuited * suits**(cards_for_hand - 4))
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __full_house(self, suits, ranks, cards_for_hand):
@@ -360,8 +356,6 @@ class LookupTable():
         # trips + pair and remaining cards
         suited = max(unsuited, unsuited * _ncr(suits, 3) * _ncr(suits, 2) *
                      suits**(cards_for_hand - 5))
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __flush(self, suits, ranks, cards_for_hand, low_end_straight):
@@ -373,8 +367,6 @@ class LookupTable():
         unsuited = _ncr(ranks, cards_for_hand) - straight_flushes
         # multiplied by number of suits
         suited = max(unsuited, unsuited * suits)
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __straight(self, suits, ranks, cards_for_hand, low_end_straight):
@@ -403,8 +395,6 @@ class LookupTable():
         # multiplied with suit choices for trips and remaining cards
         suited = max(unsuited, unsuited * _ncr(suits, 3) *
                      _ncr(suits, 3)**(cards_for_hand - 3))
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __two_pair(self, suits, ranks, cards_for_hand):
@@ -417,8 +407,6 @@ class LookupTable():
         # and suit choices for remaining cards
         suited = max(unsuited, unsuited * _ncr(suits, 2)
                      ** 2 * suits**(cards_for_hand - 4))
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __pair(self, suits, ranks, cards_for_hand):
@@ -430,8 +418,6 @@ class LookupTable():
         # multiplied with suit choices for pair and remaining cards
         suited = max(unsuited, unsuited * _ncr(suits, 2)
                      * suits**(cards_for_hand - 2))
-        if suits < 2:
-            suited = unsuited
         return int(suited), int(unsuited)
 
     def __high_card(self, suits, ranks, cards_for_hand, low_end_straight):
@@ -581,18 +567,19 @@ class LookupTable():
                     combinations = list(itertools.combinations(
                         kickers, cards_for_hand - 5))
                     # if at least one kicker exists
-                    if combinations[0]:
-                        for combination in combinations:
-                            product = base_product
-                            # for each kicker multiply kicker prime onto
-                            # base prime product
-                            for kicker in combination:
-                                product *= card.PRIMES[kicker]
-                            self.unsuited_lookup[product] = rank
-                            rank += 1
-                    else:
-                        self.unsuited_lookup[base_product] = rank
-                        rank += 1
+                    # (not needed for max 5 card hands)
+                    # if combinations[0]:
+                    #     for combination in combinations:
+                    #         product = base_product
+                    #         # for each kicker multiply kicker prime onto
+                    #         # base prime product
+                    #         for kicker in combination:
+                    #             product *= card.PRIMES[kicker]
+                    #         self.unsuited_lookup[product] = rank
+                    #         rank += 1
+                    # else:
+                    self.unsuited_lookup[base_product] = rank
+                    rank += 1
             num_ranks = rank - self.__get_rank('full house')
             assert (num_ranks == self.hand_dict['full house']['unsuited'])
 
