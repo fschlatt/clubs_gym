@@ -43,8 +43,6 @@ class ASCIIViewer(viewer.PokerViewer):
         with open('{}/ascii_table.txt'.format(dir_path), 'r') as file:
             self.table = file.read()
 
-        self.length = max([len(row) for row in self.table.split('\n')])
-
         self.player_pos = self.POS_DICT[num_players]
 
     def parse_string(self, config: dict) -> str:
@@ -100,21 +98,28 @@ class ASCIIViewer(viewer.PokerViewer):
 
         players = []
         iterator = zip(
-            config['hole_cards'], config['stacks'], config['active'])
+            config['hole_cards'], config['stacks'], config['active']
+        )
         for idx, (hand, stack, active) in enumerate(iterator):
             if not active:
-                players.append('{:2}. '.format(idx + 1) +
-                               ','.join(['--']*self.num_hole_cards) +
-                               ' {:,}'.format(stack))
+                players.append(
+                    '{:2}. '.format(idx + 1) +
+                    ','.join(['--']*self.num_hole_cards) +
+                    ' {:,}'.format(stack)
+                )
                 continue
             if done or idx == action:
-                players.append('{:2}. '.format(idx + 1) +
-                               ','.join([str(card) for card in hand]) +
-                               ' {:,}'.format(stack))
+                players.append(
+                    '{:2}. '.format(idx + 1) +
+                    ','.join([str(card) for card in hand]) +
+                    ' {:,}'.format(stack)
+                )
                 continue
-            players.append('{:2}. '.format(idx + 1) +
-                           ','.join(['??']*self.num_hole_cards) +
-                           ' {:,}'.format(stack))
+            players.append(
+                '{:2}. '.format(idx + 1) +
+                ','.join(['??']*self.num_hole_cards) +
+                ' {:,}'.format(stack)
+            )
 
         positions = ['p{}'.format(idx) for idx in self.player_pos]
         iterables = [
