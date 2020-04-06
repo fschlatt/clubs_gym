@@ -432,7 +432,7 @@ class Dealer():
                 )
             else:
                 render_modes = ', '.join(['ascii', 'asciimatics'])
-                raise error.UnknownRenderModeError(
+                raise error.InvalidRenderModeError(
                     (f'incorrect render mode {mode},'
                      f'use one of[{render_modes}]')
                 )

@@ -34,5 +34,5 @@ class TableResetError(Exception):
     pass
 
 
-class UnknownRenderModeError(Exception):
+class InvalidRenderModeError(Exception):
     pass
