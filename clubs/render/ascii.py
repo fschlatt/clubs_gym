@@ -59,7 +59,7 @@ class ASCIIViewer(viewer.PokerViewer):
                     'community_cards': List[Card] - list of community
                                        cards,
                     'dealer': int - position of dealer,
-                    'done': List[bool] - list of done players,
+                    'done': bool - list of done players,
                     'hole_cards': List[List[Card]] - list of hole cards,
                     'pot': int - chips in pot,
                     'payouts': List[int] - list of chips won for each
@@ -189,7 +189,7 @@ class ASCIIViewer(viewer.PokerViewer):
                     'community_cards': List[Card] - list of community
                                        cards,
                     'dealer': int - position of dealer,
-                    'done': List[bool] - list of done players,
+                    'done': bool - list of done players,
                     'hole_cards': List[List[Card]] - list of hole cards,
                     'pot': int - chips in pot,
                     'payouts': List[int] - list of chips won for each
