@@ -35,7 +35,7 @@ class AsciimaticsViewer(ascii.ASCIIViewer):
 
         self.string = ''
         self.refresh = threading.Condition()
-        thread = threading.Thread(target=self._render, daemon=True)
+        thread = threading.Thread(target=self._render_loop, daemon=True)
         thread.start()
 
     def render(self, config: dict, fps: int = 5, **kwargs) -> None:
@@ -77,7 +77,7 @@ class AsciimaticsViewer(ascii.ASCIIViewer):
         if fps:
             time.sleep(1/fps)
 
-    def _render(self):
+    def _render_loop(self):
         with screen.ManagedScreen() as scr:
             while True:
                 for idx, line in enumerate(self.string.split('\n')):
