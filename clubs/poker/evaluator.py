@@ -322,9 +322,8 @@ class LookupTable():
             hand_or = functools.reduce(operator.or_, cards) >> 16
             prime = card.prime_product_from_rankbits(hand_or)
             return self.suited_lookup[prime]
-        else:
-            prime = card.prime_product_from_hand(cards)
-            return self.unsuited_lookup[prime]
+        prime = card.prime_product_from_hand(cards)
+        return self.unsuited_lookup[prime]
 
     def __straight_flush(self, suits, ranks, cards_for_hand, low_end_straight):
         if cards_for_hand < 3 or suits < 2:

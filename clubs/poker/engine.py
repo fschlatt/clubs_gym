@@ -325,10 +325,9 @@ class Dealer():
         if self.action == -1:
             if any(self.active):
                 return self.__output()
-            else:
-                raise error.TableResetError(
-                    'call reset() before calling first step()'
-                )
+            raise error.TableResetError(
+                'call reset() before calling first step()'
+            )
 
         fold = bet < 0
         bet = round(bet)
