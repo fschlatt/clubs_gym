@@ -6,10 +6,10 @@ except ImportError:
 import threading
 import time
 
-from . import ascii
+from . import ascii_viewer
 
 
-class AsciimaticsViewer(ascii.ASCIIViewer):
+class AsciimaticsViewer(ascii_viewer.ASCIIViewer):
     '''Poker game renderer which prints an animated ascii representation
     of the table state to the terminal using the asciimatics library
 
