@@ -526,144 +526,59 @@ class LookupTable():
                 rank += 1
 
     def __multiples(self, ranks, cards_for_hand):
-        backwards_ranks = list(range(13 - 1, 13 - 1 - ranks, -1))
 
-        if self.hand_dict['four of a kind']['cumulative unsuited']:
-            rank = self.__get_rank('four of a kind')
-            # for each choice of a set of four rank
-            for four_of_a_kind in backwards_ranks:
-                # compute prime product for selected rank
-                base_product = card.PRIMES[four_of_a_kind]**4
-                # and for each possible combination of kicker ranks
-                kickers = backwards_ranks[:]
-                kickers.remove(four_of_a_kind)
-                combinations = list(itertools.combinations(
-                    kickers, cards_for_hand - 4))
-                # if at least one kicker exists
-                if combinations[0]:
-                    for combination in combinations:
+        def add_to_table(string, multiples):
+            # inverse ranks, A - 2
+            backwards_ranks = list(range(13 - 1, 13 - 1 - ranks, -1))
+            if not self.hand_dict[string]['cumulative unsuited']:
+                return
+            # get cumulative hand rank
+            hand_rank = self.__get_rank(string)
+            # if different multiples (e.g. full house) order of
+            # multiples is important
+            if len(set(multiples)) > 1:
+                multiple_combinations = itertools.permutations(
+                    backwards_ranks, len(multiples)
+                )
+            # if same multiples (e.g. two pair) order of multiples
+            # is unimportant
+            else:
+                multiple_combinations = itertools.combinations(
+                    backwards_ranks, len(multiples)
+                )
+            for card_ranks in multiple_combinations:
+                base_product = 1
+                # compute product over every combination of multiple
+                # card rank
+                for card_rank, multiple in zip(card_ranks, multiples):
+                    base_product *= card.PRIMES[card_rank] ** multiple
+                num_kickers = cards_for_hand - sum(multiples)
+                # record product in lookup table
+                if num_kickers:
+                    kickers = backwards_ranks[:]
+                    for card_rank in card_ranks:
+                        kickers.remove(card_rank)
+                    kicker_combinations = list(
+                        itertools.combinations(kickers, num_kickers)
+                    )
+                    for kickers in kicker_combinations:
                         product = base_product
-                        # for each kicker multiply kicker prime onto
-                        # base prime product
-                        for kicker in combination:
+                        for kicker in kickers:
                             product *= card.PRIMES[kicker]
-                        self.unsuited_lookup[product] = rank
-                        rank += 1
+                        self.unsuited_lookup[product] = hand_rank
+                        hand_rank += 1
                 else:
-                    self.unsuited_lookup[base_product] = rank
-                    rank += 1
-            num_ranks = rank - self.__get_rank('four of a kind')
-            assert (num_ranks == self.hand_dict['four of a kind']['unsuited'])
+                    self.unsuited_lookup[base_product] = hand_rank
+                    hand_rank += 1
+            # check hand rank is equal to number of iterated ranks
+            num_ranks = hand_rank - self.__get_rank(string)
+            assert (num_ranks == self.hand_dict[string]['unsuited'])
 
-        if self.hand_dict['full house']['cumulative unsuited']:
-            rank = self.__get_rank('full house')
-            # for each three of a kind
-            for three_of_a_kind in backwards_ranks:
-                # and for each choice of pair rank
-                pairs = backwards_ranks[:]
-                pairs.remove(three_of_a_kind)
-                for pair in pairs:
-                    base_product = card.PRIMES[three_of_a_kind]**3 * \
-                        card.PRIMES[pair]**2
-                    kickers = pairs[:]
-                    kickers.remove(pair)
-                    combinations = list(itertools.combinations(
-                        kickers, cards_for_hand - 5))
-                    # if at least one kicker exists
-                    # (not needed for max 5 card hands)
-                    # if combinations[0]:
-                    #     for combination in combinations:
-                    #         product = base_product
-                    #         # for each kicker multiply kicker prime onto
-                    #         # base prime product
-                    #         for kicker in combination:
-                    #             product *= card.PRIMES[kicker]
-                    #         self.unsuited_lookup[product] = rank
-                    #         rank += 1
-                    # else:
-                    self.unsuited_lookup[base_product] = rank
-                    rank += 1
-            num_ranks = rank - self.__get_rank('full house')
-            assert (num_ranks == self.hand_dict['full house']['unsuited'])
-
-        if self.hand_dict['three of a kind']['cumulative unsuited']:
-            rank = self.__get_rank('three of a kind')
-            # for each three of a kind
-            for three_of_a_kind in backwards_ranks:
-                base_product = card.PRIMES[three_of_a_kind]**3
-                kickers = backwards_ranks[:]
-                kickers.remove(three_of_a_kind)
-                combinations = list(itertools.combinations(
-                    kickers, cards_for_hand - 3))
-                # if at least one kicker exists
-                if combinations[0]:
-                    for combination in combinations:
-                        product = base_product
-                        # for each kicker multiply kicker prime onto
-                        # base prime product
-                        for kicker in combination:
-                            product *= card.PRIMES[kicker]
-                        self.unsuited_lookup[product] = rank
-                        rank += 1
-                else:
-                    self.unsuited_lookup[base_product] = rank
-                    rank += 1
-            num_ranks = rank - self.__get_rank('three of a kind')
-            assert (num_ranks == self.hand_dict['three of a kind']['unsuited'])
-
-        if self.hand_dict['two pair']['cumulative unsuited']:
-            rank = self.__get_rank('two pair')
-            # for each two pair
-            tp_gen = itertools.combinations(backwards_ranks, 2)
-            for two_pair in tp_gen:
-                pair1, pair2 = two_pair
-                base_product = (card.PRIMES[pair1]**2 *
-                                card.PRIMES[pair2]**2)
-                kickers = backwards_ranks[:]
-                kickers.remove(pair1)
-                kickers.remove(pair2)
-                combinations = list(itertools.combinations(
-                    kickers, cards_for_hand - 4))
-                # if at least one kicker exists
-                if combinations[0]:
-                    for combination in combinations:
-                        product = base_product
-                        # for each kicker multiply kicker prime onto
-                        # base prime product
-                        for kicker in combination:
-                            product *= card.PRIMES[kicker]
-                        self.unsuited_lookup[product] = rank
-                        rank += 1
-                else:
-                    self.unsuited_lookup[base_product] = rank
-                    rank += 1
-            num_ranks = rank - self.__get_rank('two pair')
-            assert (num_ranks == self.hand_dict['two pair']['unsuited'])
-
-        if self.hand_dict['pair']['cumulative unsuited']:
-            rank = self.__get_rank('pair')
-            # for each pair
-            for pair in backwards_ranks:
-                base_product = card.PRIMES[pair]**2
-                kickers = backwards_ranks[:]
-                kickers.remove(pair)
-                combinations = list(itertools.combinations(
-                    kickers, cards_for_hand - 2))
-                # if at least one kicker exists
-                if combinations[0]:
-                    for combination in combinations:
-                        product = base_product
-                        # for each kicker multiply kicker prime onto
-                        # base prime product
-                        for kicker in combination:
-                            product *= card.PRIMES[kicker]
-                        self.unsuited_lookup[product] = rank
-                        rank += 1
-                else:
-                    self.unsuited_lookup[base_product] = rank
-                    rank += 1
-            num_ranks = rank - self.__get_rank('pair')
-            assert (num_ranks == self.hand_dict['pair']['unsuited'])
+        add_to_table('four of a kind', [4])
+        add_to_table('full house', [3, 2])
+        add_to_table('three of a kind', [3])
+        add_to_table('two pair', [2, 2])
+        add_to_table('pair', [2])
 
     def __get_rank(self, hand):
         rank = self.hand_dict[hand]['rank']
