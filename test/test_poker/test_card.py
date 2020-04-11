@@ -76,7 +76,7 @@ def test_ops():
     assert card._int >> 0 == card._int
 
     with pytest.raises(NotImplementedError):
-        card == 0
+        assert card == 0
 
 
 def test_str_repr():
