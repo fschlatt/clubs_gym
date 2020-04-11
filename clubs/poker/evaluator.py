@@ -527,13 +527,13 @@ class LookupTable():
 
     def __multiples(self, ranks, cards_for_hand):
 
-        def add_to_table(string, multiples):
+        def add_to_table(rank_string, multiples):
             # inverse ranks, A - 2
             backwards_ranks = list(range(13 - 1, 13 - 1 - ranks, -1))
-            if not self.hand_dict[string]['cumulative unsuited']:
+            if not self.hand_dict[rank_string]['cumulative unsuited']:
                 return
             # get cumulative hand rank
-            hand_rank = self.__get_rank(string)
+            hand_rank = self.__get_rank(rank_string)
             # if different multiples (e.g. full house) order of
             # multiples is important
             if len(set(multiples)) > 1:
