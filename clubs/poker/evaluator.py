@@ -483,47 +483,24 @@ class LookupTable():
         # so needs to be reversed
         flushes.reverse()
 
-        # add prime products to look up maps
-        # use ranks of hands computed beforehand
-        if self.hand_dict['straight flush']['cumulative unsuited']:
-            num_ranks = len(straight_flushes)
-            assert (num_ranks == self.hand_dict['straight flush']['unsuited'])
-            rank = self.__get_rank('straight flush')
-            for straight_flush in straight_flushes:
-                prime_product = card.prime_product_from_rankbits(
-                    straight_flush)
-                self.suited_lookup[prime_product] = rank
-                rank += 1
+        def add_to_table(rank_string, rank_bits, suited):
+            if not self.hand_dict[rank_string]['cumulative unsuited']:
+                return
+            num_ranks = len(rank_bits)
+            assert (num_ranks == self.hand_dict[rank_string]['unsuited'])
+            hand_rank = self.__get_rank(rank_string)
+            for rank_bit in rank_bits:
+                prime_product = card.prime_product_from_rankbits(rank_bit)
+                if suited:
+                    self.suited_lookup[prime_product] = hand_rank
+                else:
+                    self.unsuited_lookup[prime_product] = hand_rank
+                hand_rank += 1
 
-        if self.hand_dict['flush']['cumulative unsuited']:
-            num_ranks = len(flushes)
-            assert (num_ranks == self.hand_dict['flush']['unsuited'])
-            rank = self.__get_rank('flush')
-            for flush in flushes:
-                prime_product = card.prime_product_from_rankbits(flush)
-                self.suited_lookup[prime_product] = rank
-                rank += 1
-
-        # straight flush and flush bit sequences can be reused for
-        # straights and high cards since they are inherently related
-        # and differ only by context
-        if self.hand_dict['straight']['cumulative unsuited']:
-            num_ranks = len(straight_flushes)
-            assert (num_ranks == self.hand_dict['straight']['unsuited'])
-            rank = self.__get_rank('straight')
-            for straight in straight_flushes:
-                prime_product = card.prime_product_from_rankbits(straight)
-                self.unsuited_lookup[prime_product] = rank
-                rank += 1
-
-        if self.hand_dict['high card']['cumulative unsuited']:
-            num_ranks = len(flushes)
-            assert (num_ranks == self.hand_dict['high card']['unsuited'])
-            rank = self.__get_rank('high card')
-            for high_card in flushes:
-                prime_product = card.prime_product_from_rankbits(high_card)
-                self.unsuited_lookup[prime_product] = rank
-                rank += 1
+        add_to_table('straight flush', straight_flushes, True)
+        add_to_table('flush', flushes, True)
+        add_to_table('straight', straight_flushes, False)
+        add_to_table('high card', flushes, False)
 
     def __multiples(self, ranks, cards_for_hand):
 
@@ -571,8 +548,8 @@ class LookupTable():
                     self.unsuited_lookup[base_product] = hand_rank
                     hand_rank += 1
             # check hand rank is equal to number of iterated ranks
-            num_ranks = hand_rank - self.__get_rank(string)
-            assert (num_ranks == self.hand_dict[string]['unsuited'])
+            num_ranks = hand_rank - self.__get_rank(rank_string)
+            assert (num_ranks == self.hand_dict[rank_string]['unsuited'])
 
         add_to_table('four of a kind', [4])
         add_to_table('full house', [3, 2])
