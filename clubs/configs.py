@@ -78,7 +78,7 @@ LIMIT_HOLDEM_NINE_PLAYER = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_TWO_PLAYER = {
+NO_LIMIT_HOLDEM_TWO_PLAYER = {
     'num_players': 2,
     'num_streets': 4,
     'blinds': [1, 2],
@@ -94,7 +94,7 @@ NOLIMIT_HOLDEM_TWO_PLAYER = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_SIX_PLAYER = {
+NO_LIMIT_HOLDEM_SIX_PLAYER = {
     'num_players': 6,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0],
@@ -110,7 +110,7 @@ NOLIMIT_HOLDEM_SIX_PLAYER = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_NINE_PLAYER = {
+NO_LIMIT_HOLDEM_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -126,7 +126,7 @@ NOLIMIT_HOLDEM_NINE_PLAYER = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_BB_ANTE_NINE_PLAYER = {
+NO_LIMIT_HOLDEM_BB_ANTE_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [2, 4, 0, 0, 0, 0, 0, 0, 0],

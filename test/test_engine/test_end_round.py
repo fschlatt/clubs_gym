@@ -8,7 +8,7 @@ from clubs import error
 
 def test_all_but_one_fold():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -31,7 +31,7 @@ def test_all_but_one_fold():
 def test_all_all_in():
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -55,7 +55,7 @@ def test_bet_after_round_end():
 
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -80,7 +80,7 @@ def test_too_few_players():
 
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 

@@ -35,7 +35,7 @@ def test_limit_bet_size():
 
 
 def test_all_in_bet_size():
-    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -54,7 +54,7 @@ def test_all_in_bet_size():
 
 def test_incomplete_raise():
 
-    config = dict(**clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER)
+    config = dict(**clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER)
 
     dealer = clubs.Dealer(**config)
 
@@ -114,7 +114,7 @@ def test_pot_limit_bet_size():
 
 def test_bet_rounding():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_NINE_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_NINE_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -148,7 +148,7 @@ def test_bet_rounding():
 
 def test_big_blind_raise_chance():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
+    config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 
