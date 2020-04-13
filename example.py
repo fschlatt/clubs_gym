@@ -3,7 +3,7 @@ import random
 import clubs
 
 # 1-2 no limit 6 player texas hold'em
-config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
+config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 dealer = clubs.Dealer(**config)
 obs = dealer.reset()
 
