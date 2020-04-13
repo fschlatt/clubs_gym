@@ -1,3 +1,3 @@
 [submodule "clubs"]
-	path = clubs
+	path = clubs_gym/clubs
 	url = https://github.com/fschlatt/clubs
