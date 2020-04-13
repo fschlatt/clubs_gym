@@ -1,0 +1,3 @@
+[submodule "clubs"]
+	path = clubs
+	url = https://github.com/fschlatt/clubs
