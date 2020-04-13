@@ -7,7 +7,7 @@ def test_button_move():
 
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_2P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=False)
@@ -28,7 +28,7 @@ def test_button_move():
 
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=True)
@@ -52,7 +52,7 @@ def test_inactive_players():
 
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=True)

@@ -12,7 +12,7 @@ def test_render():
 
     random.seed(42)
 
-    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 

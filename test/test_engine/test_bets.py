@@ -3,7 +3,7 @@ import clubs
 
 def test_limit_bet_size():
 
-    config = clubs.configs.LIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.LIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -35,7 +35,7 @@ def test_limit_bet_size():
 
 
 def test_all_in_bet_size():
-    config = clubs.configs.NOLIMIT_HOLDEM_2P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -54,7 +54,7 @@ def test_all_in_bet_size():
 
 def test_incomplete_raise():
 
-    config = dict(**clubs.configs.NOLIMIT_HOLDEM_6P_ENV)
+    config = dict(**clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER)
 
     dealer = clubs.Dealer(**config)
 
@@ -90,7 +90,7 @@ def test_incomplete_raise():
 
 def test_pot_limit_bet_size():
 
-    config = clubs.configs.POT_LIMIT_OMAHA_6P_ENV
+    config = clubs.configs.POT_LIMIT_OMAHA_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -114,7 +114,7 @@ def test_pot_limit_bet_size():
 
 def test_bet_rounding():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_NINE_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -148,7 +148,7 @@ def test_bet_rounding():
 
 def test_big_blind_raise_chance():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_6P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
 
     dealer = clubs.Dealer(**config)
 

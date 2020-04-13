@@ -1,4 +1,4 @@
-LEDUC_2P_ENV = {
+LEDUC_TWO_PLAYER = {
     'num_players': 2,
     'num_streets': 2,
     'blinds': 0,
@@ -14,7 +14,7 @@ LEDUC_2P_ENV = {
     'start_stack': 10
 }
 
-KUHN_3P_ENV = {
+KUHN_THREE_PLAYER = {
     'num_players': 3,
     'num_streets': 1,
     'blinds': 0,
@@ -30,7 +30,7 @@ KUHN_3P_ENV = {
     'start_stack': 10
 }
 
-LIMIT_HOLDEM_2P_ENV = {
+LIMIT_HOLDEM_TWO_PLAYER = {
     'num_players': 2,
     'num_streets': 4,
     'blinds': [1, 2],
@@ -46,7 +46,7 @@ LIMIT_HOLDEM_2P_ENV = {
     'start_stack': 200
 }
 
-LIMIT_HOLDEM_6P_ENV = {
+LIMIT_HOLDEM_SIX_PLAYER = {
     'num_players': 6,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0],
@@ -62,7 +62,7 @@ LIMIT_HOLDEM_6P_ENV = {
     'start_stack': 200
 }
 
-LIMIT_HOLDEM_9P_ENV = {
+LIMIT_HOLDEM_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -78,7 +78,7 @@ LIMIT_HOLDEM_9P_ENV = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_2P_ENV = {
+NOLIMIT_HOLDEM_TWO_PLAYER = {
     'num_players': 2,
     'num_streets': 4,
     'blinds': [1, 2],
@@ -94,7 +94,7 @@ NOLIMIT_HOLDEM_2P_ENV = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_6P_ENV = {
+NOLIMIT_HOLDEM_SIX_PLAYER = {
     'num_players': 6,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0],
@@ -110,7 +110,7 @@ NOLIMIT_HOLDEM_6P_ENV = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_9P_ENV = {
+NOLIMIT_HOLDEM_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -126,7 +126,7 @@ NOLIMIT_HOLDEM_9P_ENV = {
     'start_stack': 200
 }
 
-NOLIMIT_HOLDEM_BB_ANTE_9P_ENV = {
+NOLIMIT_HOLDEM_BB_ANTE_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [2, 4, 0, 0, 0, 0, 0, 0, 0],
@@ -142,7 +142,7 @@ NOLIMIT_HOLDEM_BB_ANTE_9P_ENV = {
     'start_stack': 200
 }
 
-POT_LIMIT_OMAHA_2P_ENV = {
+POT_LIMIT_OMAHA_TWO_PLAYER = {
     'num_players': 2,
     'num_streets': 4,
     'blinds': [1, 2],
@@ -158,7 +158,7 @@ POT_LIMIT_OMAHA_2P_ENV = {
     'start_stack': 200
 }
 
-POT_LIMIT_OMAHA_6P_ENV = {
+POT_LIMIT_OMAHA_SIX_PLAYER = {
     'num_players': 6,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0],
@@ -174,7 +174,7 @@ POT_LIMIT_OMAHA_6P_ENV = {
     'start_stack': 200
 }
 
-POT_LIMIT_OMAHA_9P_ENV = {
+POT_LIMIT_OMAHA_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -190,7 +190,7 @@ POT_LIMIT_OMAHA_9P_ENV = {
     'start_stack': 200
 }
 
-SHORT_DECK_2P_ENV = {
+SHORT_DECK_TWO_PLAYER = {
     'num_players': 2,
     'num_streets': 4,
     'blinds': [1, 2],
@@ -207,7 +207,7 @@ SHORT_DECK_2P_ENV = {
     'order': ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
 }
 
-SHORT_DECK_6P_ENV = {
+SHORT_DECK_SIX_PLAYER = {
     'num_players': 6,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0],
@@ -224,7 +224,7 @@ SHORT_DECK_6P_ENV = {
     'order': ['sf', 'fk', 'fl', 'fh', 'st', 'tk', 'tp', 'pa', 'hc']
 }
 
-SHORT_DECK_9P_ENV = {
+SHORT_DECK_NINE_PLAYER = {
     'num_players': 9,
     'num_streets': 4,
     'blinds': [1, 2, 0, 0, 0, 0, 0, 0, 0],
