@@ -6,7 +6,7 @@ from clubs import error
 
 def test_game():
 
-    config = clubs.configs.LEDUC_TWO_PLAYER_ENV
+    config = clubs.configs.LEDUC_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -34,7 +34,7 @@ def test_game():
 
 def test_heads_up():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -55,7 +55,7 @@ def test_heads_up():
 
 def test_init():
 
-    config = {**clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER_ENV}
+    config = {**clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER}
 
     blinds = config['blinds']
     antes = config['antes']
@@ -116,7 +116,7 @@ def test_init():
 
 def test_str_repr():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
 
@@ -130,7 +130,7 @@ def test_str_repr():
 
 def test_init_step():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_TWO_PLAYER
 
     dealer = clubs.Dealer(**config)
 

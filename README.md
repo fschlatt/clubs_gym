@@ -20,7 +20,7 @@ import random
 
 import clubs
 
-config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER_ENV
+config = clubs.configs.NOLIMIT_HOLDEM_SIX_PLAYER
 dealer = clubs.Dealer(**config)
 obs = dealer.reset()
 
