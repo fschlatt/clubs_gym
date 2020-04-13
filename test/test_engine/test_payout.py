@@ -3,7 +3,7 @@ import clubs
 
 def test_split_pot():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_NINE_PLAYER_ENV
 
     dealer = clubs.Dealer(**config)
 
@@ -61,7 +61,7 @@ def test_split_pot():
 
 def test_all_in():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_NINE_PLAYER_ENV
 
     dealer = clubs.Dealer(**config)
 
@@ -112,7 +112,7 @@ def test_all_in():
 
 def test_all_in_split_pot():
 
-    config = clubs.configs.NOLIMIT_HOLDEM_9P_ENV
+    config = clubs.configs.NOLIMIT_HOLDEM_NINE_PLAYER_ENV
 
     dealer = clubs.Dealer(**config)
 
