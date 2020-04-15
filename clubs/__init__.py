@@ -15,9 +15,10 @@ def __register():
     try:
         env_configs = {}
         for name, config in configs.__dict__.items():
+            if not name.endswith('_PLAYER'):
+                continue
             env_id = ''.join(sub_string.title()
                              for sub_string in name.split('_'))
-            env_id = env_id.replace('Env', '')
             env_id += '-v0'
             env_configs[env_id] = config
         envs.register(env_configs)
