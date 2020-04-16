@@ -14,6 +14,22 @@ LEDUC_TWO_PLAYER = {
     'start_stack': 10
 }
 
+KUHN_TWO_PLAYER = {
+    'num_players': 2,
+    'num_streets': 1,
+    'blinds': 0,
+    'antes': 1,
+    'raise_sizes': [1],
+    'num_raises': [1],
+    'num_suits': 1,
+    'num_ranks': 4,
+    'num_hole_cards': 1,
+    'num_community_cards': [],
+    'num_cards_for_hand': 1,
+    'mandatory_num_hole_cards': 0,
+    'start_stack': 10
+}
+
 KUHN_THREE_PLAYER = {
     'num_players': 3,
     'num_streets': 1,
