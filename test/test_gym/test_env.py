@@ -1,7 +1,6 @@
 import io
 from contextlib import redirect_stdout
 
-
 import gym
 
 import clubs
