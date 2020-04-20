@@ -24,7 +24,7 @@ KUHN_TWO_PLAYER = {
     'num_suits': 1,
     'num_ranks': 4,
     'num_hole_cards': 1,
-    'num_community_cards': [],
+    'num_community_cards': [0],
     'num_cards_for_hand': 1,
     'mandatory_num_hole_cards': 0,
     'start_stack': 10
@@ -40,7 +40,7 @@ KUHN_THREE_PLAYER = {
     'num_suits': 1,
     'num_ranks': 4,
     'num_hole_cards': 1,
-    'num_community_cards': [],
+    'num_community_cards': [0],
     'num_cards_for_hand': 1,
     'mandatory_num_hole_cards': 0,
     'start_stack': 10
