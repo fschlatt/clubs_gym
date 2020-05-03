@@ -1,9 +1,9 @@
 """Classes and functions for running poker games"""
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from clubs import poker, error, render
+from clubs import error, poker, render
 
 
 class Dealer:
@@ -114,47 +114,37 @@ class Dealer:
         low_end_straight: bool = True,
         order: Optional[List[str]] = None,
     ) -> None:
+        def check_inp(
+            var: Union[List[Any], Any], expect_num: int, error_msg: str
+        ) -> List[Any]:
+            if isinstance(var, list):
+                if len(var) != expect_num:
+                    raise error.InvalidConfigError(error_msg)
+                return var
+            return [var] * expect_num
 
-        if isinstance(blinds, list):
-            if len(blinds) != num_players:
-                raise error.InvalidConfigError(
-                    f"incorrect blind distribution, expected list of "
-                    f"length {num_players}, got {blinds}"
-                )
-        else:
-            blinds = [blinds] * num_players
-        if isinstance(antes, list):
-            if len(antes) != num_players:
-                raise error.InvalidConfigError(
-                    f"incorrect ante distribution, expected list of "
-                    f"length {num_players}, got {antes}"
-                )
-        else:
-            antes = [antes] * num_players
-        if isinstance(raise_sizes, list):
-            if len(raise_sizes) != num_streets:
-                raise error.InvalidConfigError(
-                    f"incorrect raise size distribution, expected list "
-                    f"of length {num_streets}, got {raise_sizes}"
-                )
-        else:
-            raise_sizes = [raise_sizes] * num_streets
-        if isinstance(num_raises, list):
-            if len(num_raises) != num_streets:
-                raise error.InvalidConfigError(
-                    f"incorrect number of raises distributions, expected "
-                    f"list of length {num_streets}, got {num_raises}"
-                )
-        else:
-            num_raises = [num_raises] * num_streets
-        if isinstance(num_community_cards, list):
-            if len(num_community_cards) != num_streets:
-                raise error.InvalidConfigError(
-                    f"incorrect community card distribution, expected "
-                    f"list of length {num_streets}, got {num_community_cards}"
-                )
-        else:
-            num_community_cards = [num_community_cards] * num_streets
+        error_msg = "incorrect {} distribution, expected list of length {}, got {}"
+        blinds = check_inp(
+            blinds, num_players, error_msg.format("blind", num_players, str(blinds)),
+        )
+        antes = check_inp(
+            antes, num_players, error_msg.format("ante", num_players, str(antes))
+        )
+        raise_sizes = check_inp(
+            raise_sizes,
+            num_streets,
+            error_msg.format("raise size", num_streets, str(raise_sizes)),
+        )
+        num_raises = check_inp(
+            num_raises,
+            num_streets,
+            error_msg.format("number of raises", num_streets, str(num_raises)),
+        )
+        num_community_cards = check_inp(
+            num_community_cards,
+            num_streets,
+            error_msg.format("community card", num_streets, str(num_community_cards)),
+        )
 
         def clean_rs(raise_size):
             if isinstance(raise_size, (int, float)):
@@ -162,7 +152,7 @@ class Dealer:
             if raise_size == "pot":
                 return raise_size
             raise error.InvalidRaiseSizeError(
-                f'unknown raise size, expected one of (int, float, "pot"),'
+                f"unknown raise size, expected one of (int, float, 'pot'),"
                 f" got {raise_size}"
             )
 
