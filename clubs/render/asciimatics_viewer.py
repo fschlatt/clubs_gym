@@ -1,5 +1,6 @@
 try:
     from asciimatics import screen
+
     ASCIIMATICS = True
 except ImportError:
     ASCIIMATICS = False
@@ -10,7 +11,7 @@ from . import ascii_viewer
 
 
 class AsciimaticsViewer(ascii_viewer.ASCIIViewer):
-    '''Poker game renderer which prints an animated ascii representation
+    """Poker game renderer which prints an animated ascii representation
     of the table state to the terminal using the asciimatics library
 
     Parameters
@@ -21,25 +22,25 @@ class AsciimaticsViewer(ascii_viewer.ASCIIViewer):
         number of hole cards
     num_community_cards : int
         number of community cards
-    '''
+    """
 
-    def __init__(self, num_players: int, num_hole_cards: int,
-                 num_community_cards: int) -> None:
+    def __init__(
+        self, num_players: int, num_hole_cards: int, num_community_cards: int
+    ) -> None:
         super(AsciimaticsViewer, self).__init__(
-            num_players, num_hole_cards, num_community_cards)
+            num_players, num_hole_cards, num_community_cards
+        )
 
         if not ASCIIMATICS:
-            raise ImportError(
-                'install asciimatics to use the asciimatics viewer'
-            )
+            raise ImportError("install asciimatics to use the asciimatics viewer")
 
-        self.string = ''
+        self.string = ""
         self.refresh = threading.Condition()
         thread = threading.Thread(target=self._render_loop, daemon=True)
         thread.start()
 
     def render(self, config: dict, fps: int = 5, **kwargs) -> None:
-        '''Render ascii table representation based on the table
+        """Render ascii table representation based on the table
         configuration
 
         Parameters
@@ -67,7 +68,7 @@ class AsciimaticsViewer(ascii_viewer.ASCIIViewer):
                 }
         fps : int, optional
             frames per second for ascii animation, by default 5
-        '''
+        """
 
         self.string = self.parse_string(config)
 
@@ -75,12 +76,12 @@ class AsciimaticsViewer(ascii_viewer.ASCIIViewer):
         self.refresh.notify()
         self.refresh.release()
         if fps:
-            time.sleep(1/fps)
+            time.sleep(1 / fps)
 
     def _render_loop(self):
         with screen.ManagedScreen() as scr:
             while True:
-                for idx, line in enumerate(self.string.split('\n')):
+                for idx, line in enumerate(self.string.split("\n")):
                     scr.print_at(line, 0, idx)
                 scr.refresh()
                 self.refresh.acquire()

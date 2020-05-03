@@ -1,5 +1,5 @@
-class PokerViewer():
-    '''Base class for renderer. Any renderer must subclass this renderer
+class PokerViewer:
+    """Base class for renderer. Any renderer must subclass this renderer
     and implement the function render
 
     Parameters
@@ -10,16 +10,17 @@ class PokerViewer():
         number of hole cards
     num_community_cards : int
         number of community cards
-    '''
+    """
 
-    def __init__(self, num_players: int, num_hole_cards: int,
-                 num_community_cards: int) -> None:
+    def __init__(
+        self, num_players: int, num_hole_cards: int, num_community_cards: int
+    ) -> None:
         self.num_players = num_players
         self.num_hole_cards = num_hole_cards
         self.num_community_cards = num_community_cards
 
     def render(self, config: dict, **kwargs) -> None:
-        '''Render the table based on the table configuration
+        """Render the table based on the table configuration
 
         Parameters
         ----------
@@ -44,5 +45,5 @@ class PokerViewer():
                                       player on current street,
                     'stacks': List[int] - list of stack sizes,
                 }
-        '''
+        """
         raise NotImplementedError

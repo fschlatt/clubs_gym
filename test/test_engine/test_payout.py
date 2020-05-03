@@ -8,9 +8,17 @@ def test_split_pot():
     dealer = clubs.Dealer(**config)
 
     hands = [
-        ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['Js', 'Jc'],
-        ['6h', '8d'], ['5c', '7d'], ['Qh', '2c'], ['3d', '4s']]
-    comm_cards = ['4d', '5h', '7c', 'Ac', 'Kh']
+        ["6c", "8s"],
+        ["Ac", "Ad"],
+        ["Kd", "2h"],
+        ["Th", "9c"],
+        ["Js", "Jc"],
+        ["6h", "8d"],
+        ["5c", "7d"],
+        ["Qh", "2c"],
+        ["3d", "4s"],
+    ]
+    comm_cards = ["4d", "5h", "7c", "Ac", "Kh"]
     top_cards = [card for hand in hands for card in hand] + comm_cards
     dealer.deck = dealer.deck.trick(top_cards)
 
@@ -34,7 +42,7 @@ def test_split_pot():
     _ = dealer.step(bet)
     bet = -1
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 27
+    assert obs["pot"] == 27
     # flop
     bet = 4
     _ = dealer.step(bet)
@@ -46,7 +54,7 @@ def test_split_pot():
     _ = dealer.step(bet)
     bet = 4
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 43
+    assert obs["pot"] == 43
 
     while True:
         bet = 0
@@ -55,8 +63,9 @@ def test_split_pot():
             break
     assert not sum(payouts)
     test_payouts = [12, -9, -2, 0, -5, 13, -9, 0, 0]
-    assert all(payout == test_payout
-               for payout, test_payout in zip(payouts, test_payouts))
+    assert all(
+        payout == test_payout for payout, test_payout in zip(payouts, test_payouts)
+    )
 
 
 def test_all_in():
@@ -66,9 +75,17 @@ def test_all_in():
     dealer = clubs.Dealer(**config)
 
     hands = [
-        ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['Js', 'Jc'],
-        ['6h', '8d'], ['5c', '7d'], ['Qh', '2c'], ['3d', '4s']]
-    comm_cards = ['4d', '5h', '7c', 'Ac', 'Kh']
+        ["6c", "8s"],
+        ["Ac", "Ad"],
+        ["Kd", "2h"],
+        ["Th", "9c"],
+        ["Js", "Jc"],
+        ["6h", "8d"],
+        ["5c", "7d"],
+        ["Qh", "2c"],
+        ["3d", "4s"],
+    ]
+    comm_cards = ["4d", "5h", "7c", "Ac", "Kh"]
     top_cards = [card for hand in hands for card in hand] + comm_cards
     dealer.deck = dealer.deck.trick(top_cards)
 
@@ -96,7 +113,7 @@ def test_all_in():
     bet = -1
     obs, *_ = dealer.step(bet)
 
-    assert obs['pot'] == 122
+    assert obs["pot"] == 122
 
     while True:
         bet = 0
@@ -106,8 +123,9 @@ def test_all_in():
 
     assert not sum(payouts)
     test_payouts = [42, 10, -2, 0, -50, 0, 0, 0, 0]
-    assert all(payout == test_payout
-               for payout, test_payout in zip(payouts, test_payouts))
+    assert all(
+        payout == test_payout for payout, test_payout in zip(payouts, test_payouts)
+    )
 
 
 def test_all_in_split_pot():
@@ -117,9 +135,17 @@ def test_all_in_split_pot():
     dealer = clubs.Dealer(**config)
 
     hands = [
-        ['6c', '8s'], ['Ac', 'Ad'], ['Kd', '2h'], ['Th', '9c'], ['6d', '8h'],
-        ['6h', '8d'], ['5c', '7d'], ['Qh', '2c'], ['3d', '4s']]
-    comm_cards = ['4d', '5h', '7c', 'Ac', 'Kh']
+        ["6c", "8s"],
+        ["Ac", "Ad"],
+        ["Kd", "2h"],
+        ["Th", "9c"],
+        ["6d", "8h"],
+        ["6h", "8d"],
+        ["5c", "7d"],
+        ["Qh", "2c"],
+        ["3d", "4s"],
+    ]
+    comm_cards = ["4d", "5h", "7c", "Ac", "Kh"]
     top_cards = [card for hand in hands for card in hand] + comm_cards
     dealer.deck = dealer.deck.trick(top_cards)
 
@@ -149,7 +175,7 @@ def test_all_in_split_pot():
     bet = -1
     obs, *_ = dealer.step(bet)
 
-    assert obs['pot'] == 147
+    assert obs["pot"] == 147
 
     while True:
         bet = 0
@@ -164,5 +190,6 @@ def test_all_in_split_pot():
 
     assert not sum(payouts)
     test_payouts = [7, -45, -2, 0, 26, 14, 0, 0, 0]
-    assert all(payout == test_payout
-               for payout, test_payout in zip(payouts, test_payouts))
+    assert all(
+        payout == test_payout for payout, test_payout in zip(payouts, test_payouts)
+    )

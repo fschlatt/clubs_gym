@@ -10,7 +10,7 @@ def test_game():
 
     dealer = clubs.Dealer(**config)
 
-    dealer.deck = dealer.deck.trick(['Qs', 'Ks', 'Qh'])
+    dealer.deck = dealer.deck.trick(["Qs", "Ks", "Qh"])
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
@@ -40,59 +40,59 @@ def test_heads_up():
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
-    assert obs['action'] == 0
-    assert obs['call'] == 1
-    assert obs['min_raise'] == 3
-    assert obs['max_raise'] == 199
+    assert obs["action"] == 0
+    assert obs["call"] == 1
+    assert obs["min_raise"] == 3
+    assert obs["max_raise"] == 199
 
     bet = 1
     obs, *_ = dealer.step(bet)
 
-    assert obs['call'] == 0
-    assert obs['min_raise'] == 2
-    assert obs['max_raise'] == 198
+    assert obs["call"] == 0
+    assert obs["min_raise"] == 2
+    assert obs["max_raise"] == 198
 
 
 def test_init():
 
     config = {**clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER}
 
-    blinds = config['blinds']
-    antes = config['antes']
-    raise_sizes = config['raise_sizes']
-    num_raises = config['num_raises']
-    num_community_cards = config['num_community_cards']
+    blinds = config["blinds"]
+    antes = config["antes"]
+    raise_sizes = config["raise_sizes"]
+    num_raises = config["num_raises"]
+    num_community_cards = config["num_community_cards"]
 
-    config['blinds'] = [0]
+    config["blinds"] = [0]
     with pytest.raises(error.InvalidConfigError):
         clubs.Dealer(**config)
-    config['blinds'] = blinds
+    config["blinds"] = blinds
 
-    config['antes'] = [0]
+    config["antes"] = [0]
     with pytest.raises(error.InvalidConfigError):
         clubs.Dealer(**config)
-    config['antes'] = antes
+    config["antes"] = antes
 
-    config['raise_sizes'] = [0]
+    config["raise_sizes"] = [0]
     with pytest.raises(error.InvalidConfigError):
         clubs.Dealer(**config)
-    config['raise_sizes'] = raise_sizes
+    config["raise_sizes"] = raise_sizes
 
-    config['num_raises'] = [0]
+    config["num_raises"] = [0]
     with pytest.raises(error.InvalidConfigError):
         clubs.Dealer(**config)
-    config['num_raises'] = num_raises
+    config["num_raises"] = num_raises
 
-    config['num_community_cards'] = [0]
+    config["num_community_cards"] = [0]
     with pytest.raises(error.InvalidConfigError):
         clubs.Dealer(**config)
-    config['num_community_cards'] = num_community_cards
+    config["num_community_cards"] = num_community_cards
 
-    config['blinds'] = 0
-    config['antes'] = 0
-    config['raise_sizes'] = 0
-    config['num_raises'] = 0
-    config['num_community_cards'] = 0
+    config["blinds"] = 0
+    config["antes"] = 0
+    config["raise_sizes"] = 0
+    config["num_raises"] = 0
+    config["num_community_cards"] = 0
 
     dealer = clubs.Dealer(**config)
 
@@ -102,16 +102,16 @@ def test_init():
     assert list(dealer.num_raises) == [0, 0, 0, 0]
     assert list(dealer.num_community_cards) == [0, 0, 0, 0]
 
-    config['blinds'] = blinds
-    config['antes'] = antes
-    config['raise_sizes'] = raise_sizes
-    config['num_raises'] = num_raises
-    config['num_community_cards'] = num_community_cards
+    config["blinds"] = blinds
+    config["antes"] = antes
+    config["raise_sizes"] = raise_sizes
+    config["num_raises"] = num_raises
+    config["num_community_cards"] = num_community_cards
 
-    config['raise_sizes'] = 'lala'
+    config["raise_sizes"] = "lala"
     with pytest.raises(error.InvalidRaiseSizeError):
         clubs.Dealer(**config)
-    config['raise_sizes'] = raise_sizes
+    config["raise_sizes"] = raise_sizes
 
 
 def test_str_repr():
@@ -122,8 +122,8 @@ def test_str_repr():
 
     assert len(str(dealer)) == 1242
     string = (
-        f'Dealer ({id(dealer)}) - num players: {dealer.num_players}, '
-        f'num streets: {dealer.num_streets}'
+        f"Dealer ({id(dealer)}) - num players: {dealer.num_players}, "
+        f"num streets: {dealer.num_streets}"
     )
     assert repr(dealer) == string
 

@@ -12,8 +12,8 @@ def test_button_move():
     dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=False)
 
-    assert obs['button'] == 0
-    assert obs['action'] == 0
+    assert obs["button"] == 0
+    assert obs["action"] == 0
 
     bet = 0
     while True:
@@ -23,8 +23,8 @@ def test_button_move():
 
     obs = dealer.reset(reset_button=False, reset_stacks=True)
 
-    assert obs['button'] == 1
-    assert obs['action'] == 1
+    assert obs["button"] == 1
+    assert obs["action"] == 1
 
     random.seed(42)
 
@@ -33,8 +33,8 @@ def test_button_move():
     dealer = clubs.Dealer(**config)
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
-    assert obs['button'] == 0
-    assert obs['action'] == 3
+    assert obs["button"] == 0
+    assert obs["action"] == 3
 
     bet = 0
     while True:
@@ -44,8 +44,8 @@ def test_button_move():
 
     obs = dealer.reset(reset_button=False, reset_stacks=True)
 
-    assert obs['button'] == 1
-    assert obs['action'] == 4
+    assert obs["button"] == 1
+    assert obs["action"] == 4
 
 
 def test_inactive_players():
@@ -69,5 +69,5 @@ def test_inactive_players():
 
     obs = dealer.reset(reset_button=False, reset_stacks=False)
 
-    assert obs['button'] == 1
-    assert obs['action'] == 5
+    assert obs["button"] == 1
+    assert obs["action"] == 5
