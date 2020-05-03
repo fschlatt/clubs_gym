@@ -429,57 +429,65 @@ class LookupTable:
             suited = unsuited
         return int(suited), int(unsuited)
 
-    def __flushes(self, ranks, cards_for_hand, low_end_straight):
-        # straight flushes in rank order
+    @staticmethod
+    def __gen_straight_flush(cards_for_hand, ranks, low_end_straight):
         straight_flushes = []
 
-        # if any straights/straight flushes exist in card configuration
-        # create list of all possibilities
+        # start with best straight (flush)
+        # for 5 card hand with 13 ranks: 0b1111100000000
+        bin_num_str = "0b" + "1" * cards_for_hand + "0" * (13 - cards_for_hand)
+        # remove one 0 for every straight (flush)
+        for _ in range(ranks - (cards_for_hand - 1)):
+            straight_flushes.append(int(bin_num_str, 2))
+            bin_num_str = bin_num_str[:-1]
+        if low_end_straight:
+            # add low end straight
+            bin_num_str = (
+                "0b1"
+                + "0" * (ranks - cards_for_hand)
+                + "1" * (cards_for_hand - 1)
+                + "0" * (13 - ranks)
+            )
+            straight_flushes.append(int(bin_num_str, 2))
+
+        return straight_flushes
+
+    @staticmethod
+    def __gen_flush(cards_for_hand, ranks, straight_flushes):
+        flushes = []
+        # start with lowest non pair hand
+        # for 5 card hand with 13 ranks: 0b11111
+        bin_num_str = "0b" + ("1" * cards_for_hand)
+        gen = _lexographic_next_bit(int(bin_num_str, 2))
+        # iterate over all possibilities of unique hands
+        for _ in range(int(_ncr(ranks, cards_for_hand))):
+            # pull the next flush pattern from generator
+            # offset by number of ranks not in play
+            flush = next(gen) << (13 - ranks)
+            if flush not in straight_flushes:
+                flushes.append(flush)
+
+        flushes.reverse()
+        return flushes
+
+    def __flushes(self, ranks, cards_for_hand, low_end_straight):
+        straight_flushes = []
         if (
             self.hand_dict["straight flush"]["cumulative unsuited"]
             or self.hand_dict["straight"]["cumulative unsuited"]
         ):
-            # start with best straight (flush)
-            # for 5 card hand with 13 ranks: 0b1111100000000
-            bin_num_str = "0b" + "1" * cards_for_hand + "0" * (13 - cards_for_hand)
-            # remove one 0 for every straight (flush)
-            for _ in range(ranks - (cards_for_hand - 1)):
-                straight_flushes.append(int(bin_num_str, 2))
-                bin_num_str = bin_num_str[:-1]
-            if low_end_straight:
-                # add low end straight
-                bin_num_str = (
-                    "0b1"
-                    + "0" * (ranks - cards_for_hand)
-                    + "1" * (cards_for_hand - 1)
-                    + "0" * (13 - ranks)
-                )
-                straight_flushes.append(int(bin_num_str, 2))
+            straight_flushes = self.__gen_straight_flush(
+                cards_for_hand, ranks, low_end_straight
+            )
 
-        # if any flushes/high cards exist in card configuration
-        # create list of all possibilities
+        # dynamically generate all the other
+        # flushes (including straight flushes)
+        flushes = []
         if (
             self.hand_dict["flush"]["cumulative unsuited"]
             or self.hand_dict["high card"]["cumulative unsuited"]
         ):
-            # dynamically generate all the other
-            # flushes (including straight flushes)
-            flushes = []
-            # start with lowest non pair hand
-            # for 5 card hand with 13 ranks: 0b11111
-            bin_num_str = "0b" + ("1" * cards_for_hand)
-            gen = _lexographic_next_bit(int(bin_num_str, 2))
-            # iterate over all possibilities of unique hands
-            for _ in range(int(_ncr(ranks, cards_for_hand))):
-                # pull the next flush pattern from generator
-                # offset by number of ranks not in play
-                flush = next(gen) << (13 - ranks)
-                if flush not in straight_flushes:
-                    flushes.append(flush)
-
-        # hand generation started from worst hand
-        # so needs to be reversed
-        flushes.reverse()
+            flushes = self.__gen_flush(cards_for_hand, ranks, straight_flushes)
 
         def add_to_table(rank_string, rank_bits, suited):
             if not self.hand_dict[rank_string]["cumulative unsuited"]:
