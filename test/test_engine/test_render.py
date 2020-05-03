@@ -18,15 +18,20 @@ def test_render():
 
     dealer.reset()
     with pytest.raises(error.InvalidRenderModeError):
-        dealer.render('lala')
+        dealer.render("lala")
 
     stdout = io.StringIO()
     with redirect_stdout(stdout):
         dealer.render()
     string = stdout.getvalue()
 
-    action_string = 'Action on Player 5'
+    action_string = "Action on Player 5"
     sub_strings = [
-        f'6{chr(9824)},2{chr(9827)} 200', '199', '??', '3', 'Ac', action_string
+        f"6{chr(9824)},2{chr(9827)} 200",
+        "199",
+        "??",
+        "3",
+        "Ac",
+        action_string,
     ]
     assert all(sub_string in string for sub_string in sub_strings)

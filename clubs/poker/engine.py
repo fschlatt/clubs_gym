@@ -1,13 +1,13 @@
-'''Classes and functions for running poker games'''
-from typing import Dict, List, Optional, Tuple, Union
+"""Classes and functions for running poker games"""
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from clubs import poker, error, render
+from clubs import error, poker, render
 
 
-class Dealer():
-    '''Runs a range of different of poker games dependent on the
+class Dealer:
+    """Runs a range of different of poker games dependent on the
     given configuration. Supports limit, no limit and pot limit
     bet sizing, arbitrary deck sizes, arbitrary hole and community
     cards and many other options.
@@ -94,67 +94,66 @@ class Dealer():
                mandatory_num_hole_cards=0, start_stack=200,
                order=['sf', 'fk', 'fl', 'fh', 'st',
                       'tk', 'tp', 'pa', 'hc'])
-    '''
+    """
 
-    def __init__(self, num_players: int, num_streets: int,
-                 blinds: Union[int, List[int]], antes: Union[int, List[int]],
-                 raise_sizes: Union[float, str, List[Union[float, str]]],
-                 num_raises: Union[float, List[float]], num_suits: int,
-                 num_ranks: int, num_hole_cards: int,
-                 num_community_cards: Union[int, List[int]],
-                 num_cards_for_hand: int, mandatory_num_hole_cards: int,
-                 start_stack: int, low_end_straight: bool = True,
-                 order: Optional[List[str]] = None) -> None:
+    def __init__(
+        self,
+        num_players: int,
+        num_streets: int,
+        blinds: Union[int, List[int]],
+        antes: Union[int, List[int]],
+        raise_sizes: Union[float, str, List[Union[float, str]]],
+        num_raises: Union[float, List[float]],
+        num_suits: int,
+        num_ranks: int,
+        num_hole_cards: int,
+        num_community_cards: Union[int, List[int]],
+        num_cards_for_hand: int,
+        mandatory_num_hole_cards: int,
+        start_stack: int,
+        low_end_straight: bool = True,
+        order: Optional[List[str]] = None,
+    ) -> None:
+        def check_inp(
+            var: Union[List[Any], Any], expect_num: int, error_msg: str
+        ) -> List[Any]:
+            if isinstance(var, list):
+                if len(var) != expect_num:
+                    raise error.InvalidConfigError(error_msg)
+                return var
+            return [var] * expect_num
 
-        if isinstance(blinds, list):
-            if len(blinds) != num_players:
-                raise error.InvalidConfigError(
-                    f'incorrect blind distribution, expected list of '
-                    f'length {num_players}, got {blinds}'
-                )
-        else:
-            blinds = [blinds] * num_players
-        if isinstance(antes, list):
-            if len(antes) != num_players:
-                raise error.InvalidConfigError(
-                    f'incorrect ante distribution, expected list of '
-                    f'length {num_players}, got {antes}'
-                )
-        else:
-            antes = [antes] * num_players
-        if isinstance(raise_sizes, list):
-            if len(raise_sizes) != num_streets:
-                raise error.InvalidConfigError(
-                    f'incorrect raise size distribution, expected list '
-                    f'of length {num_streets}, got {raise_sizes}'
-                )
-        else:
-            raise_sizes = [raise_sizes] * num_streets
-        if isinstance(num_raises, list):
-            if len(num_raises) != num_streets:
-                raise error.InvalidConfigError(
-                    f'incorrect number of raises distributions, expected '
-                    f'list of length {num_streets}, got {num_raises}'
-                )
-        else:
-            num_raises = [num_raises] * num_streets
-        if isinstance(num_community_cards, list):
-            if len(num_community_cards) != num_streets:
-                raise error.InvalidConfigError(
-                    f'incorrect community card distribution, expected '
-                    f'list of length {num_streets}, got {num_community_cards}'
-                )
-        else:
-            num_community_cards = [num_community_cards] * num_streets
+        error_msg = "incorrect {} distribution, expected list of length {}, got {}"
+        blinds = check_inp(
+            blinds, num_players, error_msg.format("blind", num_players, str(blinds)),
+        )
+        antes = check_inp(
+            antes, num_players, error_msg.format("ante", num_players, str(antes))
+        )
+        raise_sizes = check_inp(
+            raise_sizes,
+            num_streets,
+            error_msg.format("raise size", num_streets, str(raise_sizes)),
+        )
+        num_raises = check_inp(
+            num_raises,
+            num_streets,
+            error_msg.format("number of raises", num_streets, str(num_raises)),
+        )
+        num_community_cards = check_inp(
+            num_community_cards,
+            num_streets,
+            error_msg.format("community card", num_streets, str(num_community_cards)),
+        )
 
         def clean_rs(raise_size):
             if isinstance(raise_size, (int, float)):
                 return raise_size
-            if raise_size == 'pot':
+            if raise_size == "pot":
                 return raise_size
             raise error.InvalidRaiseSizeError(
-                f'unknown raise size, expected one of (int, float, "pot"),'
-                f' got {raise_size}'
+                f"unknown raise size, expected one of (int, float, 'pot'),"
+                f" got {raise_size}"
             )
 
         # config
@@ -180,17 +179,19 @@ class Dealer():
         self.community_cards: List[poker.Card] = []
         self.deck = poker.Deck(self.num_suits, self.num_ranks)
         self.evaluator = poker.Evaluator(
-            self.num_suits, self.num_ranks, self.num_cards_for_hand,
+            self.num_suits,
+            self.num_ranks,
+            self.num_cards_for_hand,
             self.mandatory_num_hole_cards,
-            low_end_straight=low_end_straight, order=order
+            low_end_straight=low_end_straight,
+            order=order,
         )
         self.history: List[Tuple[int, int, bool]] = []
         self.hole_cards: List[List[poker.Card]] = []
         self.largest_raise = 0
         self.pot = 0
         self.pot_commit = np.zeros(self.num_players, dtype=np.int32)
-        self.stacks = np.full(
-            self.num_players, self.start_stack, dtype=np.int32)
+        self.stacks = np.full(self.num_players, self.start_stack, dtype=np.int32)
         self.street = 0
         self.street_commits = np.zeros(self.num_players, dtype=np.int32)
         self.street_option = np.zeros(self.num_players, dtype=np.uint8)
@@ -209,14 +210,13 @@ class Dealer():
 
     def __repr__(self) -> str:
         string = (
-            f'Dealer ({id(self)}) - num players: {self.num_players}, '
-            f'num streets: {self.num_streets}'
+            f"Dealer ({id(self)}) - num players: {self.num_players}, "
+            f"num streets: {self.num_streets}"
         )
         return string
 
-    def reset(self, reset_button: bool = False,
-              reset_stacks: bool = False) -> Dict:
-        '''Resets the table. Shuffles the deck, deals new hole cards
+    def reset(self, reset_button: bool = False, reset_stacks: bool = False) -> Dict:
+        """Resets the table. Shuffles the deck, deals new hole cards
         to all players, moves the button and collects blinds and antes.
 
         Parameters
@@ -244,7 +244,7 @@ class Dealer():
                     street_commits: number of chips commited by every
                                     player on this street
                 }
-        '''
+        """
         if reset_stacks:
             self.active.fill(1)
             self.stacks = np.full(self.num_players, self.start_stack)
@@ -252,7 +252,7 @@ class Dealer():
             self.active = self.stacks > 0
             if sum(self.active) <= 1:
                 raise error.TooFewActivePlayersError(
-                    'not enough players have chips, set reset_stacks=True'
+                    "not enough players have chips, set reset_stacks=True"
                 )
         if reset_button:
             self.button = 0
@@ -263,8 +263,7 @@ class Dealer():
         self.community_cards = self.deck.draw(self.num_community_cards[0])
         self.history = []
         self.hole_cards = [
-            self.deck.draw(self.num_hole_cards)
-            for _ in range(self.num_players)
+            self.deck.draw(self.num_hole_cards) for _ in range(self.num_players)
         ]
         self.largest_raise = self.big_blind
         self.pot = 0
@@ -286,7 +285,7 @@ class Dealer():
         return self.__observation()
 
     def step(self, bet: int) -> Tuple[Dict, np.ndarray, np.ndarray]:
-        '''Advances poker game to next player. If the bet is 0, it is
+        """Advances poker game to next player. If the bet is 0, it is
         either considered a check or fold, depending on the previous
         action. The given bet is always rounded to the closest valid bet
         size. When it is the same distance from two valid bet sizes
@@ -321,13 +320,11 @@ class Dealer():
 
             bool array containing value for every player if that player
             is still involved in round
-        '''
+        """
         if self.action == -1:
             if any(self.active):
                 return self.__output()
-            raise error.TableResetError(
-                'call reset() before calling first step()'
-            )
+            raise error.TableResetError("call reset() before calling first step()")
 
         fold = bet < 0
         bet = round(bet)
@@ -378,7 +375,7 @@ class Dealer():
         observation, payouts, done = self.__output()
         if all(done):
             self.action = -1
-            observation['action'] = -1
+            observation["action"] = -1
         return observation, payouts, done
 
     def _render_config(self):
@@ -395,45 +392,42 @@ class Dealer():
         stacks = self.stacks
 
         config = {
-            'action': action,
-            'active': active,
-            'all_in': all_in,
-            'community_cards': community_cards,
-            'dealer': dealer,
-            'done': done,
-            'hole_cards': hole_cards,
-            'pot': pot,
-            'payouts': payouts,
-            'prev_action': None if not self.history else self.history[-1],
-            'street_commits': street_commits,
-            'stacks': stacks,
+            "action": action,
+            "active": active,
+            "all_in": all_in,
+            "community_cards": community_cards,
+            "dealer": dealer,
+            "done": done,
+            "hole_cards": hole_cards,
+            "pot": pot,
+            "payouts": payouts,
+            "prev_action": None if not self.history else self.history[-1],
+            "street_commits": street_commits,
+            "stacks": stacks,
         }
 
         return config
 
-    def render(self, mode: str = 'ascii', **kwargs):
-        '''Renders poker table. Render mode options are: ascii,
+    def render(self, mode: str = "ascii", **kwargs):
+        """Renders poker table. Render mode options are: ascii,
         asciimatics
 
         Parameters
         ----------
         mode : str, optional
             toggle for using different renderer, by default 'ascii'
-        '''
+        """
         if self.viewer is None:
-            if mode == 'ascii':
+            if mode == "ascii":
                 self.viewer = self.ascii_viewer
-            elif mode == 'asciimatics':
+            elif mode == "asciimatics":
                 self.viewer = render.AsciimaticsViewer(
-                    self.num_players,
-                    self.num_hole_cards,
-                    sum(self.num_community_cards)
+                    self.num_players, self.num_hole_cards, sum(self.num_community_cards)
                 )
             else:
-                render_modes = ', '.join(['ascii', 'asciimatics'])
+                render_modes = ", ".join(["ascii", "asciimatics"])
                 raise error.InvalidRenderModeError(
-                    (f'incorrect render mode {mode},'
-                     f'use one of[{render_modes}]')
+                    (f"incorrect render mode {mode}," f"use one of[{render_modes}]")
                 )
 
         config = self._render_config()
@@ -447,9 +441,11 @@ class Dealer():
         # all agreed if street commits equal to maximum street commit
         # or player is all in
         # or player is not active
-        return all((self.street_commits == self.street_commits.max()) |
-                   (self.stacks == 0) |
-                   np.logical_not(self.active))
+        return all(
+            (self.street_commits == self.street_commits.max())
+            | (self.stacks == 0)
+            | np.logical_not(self.active)
+        )
 
     def __bet_sizes(self) -> Tuple[int, int, int]:
         # call difference between commit and maximum commit
@@ -460,9 +456,9 @@ class Dealer():
             max_raise = min_raise = self.raise_sizes[self.street] + call
         else:
             min_raise = max(self.big_blind, self.largest_raise + call)
-            if self.raise_sizes[self.street] == 'pot':
+            if self.raise_sizes[self.street] == "pot":
                 max_raise = self.pot + call * 2
-            elif self.raise_sizes[self.street] == float('inf'):
+            elif self.raise_sizes[self.street] == float("inf"):
                 max_raise = self.stacks[self.action]
         # if maximum number of raises in street
         # was reached cap raise at 0
@@ -480,12 +476,10 @@ class Dealer():
         return call, min_raise, max_raise
 
     @staticmethod
-    def __clean_bet(bet: int, call: int, min_raise: int,
-                    max_raise: int) -> int:
+    def __clean_bet(bet: int, call: int, min_raise: int, max_raise: int) -> int:
         # find closest bet size to actual bet
         # pessimistic approach: in ties order is fold/check -> call -> raise
-        idx = np.argmin(np.absolute(
-            np.array([0, call, min_raise, max_raise]) - bet))
+        idx = np.argmin(np.absolute(np.array([0, call, min_raise, max_raise]) - bet))
         # if call closest
         if idx == 1:
             return call
@@ -495,8 +489,7 @@ class Dealer():
         # if fold closest
         return 0
 
-    def __collect_multiple_bets(self, bets: List[int],
-                                street_commits: bool = True):
+    def __collect_multiple_bets(self, bets: List[int], street_commits: bool = True):
         bets = np.roll(bets, self.action)
         bets = (self.stacks > 0) * self.active * bets
         if street_commits:
@@ -527,23 +520,17 @@ class Dealer():
         else:
             call, min_raise, max_raise = self.__bet_sizes()
         observation: dict = {
-            'action': self.action,
-            'active': self.active,
-            'button': self.button,
-            'call': call,
-            'community_cards': [
-                str(card)
-                for card in self.community_cards
-            ],
-            'hole_cards': [
-                [str(card) for card in cards]
-                for cards in self.hole_cards
-            ],
-            'max_raise': max_raise,
-            'min_raise': min_raise,
-            'pot': self.pot,
-            'stacks': self.stacks,
-            'street_commits': self.street_commits,
+            "action": self.action,
+            "active": self.active,
+            "button": self.button,
+            "call": call,
+            "community_cards": [str(card) for card in self.community_cards],
+            "hole_cards": [[str(card) for card in cards] for cards in self.hole_cards],
+            "max_raise": max_raise,
+            "min_raise": min_raise,
+            "pot": self.pot,
+            "stacks": self.stacks,
+            "street_commits": self.street_commits,
         }
         return observation
 

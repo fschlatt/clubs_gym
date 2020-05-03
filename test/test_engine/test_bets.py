@@ -10,28 +10,28 @@ def test_limit_bet_size():
     _ = dealer.reset(reset_button=True, reset_stacks=True)
     bet = 2.1
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 5
-    assert sum(obs['street_commits']) == obs['pot']
+    assert obs["pot"] == 5
+    assert sum(obs["street_commits"]) == obs["pot"]
 
     bet = 10
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 9
-    assert sum(obs['street_commits']) == obs['pot']
+    assert obs["pot"] == 9
+    assert sum(obs["street_commits"]) == obs["pot"]
 
     bet = 6
     _ = dealer.step(bet)
     bet = 8
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 23
-    assert obs['max_raise'] == 0
-    assert obs['call'] == 7
+    assert obs["pot"] == 23
+    assert obs["max_raise"] == 0
+    assert obs["call"] == 7
     bet = 7
     obs, *_ = dealer.step(bet)
 
     bet = -1
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 30
-    assert not obs['active'].all()
+    assert obs["pot"] == 30
+    assert not obs["active"].all()
 
 
 def test_all_in_bet_size():
@@ -46,10 +46,10 @@ def test_all_in_bet_size():
 
     bet = 100
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 52
+    assert obs["pot"] == 52
     bet = 1000
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 400
+    assert obs["pot"] == 400
 
 
 def test_incomplete_raise():
@@ -69,23 +69,23 @@ def test_incomplete_raise():
     _ = dealer.step(bet)
     bet = 8
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 11
-    assert obs['call'] == 7
-    assert obs['min_raise'] == 9
-    assert obs['max_raise'] == 9
+    assert obs["pot"] == 11
+    assert obs["call"] == 7
+    assert obs["min_raise"] == 9
+    assert obs["max_raise"] == 9
 
     bet = 9
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 20
-    assert obs['call'] == 8
-    assert obs['min_raise'] == 14  # call 8 + 6 largest valid raise
+    assert obs["pot"] == 20
+    assert obs["call"] == 8
+    assert obs["min_raise"] == 14  # call 8 + 6 largest valid raise
 
     bet = 8
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 28
-    assert obs['call'] == 2
-    assert obs['min_raise'] == 0
-    assert obs['max_raise'] == 0
+    assert obs["pot"] == 28
+    assert obs["call"] == 2
+    assert obs["min_raise"] == 0
+    assert obs["max_raise"] == 0
 
 
 def test_pot_limit_bet_size():
@@ -95,15 +95,15 @@ def test_pot_limit_bet_size():
     dealer = clubs.Dealer(**config)
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
-    assert obs['min_raise'] == 4
-    assert obs['max_raise'] == 7
+    assert obs["min_raise"] == 4
+    assert obs["max_raise"] == 7
 
     bet = 4
     obs, *_ = dealer.step(bet)
-    assert obs['pot'] == 7
-    assert obs['call'] == 4
-    assert obs['min_raise'] == 6
-    assert obs['max_raise'] == 15  # call + call + pot (2 * 4 + 7)
+    assert obs["pot"] == 7
+    assert obs["call"] == 4
+    assert obs["min_raise"] == 6
+    assert obs["max_raise"] == 15  # call + call + pot (2 * 4 + 7)
 
     bet = 4
     _ = dealer.step(bet)
@@ -122,28 +122,28 @@ def test_bet_rounding():
 
     bet = 1
     obs, *_ = dealer.step(bet)
-    assert obs['street_commits'][3] == 0
+    assert obs["street_commits"][3] == 0
 
     bet = 6
     obs, *_ = dealer.step(bet)
-    assert obs['street_commits'][4] == 6
+    assert obs["street_commits"][4] == 6
 
     bet = 3
     obs, *_ = dealer.step(bet)
-    assert obs['street_commits'][5] == 0
-    assert not obs['active'][5]
+    assert obs["street_commits"][5] == 0
+    assert not obs["active"][5]
 
     bet = 4
     obs, *_ = dealer.step(bet)
-    assert obs['street_commits'][6] == 6
+    assert obs["street_commits"][6] == 6
 
     bet = 8
     obs, *_ = dealer.step(bet)
-    assert obs['street_commits'][7] == 6
+    assert obs["street_commits"][7] == 6
 
     bet = 9
     obs, *_ = dealer.step(bet)
-    assert obs['street_commits'][8] == 10
+    assert obs["street_commits"][8] == 10
 
 
 def test_big_blind_raise_chance():
@@ -158,6 +158,6 @@ def test_big_blind_raise_chance():
     for _ in range(5):
         obs, *_ = dealer.step(bet)
 
-    assert obs['action'] == 2
-    assert obs['call'] == 0
-    assert obs['min_raise'] == 2
+    assert obs["action"] == 2
+    assert obs["call"] == 0
+    assert obs["min_raise"] == 2
