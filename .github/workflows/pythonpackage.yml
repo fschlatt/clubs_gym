@@ -36,7 +36,7 @@ jobs:
           flake8 clubs --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Lint with mypy
         run: |
-          mypy clubs --config_file mypy.ini
+          mypy clubs --config_file=mypy.ini
       - name: Test with pytest
         run: |
           pytest test
