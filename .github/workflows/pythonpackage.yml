@@ -37,7 +37,7 @@ jobs:
       - name: Lint with mypy
         run: |
           pip install mypy
-          mypy
+          mypy .
       - name: Test with pytest
         run: |
           pip install pytest
