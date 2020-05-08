@@ -72,7 +72,7 @@ The type of poker game is defined using a configuration dictionary. See [configs
 
 ## API
 
-clubs adopts the [Open AI gym](https://github.com/openai/gym) interface. See [clubs gym](https://github.com/fschlatt/clubs_gym.git) for a full clubs gym environment. To deal a new hand, call `dealer.reset()`, which returns a dictionary of observations for the current active player. To advance the game, call `dealer.step({bet})` with an integer bet size. Invalid bet sizes are always rounded to the nearest valid bet size. When the bet lies exactly between 2 valid bet sizes, it is always rounded down. For example, if the minimum raise size is 10 and the bet is 5, the bet is rounded down to 0, i.e. call or fold.
+clubs adopts the [Open AI gym](https://github.com/openai/gym) interface. To deal a new hand, call `env.reset()`, which returns a dictionary of observations for the current active player. To advance the game, call `env.step({bet})` with an integer bet size. Invalid bet sizes are always rounded to the nearest valid bet size. When the bet lies exactly between 2 valid bet sizes, it is always rounded down. For example, if the minimum raise size is 10 and the bet is 5, the bet is rounded down to 0, i.e. call or fold.
 
 ## Universal Deuces
 
