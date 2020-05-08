@@ -16,28 +16,18 @@ clubs_gym is a python library for running arbitrary configurations of community 
 ## Example
 
 ```python
-import random
+import gym
 
 import clubs
 
-config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
-dealer = clubs.Dealer(**config)
-obs = dealer.reset()
+env = gym.make("KuhnTwoPlayer-v0")
+env.register_agents([clubs.agent.kuhn.NashKuhnAgent(0.3)] * 2)
+obs = env.reset()
 
 while True:
-    call = obs['call']
-    min_raise = obs['min_raise']
-    max_raise = obs['max_raise']
+    bet = env.act(obs)
+    obs, rewards, done, info = env.step(bet)
 
-    rand = random.random()
-    if rand < 0.1:
-        bet = 0
-    elif rand < 0.80:
-        bet = call
-    else:
-        bet = random.randint(min_raise, max_raise)
-
-    obs, rewards, done, info = dealer.step(bet)
     if all(done):
         break
 
