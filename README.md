@@ -51,6 +51,7 @@ print(rewards)
 ## Configuration
 
 The type of poker game is defined using a configuration dictionary. See [configs.py](./clubs/configs.py) for some example configurations. A configuration dictionary has to have the following key value structure:
+
 * num_players
   * int: maximum number of players
 * num_streets
