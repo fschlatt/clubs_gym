@@ -94,7 +94,7 @@ The hand evaluator is heavily inspired by the [deuces](https://github.com/worldv
 
 ## Limitations
 
-Even though the library is aimed to be as general as possible, it currently has a couple limitations:
+Even though the library is designed to be as general as possible, it currently has a couple limitations:
 * Only integer chip denominations are supported 
 * The evaluator only works for sub decks of the standard 52 card deck as well as a maximum of 5 card poker hands
 * Draw and stud poker games are not supported 
