@@ -1,8 +1,8 @@
 import random
 
 import pytest
-import clubs
 
+import clubs
 from clubs import error
 
 
