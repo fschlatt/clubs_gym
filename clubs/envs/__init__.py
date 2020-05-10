@@ -1,3 +1,3 @@
-from .env import register, ClubsEnv
+from .env import ClubsEnv, register
 
 __all__ = ["ClubsEnv", "register"]
