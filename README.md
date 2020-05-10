@@ -15,7 +15,7 @@ clubs_gym is a python library for running arbitrary configurations of community 
 
 ## Install
 
-Install using `pip install clubs`.
+Install using `pip install clubs-gym`.
 
 ## Example
 
