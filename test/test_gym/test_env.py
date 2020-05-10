@@ -10,7 +10,7 @@ from clubs import configs, error
 
 def test_env():
     env = gym.make("NoLimitHoldemTwoPlayer-v0")
-    dealer = clubs.Dealer(**configs.NO_LIMIT_HOLDEM_TWO_PLAYER)
+    dealer = clubs.poker.Dealer(**configs.NO_LIMIT_HOLDEM_TWO_PLAYER)
 
     env_obs = env.reset()
     dealer_obs = dealer.reset()
