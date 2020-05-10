@@ -13,6 +13,10 @@
 
 clubs_gym is a python library for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
 
+## Install
+
+Install using `pip install clubs`.
+
 ## Example
 
 ```python
@@ -37,6 +41,7 @@ print(rewards)
 ## Configuration
 
 The type of poker game is defined using a configuration dictionary. See [configs.py](./clubs/configs.py) for some example configurations. A configuration dictionary has to have the following key value structure:
+
 * num_players
   * int: maximum number of players
 * num_streets
@@ -80,7 +85,8 @@ The hand evaluator is heavily inspired by the [deuces](https://github.com/worldv
 
 ## Limitations
 
-Even though the library is aimed to be as general as possible, it currently has a couple limitations:
-* Only integer chip denominations are supported 
+Even though the library is designed to be as general as possible, it currently has a couple limitations:
+
+* Only integer chip denominations are supported
 * The evaluator only works for sub decks of the standard 52 card deck as well as a maximum of 5 card poker hands
-* Draw and stud poker games are not supported 
+* Draw and stud poker games are not supported
