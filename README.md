@@ -6,10 +6,10 @@
 
 # clubs_gym
 
-<!-- [![PyPI Status](https://badge.fury.io/py/clubs.svg)](https://badge.fury.io/py/clubs)
-[![PyPI Status](https://pepy.tech/badge/clubs)](https://pepy.tech/project/clubs)
-[![codecov](https://codecov.io/gh/fschlatt/clubs/branch/master/graph/badge.svg)](https://codecov.io/gh/fschlatt/clubs)
-[![CodeFactor](https://www.codefactor.io/repository/github/fschlatt/clubs/badge)](https://www.codefactor.io/repository/github/fschlatt/clubs) -->
+[![PyPI Status](https://badge.fury.io/py/clubs_gym.svg)](https://badge.fury.io/py/clubs_gym)
+[![PyPI Status](https://pepy.tech/badge/clubs_gym)](https://pepy.tech/project/clubs_gym)
+[![codecov](https://codecov.io/gh/fschlatt/clubs_gym/branch/master/graph/badge.svg)](https://codecov.io/gh/fschlatt/clubs_gym)
+[![CodeFactor](https://www.codefactor.io/repository/github/fschlatt/clubs_gym/badge)](https://www.codefactor.io/repository/github/fschlatt/clubs_gym)
 
 clubs_gym is a python library for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
 
