@@ -10,7 +10,7 @@ with open(os.path.join(file_dir, "README.md"), encoding="utf-8") as file:
     long_description = file.read()
 
 setup(
-    name="clubs",
+    name="clubs-gym",
     version=clubs.__version__,
     description=clubs.__docs__,
     long_description=long_description,
