@@ -5,7 +5,7 @@ def test_split_pot():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_NINE_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     hands = [
         ["6c", "8s"],
@@ -72,7 +72,7 @@ def test_all_in():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_NINE_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     hands = [
         ["6c", "8s"],
@@ -132,7 +132,7 @@ def test_all_in_split_pot():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_NINE_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     hands = [
         ["6c", "8s"],

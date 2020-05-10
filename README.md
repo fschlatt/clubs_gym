@@ -25,7 +25,7 @@ import random
 import clubs
 
 config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
-dealer = clubs.Dealer(**config)
+dealer = clubs.poker.Dealer(**config)
 obs = dealer.reset()
 
 while True:

@@ -8,7 +8,7 @@ def test_game():
 
     config = clubs.configs.LEDUC_TWO_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     dealer.deck = dealer.deck.trick(["Qs", "Ks", "Qh"])
 
@@ -36,7 +36,7 @@ def test_heads_up():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
 
@@ -65,27 +65,27 @@ def test_init():
 
     config["blinds"] = [0]
     with pytest.raises(error.InvalidConfigError):
-        clubs.Dealer(**config)
+        clubs.poker.Dealer(**config)
     config["blinds"] = blinds
 
     config["antes"] = [0]
     with pytest.raises(error.InvalidConfigError):
-        clubs.Dealer(**config)
+        clubs.poker.Dealer(**config)
     config["antes"] = antes
 
     config["raise_sizes"] = [0]
     with pytest.raises(error.InvalidConfigError):
-        clubs.Dealer(**config)
+        clubs.poker.Dealer(**config)
     config["raise_sizes"] = raise_sizes
 
     config["num_raises"] = [0]
     with pytest.raises(error.InvalidConfigError):
-        clubs.Dealer(**config)
+        clubs.poker.Dealer(**config)
     config["num_raises"] = num_raises
 
     config["num_community_cards"] = [0]
     with pytest.raises(error.InvalidConfigError):
-        clubs.Dealer(**config)
+        clubs.poker.Dealer(**config)
     config["num_community_cards"] = num_community_cards
 
     config["blinds"] = 0
@@ -94,7 +94,7 @@ def test_init():
     config["num_raises"] = 0
     config["num_community_cards"] = 0
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     assert list(dealer.blinds) == [0, 0]
     assert list(dealer.antes) == [0, 0]
@@ -110,7 +110,7 @@ def test_init():
 
     config["raise_sizes"] = "lala"
     with pytest.raises(error.InvalidRaiseSizeError):
-        clubs.Dealer(**config)
+        clubs.poker.Dealer(**config)
     config["raise_sizes"] = raise_sizes
 
 
@@ -118,7 +118,7 @@ def test_str_repr():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     assert len(str(dealer)) == 1242
     string = (
@@ -132,7 +132,7 @@ def test_init_step():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     with pytest.raises(error.TableResetError):
         dealer.step(0)
