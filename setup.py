@@ -42,7 +42,7 @@ setup(
     keywords=["reinforcement learning", "poker", "AI", "gym"],
     packages=["clubs"],
     python_requires=">=3.6",
-    install_requires=["numpy>=1.16.6", "gym>=0.12.0"],
+    install_requires=["numpy>=1.16.6"],
     extras_requires={"render": ["asciimatics>=1.0.0", "flask>=1.0.0"]},
     project_urls={
         "Bug Reports": "https://github.com/fschlatt/clubs_gym/issues",
