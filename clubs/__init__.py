@@ -1,4 +1,3 @@
-__all__ = ["configs", "poker"]
 __version__ = "0.1.0-1"
 __author__ = "Ferdinand Schlatt"
 __license__ = "GPL-3.0"
@@ -21,3 +20,5 @@ if __CLUBS_SETUP__:  # type: ignore
     pass
 else:
     from . import configs, poker
+
+__all__ = ["configs", "poker"]
