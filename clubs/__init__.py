@@ -1,5 +1,5 @@
 __all__ = ["configs", "poker"]
-__version__ = "0.1.1"
+__version__ = "0.1.0"
 __author__ = "Ferdinand Schlatt"
 __license__ = "GPL-3.0"
 __copyright__ = f"Copyright (c) 2020, {__author__}."
