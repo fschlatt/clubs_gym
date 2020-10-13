@@ -13,7 +13,7 @@ class PokerViewer:
     """
 
     def __init__(
-        self, num_players: int, num_hole_cards: int, num_community_cards: int
+        self, num_players: int, num_hole_cards: int, num_community_cards: int, **kwargs,
     ) -> None:
         self.num_players = num_players
         self.num_hole_cards = num_hole_cards

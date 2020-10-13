@@ -417,18 +417,18 @@ class Dealer:
         mode : str, optional
             toggle for using different renderer, by default 'ascii'
         """
+        viewer: Optional[Type[render.PokerViewer]] = None
         if self.viewer is None:
-            viewer: Optional[Type[render.PokerViewer]] = None
             if mode == "ascii":
                 viewer = render.ASCIIViewer
             elif mode == "asciimatics":
                 viewer = render.AsciimaticsViewer
 
-            if viewer is None:
-                render_modes = ", ".join(["ascii", "asciimatics"])
-                raise error.InvalidRenderModeError(
-                    (f"incorrect render mode {mode}," f"use one of[{render_modes}]")
-                )
+        if viewer is None:
+            render_modes = ", ".join(["ascii", "asciimatics"])
+            raise error.InvalidRenderModeError(
+                (f"incorrect render mode {mode}," f"use one of[{render_modes}]")
+            )
 
         self.viewer = viewer(
             self.num_players,
