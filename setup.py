@@ -2,7 +2,6 @@ import os
 
 from setuptools import setup
 
-__all__ = ["configs", "poker"]
 __version__ = "0.1.0"
 __author__ = "Ferdinand Schlatt"
 __license__ = "GLP-3.0"
