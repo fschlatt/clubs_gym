@@ -14,7 +14,7 @@ def test_render():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     dealer.reset()
     with pytest.raises(error.InvalidRenderModeError):

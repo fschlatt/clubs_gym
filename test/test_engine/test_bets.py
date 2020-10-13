@@ -5,7 +5,7 @@ def test_limit_bet_size():
 
     config = clubs.configs.LIMIT_HOLDEM_SIX_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
     bet = 2.1
@@ -37,7 +37,7 @@ def test_limit_bet_size():
 def test_all_in_bet_size():
     config = clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     dealer.stacks[0] -= 150
     dealer.stacks[1] += 150
@@ -56,7 +56,7 @@ def test_incomplete_raise():
 
     config = dict(**clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER)
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     dealer.stacks[1] = dealer.stacks[1] - 190
     dealer.stacks[2] = dealer.stacks[2] + 190
@@ -92,7 +92,7 @@ def test_pot_limit_bet_size():
 
     config = clubs.configs.POT_LIMIT_OMAHA_SIX_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     obs = dealer.reset(reset_button=True, reset_stacks=True)
     assert obs["min_raise"] == 4
@@ -116,7 +116,7 @@ def test_bet_rounding():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_NINE_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
@@ -150,7 +150,7 @@ def test_big_blind_raise_chance():
 
     config = clubs.configs.NO_LIMIT_HOLDEM_SIX_PLAYER
 
-    dealer = clubs.Dealer(**config)
+    dealer = clubs.poker.Dealer(**config)
 
     _ = dealer.reset(reset_button=True, reset_stacks=True)
 
