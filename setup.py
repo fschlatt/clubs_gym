@@ -37,7 +37,7 @@ setup(
     install_requires=["numpy>=1.16.6"],
     extras_requires={"render": ["asciimatics>=1.0.0", "flask>=1.0.0"]},
     project_urls={
-        "Bug Reports": "https://github.com/fschlatt/clubs/issues",
-        "Source": "https://github.com/fschlatt/clubs/",
+        "Bug Reports": "https://github.com/fschlatt/clubs_gym/issues",
+        "Source": "https://github.com/fschlatt/clubs_gym/",
     },
 )
