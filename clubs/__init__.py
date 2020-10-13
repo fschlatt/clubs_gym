@@ -1,5 +1,4 @@
 from . import agent, configs, envs, poker
-from .poker.engine import Dealer
 
 __all__ = ["agent", "configs", "envs", "poker"]
 __version__ = "0.1.0"

@@ -16,15 +16,13 @@ class NashKuhnAgent(base.BaseAgent):
         if obs["hole_cards"][0][0] == "Q":
             if random.random() < self.alpha:
                 return 1
-            else:
-                return 0
+            return 0
         if obs["hole_cards"][0][0] == "K":
             return 0
         if obs["hole_cards"][0][0] == "A":
             if random.random() < 3 * self.alpha:
                 return 1
-            else:
-                return 0
+            return 0
 
     def player_1_bet(self, obs):
         if obs["hole_cards"][0][0] == "Q":
@@ -32,23 +30,20 @@ class NashKuhnAgent(base.BaseAgent):
         if obs["hole_cards"][0][0] == "K":
             if random.random() < 1 / 3 + self.alpha:
                 return 1
-            else:
-                return 0
+            return 0
         if obs["hole_cards"][0][0] == "A":
             return 1
 
     def _player_1(self, obs):
         if obs["pot"] == 2:
             return self.player_1_check(obs)
-        else:
-            return self.player_1_bet(obs)
+        return self.player_1_bet(obs)
 
     def _player_2_check(self, obs):
         if obs["hole_cards"][0][0] == "Q":
             if random.random() < 1 / 3:
                 return 1
-            else:
-                return 0
+            return 0
         if obs["hole_cards"][0][0] == "K":
             return 0
         if obs["hole_cards"][0][0] == "A":
@@ -60,19 +55,16 @@ class NashKuhnAgent(base.BaseAgent):
         if obs["hole_cards"][0][0] == "K":
             if random.random() < 1 / 3:
                 return 1
-            else:
-                return 0
+            return 0
         if obs["hole_cards"][0][0] == "A":
             return 1
 
     def _player_2(self, obs):
         if obs["pot"] == 2:
             return self._player_2_check(obs)
-        else:
-            return self._player_2_bet(obs)
+        return self._player_2_bet(obs)
 
     def act(self, obs):
         if obs["action"] == 0:
             return self._player_1(obs)
-        else:
-            return self._player_2(obs)
+        return self._player_2(obs)

@@ -4,8 +4,7 @@ import gym
 import numpy as np
 from gym import spaces
 
-import clubs
-from clubs import error
+from clubs import agent, error, poker
 
 
 class ClubsEnv(gym.Env):
@@ -119,7 +118,7 @@ class ClubsEnv(gym.Env):
         order: Optional[List[str]] = None,
     ) -> None:
 
-        self.dealer = clubs.Dealer(
+        self.dealer = poker.Dealer(
             num_players,
             num_streets,
             blinds,
@@ -163,7 +162,7 @@ class ClubsEnv(gym.Env):
             }
         )
 
-        self.agents: Optional[Dict[int, clubs.agent.BaseAgent]] = None
+        self.agents: Optional[Dict[int, agent.BaseAgent]] = None
         self.prev_obs: Optional[Dict] = None
 
     def act(self, obs: dict) -> int:
@@ -228,13 +227,11 @@ class ClubsEnv(gym.Env):
                     f"expected permutation of {list(range(len(agents)))}"
                 )
             agents = list(agents.values())
-        all_base_agents = all(
-            isinstance(agent, clubs.agent.BaseAgent) for agent in agents
-        )
+        all_base_agents = all(isinstance(_agent, agent.BaseAgent) for _agent in agents)
         if not all_base_agents:
             raise error.InvalidAgentConfigurationError(
                 error_msg.format(
-                    f"agent types {[type(agent) for agent in agents]}",
+                    f"agent types {[type(_agent) for _agent in agents]}",
                     "only subtypes of clubs.agent.BaseAgent",
                 )
             )
