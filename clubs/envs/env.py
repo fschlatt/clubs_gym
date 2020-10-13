@@ -173,7 +173,7 @@ class ClubsEnv(gym.Env):
             )
         if self.prev_obs is None:
             raise error.EnvironmentResetError(
-                f"call reset() before calling first step()"
+                "call reset() before calling first step()"
             )
         action = self.prev_obs["action"]
         bet = self.agents[action].act(obs)
