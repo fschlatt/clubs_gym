@@ -1,5 +1,5 @@
 """Classes and functions for running poker games"""
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import numpy as np
 
@@ -418,17 +418,24 @@ class Dealer:
             toggle for using different renderer, by default 'ascii'
         """
         if self.viewer is None:
+            viewer: Optional[Type[render.PokerViewer]] = None
             if mode == "ascii":
-                self.viewer = self.ascii_viewer
+                viewer = render.ASCIIViewer
             elif mode == "asciimatics":
-                self.viewer = render.AsciimaticsViewer(
-                    self.num_players, self.num_hole_cards, sum(self.num_community_cards)
-                )
-            else:
+                viewer = render.AsciimaticsViewer
+
+            if viewer is None:
                 render_modes = ", ".join(["ascii", "asciimatics"])
                 raise error.InvalidRenderModeError(
                     (f"incorrect render mode {mode}," f"use one of[{render_modes}]")
                 )
+
+        self.viewer = viewer(
+            self.num_players,
+            self.num_hole_cards,
+            sum(self.num_community_cards),
+            **kwargs,
+        )
 
         config = self._render_config()
 
