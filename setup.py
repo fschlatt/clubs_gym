@@ -1,16 +1,16 @@
 import os
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
-__version__ = "0.1.1"
-__author__ = "Ferdinand Schlatt"
-__license__ = "GLP-3.0"
-__copyright__ = f"Copyright (c) 2020, {__author__}."
-__homepage__ = "https://github.com/fschlatt/clubs"
-__docs__ = (
-    "clubs is a general purpose python poker engine for"
-    " running arbitrary poker configurations."
-)
+try:
+    import builtins
+except ImportError:
+    import __builtin__ as builtins  # type: ignore
+
+PATH_ROOT = os.path.dirname(__file__)
+builtins.__CLUBS__SETUP__ = True  # type: ignore
+
+import clubs  # noqa
 
 file_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -19,13 +19,13 @@ with open(os.path.join(file_dir, "README.md"), encoding="utf-8") as file:
 
 setup(
     name="clubs-gym",
-    version=__version__,
-    description=__docs__,
+    version=clubs.__version__,
+    description=clubs.__docs__,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author=__author__,
-    url=__homepage__,
-    license=__license__,
+    author=clubs.__author__,
+    url=clubs.__homepage__,
+    license=clubs.__license__,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -40,7 +40,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     keywords=["reinforcement learning", "poker", "AI", "gym"],
-    packages=["clubs"],
+    packages=find_packages(exclude=["test", "test.*"]),
     python_requires=">=3.6",
     install_requires=["numpy>=1.16.6", "gym>=0.12.0"],
     extras_requires={"render": ["asciimatics>=1.0.0", "flask>=1.0.0"]},
