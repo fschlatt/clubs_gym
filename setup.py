@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Ferdinand Schlatt"
 __license__ = "GLP-3.0"
 __copyright__ = f"Copyright (c) 2020, {__author__}."
