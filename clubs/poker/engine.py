@@ -417,9 +417,8 @@ class Dealer:
         mode : str, optional
             toggle for using different renderer, by default 'ascii'
         """
-        viewer = None
+        viewer: Optional[Type[render.PokerViewer]] = None
         if self.viewer is None:
-            viewer: Optional[Type[render.PokerViewer]] = None
             if mode == "ascii":
                 viewer = render.ASCIIViewer
             elif mode == "asciimatics":
