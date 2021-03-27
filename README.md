@@ -22,7 +22,7 @@ Install using `pip install clubs-gym`.
 ```python
 import gym
 
-import clubs
+import clubs_gym
 
 env = gym.make("KuhnTwoPlayer-v0")
 env.register_agents([clubs.agent.kuhn.NashKuhnAgent(0.3)] * 2)
