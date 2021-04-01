@@ -1,5 +1,7 @@
 import random
 
+import clubs
+
 import clubs_gym
 
 
@@ -12,7 +14,7 @@ def test_agent():
         "button": 1,
         "call": 0,
         "community_cards": [],
-        "hole_cards": ["Q♠"],
+        "hole_cards": [clubs.Card("QS")],
         "max_raise": 1,
         "min_raise": 1,
         "pot": 2,
@@ -21,48 +23,48 @@ def test_agent():
     }
     assert agent.act(obs) == 0
 
-    obs["hole_cards"] = ["K♠"]
+    obs["hole_cards"] = [clubs.Card("KS")]
     assert agent.act(obs) == 0
 
-    obs["hole_cards"] = ["A♠"]
+    obs["hole_cards"] = [clubs.Card("AS")]
     assert agent.act(obs) == 0
 
     obs["pot"] = 4
-    obs["hole_cards"] = ["Q♠"]
+    obs["hole_cards"] = [clubs.Card("QS")]
     assert agent.act(obs) == 0
 
-    obs["hole_cards"] = ["K♠"]
+    obs["hole_cards"] = [clubs.Card("KS")]
     random.seed(0)
     assert agent.act(obs) == 0
     random.seed(1)
     assert agent.act(obs) == 1
 
-    obs["hole_cards"] = ["A♠"]
+    obs["hole_cards"] = [clubs.Card("AS")]
     assert agent.act(obs) == 1
 
     obs["action"] = ["1"]
     obs["pot"] = 2
-    obs["hole_cards"] = ["Q♠"]
+    obs["hole_cards"] = [clubs.Card("QS")]
     random.seed(0)
     assert agent.act(obs) == 0
     random.seed(1)
     assert agent.act(obs) == 1
 
-    obs["hole_cards"] = ["K♠"]
+    obs["hole_cards"] = [clubs.Card("KS")]
     assert agent.act(obs) == 0
 
-    obs["hole_cards"] = ["A♠"]
+    obs["hole_cards"] = [clubs.Card("AS")]
     assert agent.act(obs) == 1
 
     obs["pot"] = 3
-    obs["hole_cards"] = ["Q♠"]
+    obs["hole_cards"] = [clubs.Card("QS")]
     assert agent.act(obs) == 0
 
-    obs["hole_cards"] = ["K♠"]
+    obs["hole_cards"] = [clubs.Card("KS")]
     random.seed(0)
     assert agent.act(obs) == 0
     random.seed(1)
     assert agent.act(obs) == 1
 
-    obs["hole_cards"] = ["A♠"]
+    obs["hole_cards"] = [clubs.Card("AS")]
     assert agent.act(obs) == 1

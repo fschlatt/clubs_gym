@@ -1,10 +1,10 @@
 import io
 from contextlib import redirect_stdout
 
+import clubs
 import gym
 import pytest
 
-import clubs
 import clubs_gym
 from clubs_gym import error
 
@@ -17,7 +17,8 @@ def test_env():
     dealer_obs = dealer.reset()
 
     assert list(env_obs.keys()) == list(dealer_obs.keys())
-    assert all(env_obs["stacks"] == dealer_obs["stacks"])
+    iterator = zip(env_obs["stacks"], dealer_obs["stacks"])
+    assert all(stack_1 == stack_2 for stack_1, stack_2 in iterator)
 
     bet = 10
     env_obs, *_ = env.step(bet)
@@ -27,7 +28,7 @@ def test_env():
 
     stdout = io.StringIO()
     with redirect_stdout(stdout):
-        env.render()
+        env.render("ascii")
     string = stdout.getvalue()
 
     assert "Action on Player 1" in string
