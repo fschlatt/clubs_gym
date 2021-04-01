@@ -15,4 +15,6 @@ while True:
     if all(done):
         break
 
+env.close()
+
 print(rewards)
