@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional, Tuple, Union
 
+import clubs
 import gym
 from gym import spaces
-import clubs
 
 from .. import agent, error
 
@@ -138,7 +138,9 @@ class ClubsEnv(gym.Env):
 
         max_bet = start_stack * num_players
         if isinstance(num_community_cards, list):
-            num_community_cards = sum(num_community_cards)
+            comm_card_numb = sum(num_community_cards)
+        else:
+            comm_card_numb = num_community_cards
         self.action_space = spaces.Discrete(max_bet)
         card_space = spaces.Tuple(
             (spaces.Discrete(num_ranks), spaces.Discrete(num_suits))
@@ -150,7 +152,7 @@ class ClubsEnv(gym.Env):
                 "active": spaces.MultiBinary(num_players),
                 "button": spaces.Discrete(num_players),
                 "call": spaces.Discrete(max_bet),
-                "community_cards": spaces.Tuple((card_space,) * num_community_cards),
+                "community_cards": spaces.Tuple((card_space,) * comm_card_numb),
                 "hole_cards": spaces.Tuple((hole_card_space,) * num_players),
                 "max_raise": spaces.Discrete(max_bet),
                 "min_raise": spaces.Discrete(max_bet),
