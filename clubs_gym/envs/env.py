@@ -165,6 +165,9 @@ class ClubsEnv(gym.Env):
         self.agents: Optional[Dict[int, agent.BaseAgent]] = None
         self.prev_obs: Optional[Dict] = None
 
+    def __del__(self):
+        self.close()
+
     def act(self, obs: dict) -> int:
         if self.agents is None:
             raise error.NoRegisteredAgentsError(
@@ -202,7 +205,8 @@ class ClubsEnv(gym.Env):
         self.dealer.render(mode=mode, **kwargs)
 
     def close(self):
-        pass
+        if isinstance(self.dealer.viewer, clubs.render.GraphicViewer):
+            self.dealer.viewer.close()
 
     def register_agents(self, agents: Union[List, Dict]) -> None:
         error_msg = "invalid agent configuration, got {}, expected {}"
