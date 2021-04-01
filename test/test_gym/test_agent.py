@@ -1,8 +1,16 @@
 import random
 
 import clubs
+import pytest
 
 import clubs_gym
+
+
+def test_base():
+    agent = clubs_gym.agent.BaseAgent()
+
+    with pytest.raises(NotImplementedError):
+        agent.act({})
 
 
 def test_agent():
