@@ -1,10 +1,10 @@
 import gym
 
-import clubs
+import clubs_gym
 
 env = gym.make("KuhnTwoPlayer-v0")
 
-env.register_agents([clubs.agent.kuhn.NashKuhnAgent(0.3)] * 2)
+env.register_agents([clubs_gym.agent.kuhn.NashKuhnAgent(0.3)] * 2)
 
 obs = env.reset()
 

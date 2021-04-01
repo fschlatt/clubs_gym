@@ -5,12 +5,13 @@ import gym
 import pytest
 
 import clubs
-from clubs import configs, error
+import clubs_gym
+from clubs_gym import error
 
 
 def test_env():
     env = gym.make("NoLimitHoldemTwoPlayer-v0")
-    dealer = clubs.poker.Dealer(**configs.NO_LIMIT_HOLDEM_TWO_PLAYER)
+    dealer = clubs.poker.Dealer(**clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER)
 
     env_obs = env.reset()
     dealer_obs = dealer.reset()
@@ -41,14 +42,17 @@ def test_register():
         env.act({})
 
     env.register_agents(
-        [clubs.agent.kuhn.NashKuhnAgent(0), clubs.agent.kuhn.NashKuhnAgent(0)]
+        [clubs_gym.agent.kuhn.NashKuhnAgent(0), clubs_gym.agent.kuhn.NashKuhnAgent(0)]
     )
 
     with pytest.raises(error.EnvironmentResetError):
         env.act({})
 
     env.register_agents(
-        {0: clubs.agent.kuhn.NashKuhnAgent(0), 1: clubs.agent.kuhn.NashKuhnAgent(0)}
+        {
+            0: clubs_gym.agent.kuhn.NashKuhnAgent(0),
+            1: clubs_gym.agent.kuhn.NashKuhnAgent(0),
+        }
     )
 
     obs = env.reset()
@@ -69,5 +73,8 @@ def test_errors():
 
     with pytest.raises(error.InvalidAgentConfigurationError):
         env.register_agents(
-            {4: clubs.agent.kuhn.NashKuhnAgent(0), 5: clubs.agent.kuhn.NashKuhnAgent(0)}
+            {
+                4: clubs_gym.agent.kuhn.NashKuhnAgent(0),
+                5: clubs_gym.agent.kuhn.NashKuhnAgent(0),
+            }
         )

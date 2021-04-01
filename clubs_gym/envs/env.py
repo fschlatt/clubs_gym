@@ -1,10 +1,10 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import gym
-import numpy as np
 from gym import spaces
+import clubs
 
-from clubs import agent, error, poker
+from .. import agent, error
 
 
 class ClubsEnv(gym.Env):
@@ -118,7 +118,7 @@ class ClubsEnv(gym.Env):
         order: Optional[List[str]] = None,
     ) -> None:
 
-        self.dealer = poker.Dealer(
+        self.dealer = clubs.Dealer(
             num_players,
             num_streets,
             blinds,
@@ -138,7 +138,7 @@ class ClubsEnv(gym.Env):
 
         max_bet = start_stack * num_players
         if isinstance(num_community_cards, list):
-            num_comm_cards = sum(num_community_cards)
+            num_community_cards = sum(num_community_cards)
         self.action_space = spaces.Discrete(max_bet)
         card_space = spaces.Tuple(
             (spaces.Discrete(num_ranks), spaces.Discrete(num_suits))
@@ -150,7 +150,7 @@ class ClubsEnv(gym.Env):
                 "active": spaces.MultiBinary(num_players),
                 "button": spaces.Discrete(num_players),
                 "call": spaces.Discrete(max_bet),
-                "community_cards": spaces.Tuple((card_space,) * num_comm_cards),
+                "community_cards": spaces.Tuple((card_space,) * num_community_cards),
                 "hole_cards": spaces.Tuple((hole_card_space,) * num_players),
                 "max_raise": spaces.Discrete(max_bet),
                 "min_raise": spaces.Discrete(max_bet),
@@ -184,7 +184,7 @@ class ClubsEnv(gym.Env):
         obs["hole_cards"] = obs["hole_cards"][obs["action"]]
         return obs
 
-    def step(self, bet: int) -> Tuple[Dict, np.ndarray, np.ndarray, None]:
+    def step(self, bet: int) -> Tuple[Dict, List[int], List[int], None]:
         obs, rewards, done = self.dealer.step(bet)
         obs = self._parse_obs(obs)
         if self.agents is not None:
@@ -198,7 +198,7 @@ class ClubsEnv(gym.Env):
             self.prev_obs = obs
         return obs
 
-    def render(self, mode="ascii", **kwargs) -> None:
+    def render(self, mode="human", **kwargs) -> None:
         self.dealer.render(mode=mode, **kwargs)
 
     def close(self):
@@ -264,7 +264,7 @@ def register(configs: Dict) -> None:
                 }
             }
     """
-    env_entry_point = "clubs.envs.env:ClubsEnv"
+    env_entry_point = "clubs_gym.envs.env:ClubsEnv"
     for env_id, config in configs.items():
         gym.envs.registration.register(
             id=env_id, entry_point=env_entry_point, kwargs={**config}

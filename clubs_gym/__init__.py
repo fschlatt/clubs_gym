@@ -1,4 +1,4 @@
-__version__ = "0.1.0-1"
+__version__ = "0.1.2"
 __author__ = "Ferdinand Schlatt"
 __license__ = "GPL-3.0"
 __copyright__ = f"Copyright (c) 2020, {__author__}."
@@ -11,22 +11,24 @@ try:
     # This variable is injected in the __builtins__ by the build
     # process. It used to enable importing subpackages of skimage when
     # the binaries are not built
-    __CLUBS_SETUP__  # type: ignore
+    __CLUBS_GYM_SETUP__  # type: ignore
 except NameError:
-    __CLUBS_SETUP__ = False
+    __CLUBS_GYM_SETUP__ = False
 
-if __CLUBS_SETUP__:  # type: ignore
+if __CLUBS_GYM_SETUP__:  # type: ignore
     pass
 else:
-    from . import agent, configs, envs, poker
+    from . import agent, envs
 
-__all__ = ["agent", "configs", "envs", "poker"]
+import clubs
+
+__all__ = ["agent", "envs"]
 
 
 def __register():
     try:
         env_configs = {}
-        for name, config in configs.__dict__.items():
+        for name, config in clubs.configs.__dict__.items():
             if not name.endswith("_PLAYER"):
                 continue
             env_id = "".join(sub_string.title() for sub_string in name.split("_"))

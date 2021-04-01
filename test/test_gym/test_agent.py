@@ -1,10 +1,10 @@
 import random
 
-import clubs
+import clubs_gym
 
 
 def test_agent():
-    agent = clubs.agent.kuhn.NashKuhnAgent(0)
+    agent = clubs_gym.agent.kuhn.NashKuhnAgent(0)
 
     obs = {
         "action": 0,

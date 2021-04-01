@@ -13,25 +13,25 @@ class NashKuhnAgent(base.BaseAgent):
         self.alpha = alpha
 
     def player_1_check(self, obs):
-        if obs["hole_cards"][0][0] == "Q":
+        if obs["hole_cards"][0].rank == "Q":
             if random.random() < self.alpha:
                 return 1
             return 0
-        if obs["hole_cards"][0][0] == "K":
+        if obs["hole_cards"][0].rank == "K":
             return 0
-        if obs["hole_cards"][0][0] == "A":
+        if obs["hole_cards"][0].rank == "A":
             if random.random() < 3 * self.alpha:
                 return 1
             return 0
 
     def player_1_bet(self, obs):
-        if obs["hole_cards"][0][0] == "Q":
+        if obs["hole_cards"][0].rank == "Q":
             return 0
-        if obs["hole_cards"][0][0] == "K":
+        if obs["hole_cards"][0].rank == "K":
             if random.random() < 1 / 3 + self.alpha:
                 return 1
             return 0
-        if obs["hole_cards"][0][0] == "A":
+        if obs["hole_cards"][0].rank == "A":
             return 1
 
     def _player_1(self, obs):
@@ -40,23 +40,23 @@ class NashKuhnAgent(base.BaseAgent):
         return self.player_1_bet(obs)
 
     def _player_2_check(self, obs):
-        if obs["hole_cards"][0][0] == "Q":
+        if obs["hole_cards"][0].rank == "Q":
             if random.random() < 1 / 3:
                 return 1
             return 0
-        if obs["hole_cards"][0][0] == "K":
+        if obs["hole_cards"][0].rank == "K":
             return 0
-        if obs["hole_cards"][0][0] == "A":
+        if obs["hole_cards"][0].rank == "A":
             return 1
 
     def _player_2_bet(self, obs):
-        if obs["hole_cards"][0][0] == "Q":
+        if obs["hole_cards"][0].rank == "Q":
             return 0
-        if obs["hole_cards"][0][0] == "K":
+        if obs["hole_cards"][0].rank == "K":
             if random.random() < 1 / 3:
                 return 1
             return 0
-        if obs["hole_cards"][0][0] == "A":
+        if obs["hole_cards"][0].rank == "A":
             return 1
 
     def _player_2(self, obs):
