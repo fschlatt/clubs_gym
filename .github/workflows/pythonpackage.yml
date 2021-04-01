@@ -32,11 +32,11 @@ jobs:
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          flake8 clubs --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 clubs --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+          flake8 clubs_gym --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 clubs_gym --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
       - name: Lint with mypy
         run: |
-          mypy clubs --config-file=mypy.ini
+          mypy clubs_gym --config-file=mypy.ini
       - name: Test with pytest
         run: |
           pytest test
@@ -56,7 +56,7 @@ jobs:
           pip install pytest pytest-cov
       - name: Create coverage report
         run: |
-          pytest --cov=./clubs --cov-report=xml
+          pytest --cov=./clubs_gym --cov-report=xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

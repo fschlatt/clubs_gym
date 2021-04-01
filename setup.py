@@ -10,7 +10,7 @@ except ImportError:
 PATH_ROOT = os.path.dirname(__file__)
 builtins.__CLUBS__SETUP__ = True  # type: ignore
 
-import clubs  # noqa
+import clubs_gym  # noqa
 
 file_dir = os.path.abspath(os.path.dirname(__file__))
 
@@ -26,13 +26,13 @@ with open(os.path.join(file_dir, "extra-requirements.txt")) as file:
 
 setup(
     name="clubs-gym",
-    version=clubs.__version__,
-    description=clubs.__docs__,
+    version=clubs_gym.__version__,
+    description=clubs_gym.__docs__,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author=clubs.__author__,
-    url=clubs.__homepage__,
-    license=clubs.__license__,
+    author=clubs_gym.__author__,
+    url=clubs_gym.__homepage__,
+    license=clubs_gym.__license__,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
