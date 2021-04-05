@@ -11,11 +11,16 @@
 [![codecov](https://codecov.io/gh/fschlatt/clubs_gym/branch/master/graph/badge.svg)](https://codecov.io/gh/fschlatt/clubs_gym)
 [![CodeFactor](https://www.codefactor.io/repository/github/fschlatt/clubs_gym/badge)](https://www.codefactor.io/repository/github/fschlatt/clubs_gym)
 
-clubs_gym is a python library for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
-
+clubs_gym is a [gym](https://gym.openai.com/) wrapper around the [clubs](https://github.com/fschlatt/clubs) python poker library. [clubs](https://github.com/fschlatt/clubs) is used for running arbitrary configurations of community card poker games. This includes anything from simple Leduc or [Kuhn](https://en.wikipedia.org/wiki/Kuhn_poker) poker to full n-player [No Limit Texas Hold'em](https://en.wikipedia.org/wiki/Texas_hold_%27em) or [Pot Limit Omaha](https://en.wikipedia.org/wiki/Omaha_hold_%27em#Pot-limit_Omaha).
 ## Install
 
 Install using `pip install clubs-gym`.
+
+# How to use
+
+By running `import clubs_gym`, several pre-defined poker clubs poker configurations are registered with gym (call `clubs_gym.ENVS` for a full list). Custom environments can be registered with `clubs.envs.register({"{environment_name}": {config_dictionary})}`. Environment names must follow the gym environment name convention ({title-case}-v{version_number}). Check the [clubs documentation](https://clubs.readthedocs.io/en/latest/index.html) for additional information about the structure of a configuration dictionary.
+
+Since [gym](https://gym.openai.com/) isn't designed for multi-agent games, the api is extended to enable registering agents. This is not required, but ensures each agent only receives the information it's supposed to. An agent needs to inherit from the `clubs_gym.agent.base.BaseAgent` class and implement the `act` mathod. `act` receives a game state dictionary and needs to output an integer bet size. A list of agents the length of the number of players can then be registered with the environment using `env.register_agents`. By calling `env.act({observation_dictionary})`, the observation dictionary is passed to the correct agent and the agent's bet is returned. This can then be passed on the `env.step` function. An example with an optimal Kuhn agent (`clubs_gym.agent.kuhn.NashKuhnAgent`) is given below.
 
 ## Example
 
@@ -37,56 +42,3 @@ while True:
 
 print(rewards)
 ```
-
-## Configuration
-
-The type of poker game is defined using a configuration dictionary. See [configs.py](./clubs/configs.py) for some example configurations. A configuration dictionary has to have the following key value structure:
-
-* num_players
-  * int: maximum number of players
-* num_streets
-  * int: number of streets
-* blinds
-  * int or list of ints: the blind distribution starting from the button e.g. [0, 1, 2, 0, 0, 0] for a 6 player 1-2 game
-  * a single int is expanded to the number of players, settings blinds=0 will result in no blinds [0, 0, 0, 0, 0, 0]
-* antes
-  * int or list of ints: the ante distribution starting from the button, analog to the blind distribution
-  * single ints are expanded to the number of players
-* raise_sizes
-  * float or str or list of floats or str: the maximum raise size as a list of values, one for each street
-  * options are ints (for fixed raise sizes), float('inf') (for no limit raise sizes) or 'pot' for pot limit raise sizes
-  * single values are expanded to the number of streets
-* num_raises
-  * float or list of floats: the maximum number of raises for each street
-  * options are ints (for a fixed number of bets per round) or float('inf') for unlimited number of raises
-  * single values are expanded to the number of streets
-* num_suits
-  * number of suits in the deck
-* num_ranks
-  * number of ranks in the deck
-* num_hole_cards
-  * number of hole cards for each player
-* num_community_cards
-  * number of community cards per street
-* num_cards_for_hand
-  * number of cards for a valid poker hand
-* mandatory_num_hole_cards
-  * number of hole cards which must be used for a poker hand
-* start_stack
-  * initial stack size
-
-## API
-
-clubs adopts the [Open AI gym](https://github.com/openai/gym) interface. To deal a new hand, call `env.reset()`, which returns a dictionary of observations for the current active player. To advance the game, call `env.step({bet})` with an integer bet size. Invalid bet sizes are always rounded to the nearest valid bet size. When the bet lies exactly between 2 valid bet sizes, it is always rounded down. For example, if the minimum raise size is 10 and the bet is 5, the bet is rounded down to 0, i.e. call or fold.
-
-## Universal Deuces
-
-The hand evaluator is heavily inspired by the [deuces](https://github.com/worldveil/deuces/) library. The basic logic is identical, but the evaluator and lookup table are generalized to work for any deck configuration with number of ranks <= 13 and number of suits <= 4 and poker hands with 5 or less cards. See the poker [README](./clubs/poker/README.md) for further details.
-
-## Limitations
-
-Even though the library is designed to be as general as possible, it currently has a couple limitations:
-
-* Only integer chip denominations are supported
-* The evaluator only works for sub decks of the standard 52 card deck as well as a maximum of 5 card poker hands
-* Draw and stud poker games are not supported
