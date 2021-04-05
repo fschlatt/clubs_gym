@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./clubs/resources/images/black_red_logo.svg" alt="Logo" width=200px>
+<img src="./clubs_gym/resources/images/black_red_logo.svg" alt="Logo" width=200px>
 
 </div>
 
