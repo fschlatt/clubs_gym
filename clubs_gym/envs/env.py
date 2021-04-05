@@ -72,29 +72,30 @@ class ClubsEnv(gym.Env):
         order=None, hands are ranked by rarity. by default None
 
     Examples
-    ----------
-    1-2 Heads Up No Limit Texas Hold'em:
+    --------
 
-        Dealer(num_players=2, num_streets=4, blinds=[1, 2], antes=0,
-               raise_sizes=float('inf'), num_raises=float('inf'),
-               num_suits=4, num_ranks=13, num_hole_cards=2,
-               mandatory_num_hole_cards=0, start_stack=200)
-
-    1-2 6 Player PLO
-
-        Dealer(num_players=6, num_streets=4, blinds=[0, 1, 2, 0, 0, 0],
-               antes=0, raise_sizes='pot', num_raises=float('inf'),
-               num_suits=4, num_ranks=13, num_hole_cards=4,
-               mandatory_num_hole_cards=2, start_stack=200)
-
-    1-2 Heads Up No Limit Short Deck
-
-        Dealer(num_players=2, num_streets=4, blinds=[1, 2], antes=0,
-               raise_sizes=float('inf'), num_raises=float('inf'),
-               num_suits=4, num_ranks=9, num_hole_cards=2,
-               mandatory_num_hole_cards=0, start_stack=200,
-               order=['sf', 'fk', 'fl', 'fh', 'st',
-                      'tk', 'tp', 'pa', 'hc'])
+        >>> Dealer( # 1-2 Heads Up No Limit Texas Hold'em
+        ...     num_players=2, num_streets=4, blinds=[1, 2], antes=0,
+        ...     raise_sizes=float('inf'), num_raises=float('inf'),
+        ...     num_suits=4, num_ranks=13, num_hole_cards=2,
+        ...     mandatory_num_hole_cards=0, start_stack=200
+        ... )
+        >>> Dealer( # 1-2 6 Player PLO
+        ...     num_players=6, num_streets=4, blinds=[0, 1, 2, 0, 0, 0],
+        ...     antes=0, raise_sizes='pot', num_raises=float('inf'),
+        ...     num_suits=4, num_ranks=13, num_hole_cards=4,
+        ...     mandatory_num_hole_cards=2, start_stack=200
+        ... )
+        >>> Dealer( # 1-2 Heads Up No Limit Short Deck
+        ...     num_players=2, num_streets=4, blinds=[1, 2], antes=0,
+        ...     raise_sizes=float('inf'), num_raises=float('inf'),
+        ...     num_suits=4, num_ranks=9, num_hole_cards=2,
+        ...     mandatory_num_hole_cards=0, start_stack=200,
+        ...     order=[
+        ...         'sf', 'fk', 'fl', 'fh', 'st',
+        ...         'tk', 'tp', 'pa', 'hc'
+        ...         ]
+        ... )
     """
 
     metadata = {"render.modes": ["ascii", "human"]}
