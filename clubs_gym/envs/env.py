@@ -97,7 +97,7 @@ class ClubsEnv(gym.Env):
                       'tk', 'tp', 'pa', 'hc'])
     """
 
-    metadata = {"render.modes": ["ascii", "asciimatics"]}
+    metadata = {"render.modes": ["ascii", "human"]}
 
     def __init__(
         self,
