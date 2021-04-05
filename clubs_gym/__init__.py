@@ -23,6 +23,7 @@ else:
 import clubs
 
 __all__ = ["agent", "envs"]
+ENVS = []
 
 
 def __register():
@@ -34,6 +35,7 @@ def __register():
             env_id = "".join(sub_string.title() for sub_string in name.split("_"))
             env_id += "-v0"
             env_configs[env_id] = config
+            ENVS.append(env_id)
         envs.register(env_configs)
     except ImportError:
         pass
