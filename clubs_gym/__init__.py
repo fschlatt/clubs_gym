@@ -1,7 +1,7 @@
 __version__ = "0.1.3"
 __author__ = "Ferdinand Schlatt"
 __license__ = "GPL-3.0"
-__copyright__ = f"Copyright (c) 2020, {__author__}."
+__copyright__ = f"Copyright (c) 2021, {__author__}."
 __homepage__ = "https://github.com/fschlatt/clubs_gym"
 __docs__ = (
     "clubs is an open ai gym environment for running arbitrary poker configurations."
