@@ -6,14 +6,14 @@ import pytest
 import clubs_gym
 
 
-def test_base():
+def test_base() -> None:
     agent = clubs_gym.agent.BaseAgent()
 
     with pytest.raises(NotImplementedError):
         agent.act({})
 
 
-def test_agent():
+def test_agent() -> None:
     agent = clubs_gym.agent.kuhn.NashKuhnAgent(0)
 
     obs = {

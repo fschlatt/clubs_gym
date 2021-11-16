@@ -9,7 +9,7 @@ import clubs_gym
 from clubs_gym import error
 
 
-def test_env():
+def test_env() -> None:
     env = gym.make("NoLimitHoldemTwoPlayer-v0")
     dealer = clubs.poker.Dealer(**clubs.configs.NO_LIMIT_HOLDEM_TWO_PLAYER)
 
@@ -36,7 +36,7 @@ def test_env():
     assert env.close() is None
 
 
-def test_register():
+def test_register() -> None:
     env = gym.make("KuhnTwoPlayer-v0")
 
     with pytest.raises(error.NoRegisteredAgentsError):
@@ -61,7 +61,7 @@ def test_register():
     _ = env.step(action)
 
 
-def test_errors():
+def test_errors() -> None:
     env = gym.make("NoLimitHoldemTwoPlayer-v0")
     with pytest.raises(error.InvalidAgentConfigurationError):
         env.register_agents(None)
