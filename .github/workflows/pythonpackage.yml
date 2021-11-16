@@ -5,9 +5,9 @@ name: Python package
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   build:
@@ -36,7 +36,7 @@ jobs:
           flake8 clubs_gym --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
       - name: Lint with mypy
         run: |
-          mypy clubs_gym --config-file=mypy.ini
+          mypy clubs_gym --config-file=mypy.ini --strict
       - name: Test with pytest
         run: |
           pytest test
