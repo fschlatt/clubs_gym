@@ -199,7 +199,6 @@ class ClubsEnv(gym.Env):
 
     def reset(self, reset_button: bool = False, reset_stacks: bool = False) -> Dict:
         obs = self.dealer.reset(reset_button, reset_stacks)
-        obs = self._parse_obs(obs)
         if self.agents is not None:
             self.prev_obs = obs
         return obs
