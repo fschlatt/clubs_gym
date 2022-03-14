@@ -5,10 +5,10 @@ from setuptools import find_packages, setup
 try:
     import builtins
 except ImportError:
-    import __builtin__ as builtins  # type: ignore
+    import __builtin__ as builtins
 
 PATH_ROOT = os.path.dirname(__file__)
-builtins.__CLUBS__SETUP__ = True  # type: ignore
+builtins.__CLUBS_GYM__SETUP__: bool = True
 
 import clubs_gym  # noqa
 

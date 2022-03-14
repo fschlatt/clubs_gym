@@ -1,4 +1,11 @@
-from typing import Dict, List, Optional, Tuple, Union
+import sys
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
 
 import clubs
 import gym
@@ -7,7 +14,7 @@ from gym import spaces
 from .. import agent, error
 
 
-class ClubsEnv(gym.Env):
+class ClubsEnv(gym.Env):  # type: ignore
     """Runs a range of different of poker games dependent on the
     given configuration. Supports limit, no limit and pot limit
     bet sizing, arbitrary deck sizes, arbitrary hole and community
@@ -106,8 +113,10 @@ class ClubsEnv(gym.Env):
         num_streets: int,
         blinds: Union[int, List[int]],
         antes: Union[int, List[int]],
-        raise_sizes: Union[float, str, List[Union[float, str]]],
-        num_raises: Union[float, List[float]],
+        raise_sizes: Union[
+            int, Literal["pot", "inf"], List[Union[int, Literal["pot", "inf"]]]
+        ],
+        num_raises: Union[int, Literal["inf"], List[Union[int, Literal["inf"]]]],
         num_suits: int,
         num_ranks: int,
         num_hole_cards: int,
@@ -166,12 +175,12 @@ class ClubsEnv(gym.Env):
         )
 
         self.agents: Optional[Dict[int, agent.BaseAgent]] = None
-        self.prev_obs: Optional[Dict] = None
+        self.prev_obs: Optional[clubs.poker.engine.ObservationDict] = None
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()
 
-    def act(self, obs: dict) -> int:
+    def act(self, obs: clubs.poker.engine.ObservationDict) -> int:
         if self.agents is None:
             raise error.NoRegisteredAgentsError(
                 "register agents using env.register_agents(...) before"
@@ -185,32 +194,32 @@ class ClubsEnv(gym.Env):
         bet = self.agents[action].act(obs)
         return bet
 
-    @staticmethod
-    def _parse_obs(obs):
-        obs["hole_cards"] = obs["hole_cards"][obs["action"]]
-        return obs
-
-    def step(self, bet: int) -> Tuple[Dict, List[int], List[int], None]:
+    def step(
+        self, bet: int
+    ) -> Tuple[clubs.poker.engine.ObservationDict, List[int], List[bool], None]:
         obs, rewards, done = self.dealer.step(bet)
-        obs = self._parse_obs(obs)
         if self.agents is not None:
             self.prev_obs = obs
         return obs, rewards, done, None
 
-    def reset(self, reset_button: bool = False, reset_stacks: bool = False) -> Dict:
+    def reset(
+        self, reset_button: bool = False, reset_stacks: bool = False
+    ) -> clubs.poker.engine.ObservationDict:
         obs = self.dealer.reset(reset_button, reset_stacks)
         if self.agents is not None:
             self.prev_obs = obs
         return obs
 
-    def render(self, mode="human", **kwargs) -> None:
+    def render(self, mode: str = "human", **kwargs: Any) -> None:
         self.dealer.render(mode=mode, **kwargs)
 
-    def close(self):
+    def close(self) -> None:
         if isinstance(self.dealer.viewer, clubs.render.GraphicViewer):
             self.dealer.viewer.close()
 
-    def register_agents(self, agents: Union[List, Dict]) -> None:
+    def register_agents(
+        self, agents: Union[List[agent.BaseAgent], Dict[int, agent.BaseAgent]]
+    ) -> None:
         error_msg = "invalid agent configuration, got {}, expected {}"
         if not isinstance(agents, (dict, list)):
             raise error.InvalidAgentConfigurationError(
@@ -244,7 +253,7 @@ class ClubsEnv(gym.Env):
         self.agents = dict(zip(agent_keys, agents))
 
 
-def register(configs: Dict) -> None:
+def register(configs: Dict[str, clubs.configs.PokerConfig]) -> None:
     """Registers dict of clubs configs as gym environments
 
     Parameters
