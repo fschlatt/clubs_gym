@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - uses: actions/checkout@v2
@@ -32,11 +32,11 @@ jobs:
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          flake8 clubs_gym --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 clubs_gym --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
       - name: Lint with mypy
         run: |
-          mypy clubs_gym --config-file=mypy.ini --strict
+          mypy clubs_gym test --config-file=mypy.ini --strict
       - name: Test with pytest
         run: |
           pytest test
