@@ -2,7 +2,7 @@ import random
 
 import clubs
 
-from . import base
+from clubs_gym.agent import base
 
 
 class NashKuhnAgent(base.BaseAgent):

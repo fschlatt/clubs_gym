@@ -11,7 +11,7 @@ import clubs
 import gym
 from gym import spaces
 
-from .. import agent, error
+from clubs_gym import agent, error
 
 
 class ClubsEnv(gym.Env):  # type: ignore
@@ -194,7 +194,7 @@ class ClubsEnv(gym.Env):  # type: ignore
         bet = self.agents[action].act(obs)
         return bet
 
-    def step(
+    def step(  # type: ignore
         self, bet: int
     ) -> Tuple[clubs.poker.engine.ObservationDict, List[int], List[bool], None]:
         obs, rewards, done = self.dealer.step(bet)
@@ -202,7 +202,7 @@ class ClubsEnv(gym.Env):  # type: ignore
             self.prev_obs = obs
         return obs, rewards, done, None
 
-    def reset(
+    def reset(  # type: ignore
         self, reset_button: bool = False, reset_stacks: bool = False
     ) -> clubs.poker.engine.ObservationDict:
         obs = self.dealer.reset(reset_button, reset_stacks)
